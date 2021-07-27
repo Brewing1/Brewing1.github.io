@@ -11,8 +11,7 @@ module.exports = {
 		extensions: [".js", ".html", ".npy", ".json"],
 	},
 	output: {
-		path: __dirname,
-		// path: __dirname + "/public",
+		path: __dirname + "/docs",
 		filename: "[name].bundle.js",
 		chunkFilename: "[name].[id].js",
 	},
@@ -74,8 +73,7 @@ module.exports = {
 		historyApiFallback: true,
 		overlay: true,
 		stats: "minimal",
-		contentBase: __dirname,
-		// contentBase: __dirname + "/public",
+		contentBase: __dirname + "/docs",
 	},
 	devtool: "inline-source-map",
 };
