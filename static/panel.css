@@ -1,18 +1,32 @@
 #panel {
 	display: grid;
-	grid-template-rows: 70px 350px 350px;
-	grid-template-columns: 350px 350px;
+	grid-template-rows: 100px 350px 350px;
+	grid-template-columns: 30% 20% 20% 30%;
 	grid-template-areas: 
-		"controls controls"
-		"obs sal"
-		"pca-points .";
+		"sample-controls step-controls step-controls salency-controls"
+		"obs obs sal sal"
+		"pca-points pca-points bar-graph bar-graph";
 
 	align-content: center;
+	grid-gap: 20px;
 }
 
-#controls {
-	grid-area: controls;
+#sample-controls {
+	grid-area: sample-controls;
 	text-align: center;
+}
+
+#step-controls {
+	grid-area: step-controls;
+	text-align: center;
+}
+
+#salency-controls {
+	grid-area: salency-controls;
+}
+
+.subpanel {
+	place-self: stretch;
 }
 
 #obs-subpanel {
@@ -27,10 +41,14 @@
 	grid-area: pca-points;
 }
 
+#bar-graph-subpanel {
+	grid-area: bar-graph;
+}
+
 .control-icon svg {
 	width: 25px;
 }
 
 .subpanel-image {
-	width: 80%;
+	width: 100%;
 }

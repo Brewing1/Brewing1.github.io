@@ -16,7 +16,13 @@
   <body>
     <d-article>
       <div id="panel" class="l-body-outset">
-        <div id="controls">
+        
+        <!-- Controls -->
+        <div id="sample-controls">
+          Sample Controls go here
+        </div>
+        
+        <div id="step-controls">
           <span id="back_all_btn" class="control-icon">
             <%= require("../../static/icons/first_page_black_24dp.svg") %>
           </span>
@@ -36,15 +42,31 @@
           <span id="step-counter">
           </span>
         </div>
+        
+        <div id="salency-controls">
+          Salency type:<br>
+          <input type="radio" id="action-radio" name="salency_type" value="action" checked>
+          <label for="action-radio">action</label><br>
+          <input type="radio" id="value-radio" name="salency_type" value="value">
+          <label for="value-radio">value</label><br>
+        </div>
+
+        <!-- Videos -->
         <div class="subpanel" id="obs-subpanel">
-          <img id="obs-image" src="../data/obs/0.png" class="subpanel-image">
+          <img id="obs-image" class="subpanel-image">
         </div>
         <div class="subpanel" id="sal-subpanel">
-          <img src="../data/obs/0.png" class="subpanel-image">
+          <img id="sal-image" class="subpanel-image">
         </div>
+
+        <!-- Plots -->
         <div class="subpanel" id="pca-points-subpanel">
           <svg id="pca-points-graph">
         </div>
+        <div class="subpanel" id="bar-graph">
+          <svg id="pca-bar-graph">
+        </div>
+
       </div>
     </d-article>
 	</body>

@@ -1,54 +1,55 @@
 
-// import 'bootstrap/dist/css/bootstrap.min.css';
-
 const d3 = require("d3");
-import * as Plot from "@observablehq/plot";
 
-var width = 900;
-var height = 600;
+$ = require('jquery')
 
-// d3.select("#timestep-slider")
-//   .attr("max", max_obs)
-//   .attr("min", min_obs);
+//////////   Settings    /////////////
 
+const sample_name = "sample_00003"
 
-// d3.select("#timestep-slider").on("change", e => 
-//   {
-//     value = e.target.value;
-//     change_value(e.target.value)
-//   }
-// );
+//////////   Data import    /////////////
 
+const base_hx_loadings = require("../../static/data/base_hx_loadings.json");
 
-// Data import
+const raw_sample_loadings = require("../../static/data/"+sample_name+"/hx_loadings.json");
 
-const pca_data = require("../../static/data/pca.json");
-var timesteps = pca_data.sample_pts.map( (vals, i) =>
+var sample = raw_sample_loadings.map( (vals, i) =>
   ({
-    pca_loadings: vals,
+    hx_loadings: vals,
     is_selected: i == step,
   })
 )
 
-var max_step = timesteps.length -1
+var max_step = sample.length - 1
 
-// Timestep management
+//////////   Timestep controls    /////////////
 
 var step = 0
+var sal_type = "action"
+
 change_step(0);
 
+$('input[type=radio][name=salency_type]').change(function() {
+  sal_type = this.value
+  change_step(step)
+});
+
 function change_step(new_step) {
-  console.log(step, new_step, timesteps)
-  timesteps[step].is_selected = false;
-  timesteps[new_step].is_selected = true;
+  sample[step].is_selected = false;
+  sample[new_step].is_selected = true;
   
   d3.select("#obs-image")
-    .attr("src", "../data/obs/" + step + ".png")
+    .attr("src", `../data/${sample_name}/obs/${step}.png`)
+
+  d3.select("#sal-image")
+    .attr("src", `../data/${sample_name}/sal_${sal_type}/${step}.png`)
 
   d3.select("#step-counter")
     .text("Step " + new_step + " of " + max_step)
 
   step = new_step
+
+  update_timesteps_points();
 }
 
 d3.select("#back_all_btn").on("click", _ =>
@@ -67,12 +68,22 @@ d3.select("#forward_all_btn").on("click", _ =>
   change_step(max_step)
 );
 
+document.addEventListener('keydown', function(e) {
+    switch (e.keyCode) {
+        case 37:
+            change_step(Math.max(0, step - 1));
+            break;
+        case 39:
+            change_step(Math.min(max_step, step + 1));
+            break;
+    }
+});
 
 
-// Graphing
+//////////   Graphing    /////////////
 
-pca_plot(d3.select("#pca-points-graph"), pca_data["all_pts"], timesteps)
 
+pca_plot(d3.select("#pca-points-graph"), base_hx_loadings, sample)
 
 function pca_plot(svg, base_data, sample_data) {
   // adapted from https://observablehq.com/@d3/scatterplot
@@ -87,7 +98,7 @@ function pca_plot(svg, base_data, sample_data) {
 
   const dim_extents = dim => {
     const base_extents = d3.extent(base_data, d => d[dim]);
-    const sample_extents = d3.extent(sample_data, d => d.pca_loadings[dim]);
+    const sample_extents = d3.extent(sample_data, d => d.hx_loadings[dim]);
 
     return [
       Math.min(base_extents[0], sample_extents[0]),
@@ -136,41 +147,22 @@ function pca_plot(svg, base_data, sample_data) {
       .attr("cx", d => x(d[0]))
       .attr("cy", d => y(d[1]))
       .attr("fill", "black")
+      .attr("fill-opacity", .2)
       .attr("r", 1);
 
   svg.append("g")
     .selectAll("circle")
-    .data(timesteps)
+    .data(sample_data)
     .join("circle")
-      .attr("cx", d => x(d.pca_loadings[0]))
-      .attr("cy", d => y(d.pca_loadings[1]))
-      .attr("fill", d => "is_selected" ? "red" : "blue")
+      .attr("class", "timestep-point")
+      .attr("cx", d => x(d.hx_loadings[0]))
+      .attr("cy", d => y(d.hx_loadings[1]))
+      .attr("fill", d => d["is_selected"] ? "red" : "blue")
       .attr("r", 3);
-
 }
 
-
-
-
-// document.getElementById("pca-points-subpanel")
-//   .appendChild(
-//     Plot.plot({
-//       width: 200,
-//       height: 200,
-//       marks: [
-//         Plot.dot(pca_data["all_pts"], {
-//           x: d => d[0],
-//           y: d => d[1],
-//           fill: "currentColor",
-//           r: 2,
-//         }),
-//         Plot.dot(timesteps, {
-//           x: d => d.pca_loadings[0],
-//           y: d => d.pca_loadings[1],
-//           fill: d => "is_selected" ? "red" : "blue",
-//           attr: "current_mark",
-//           r: 5,
-//         }),
-//       ]
-//     })
-// );
+function update_timesteps_points() {
+  d3.select("#pca-points-graph")
+    .selectAll(".timestep-point")
+    .attr("fill", d => d["is_selected"] ? "red" : "blue")
+}
