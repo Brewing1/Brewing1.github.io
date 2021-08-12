@@ -8,9 +8,11 @@
 	},
 	"dependencies": {
 		"@observablehq/plot": "^0.1.0",
+		"bootstrap": "^5.1.0",
 		"d3": "^7.0.0",
 		"jquery": "^3.6.0",
 		"lodash": "^4.17.21",
+		"material-design-icons": "^3.0.1",
 		"numpy-loader": "^1.2.0"
 	},
 	"devDependencies": {

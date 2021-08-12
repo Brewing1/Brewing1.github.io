@@ -26,10 +26,14 @@ module.exports = {
 					presets: ["@babel/preset-env"],
 				},
 			},
-			// {
-			// 	test: /\.css$/i,
-			// 	use: ["to-string-loader", "css-loader"],
-			// },
+			{
+				test: /\.css$/i,
+				use: [
+             		{loader: "style-loader"},
+                	{loader: "css-loader"}
+            	]
+				// use: ["to-string-loader", "css-loader"],
+			},
 			{
 				test: /\.(html|svelte)$/,
 				exclude: /node_modules/,

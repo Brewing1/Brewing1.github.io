@@ -1,0 +1,36 @@
+#panel {
+	display: grid;
+	grid-template-rows: 70px 350px 350px;
+	grid-template-columns: 350px 350px;
+	grid-template-areas: 
+		"controls controls"
+		"obs sal"
+		"pca-points .";
+
+	align-content: center;
+}
+
+#controls {
+	grid-area: controls;
+	text-align: center;
+}
+
+#obs-subpanel {
+	grid-area: obs;
+}
+
+#sal-subpanel {
+	grid-area: sal;
+}
+
+#pca-points-subpanel {
+	grid-area: pca-points;
+}
+
+.control-icon svg {
+	width: 25px;
+}
+
+.subpanel-image {
+	width: 80%;
+}

@@ -2,22 +2,50 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=1200">
     <title>Panel</title>
+    <script src="https://distill.pub/template.v2.js"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet">
+    <style>
+      <%=require("raw-loader!../../static/panel.css").default %>
+    </style>
+
 
   </head>
   <body>
-    <div id="panel">
-      <input type="range" min="1" max="100" value="50" class="slider" id="timestep-slider">
-      <div class="subpanel" id="obs-subpanel">
-        <img id="obs-image" src="../data/obs/0.png" width=200>
+    <d-article>
+      <div id="panel" class="l-body-outset">
+        <div id="controls">
+          <span id="back_all_btn" class="control-icon">
+            <%= require("../../static/icons/first_page_black_24dp.svg") %>
+          </span>
+          <span id="back_one_btn" class="control-icon">
+            <%= require("../../static/icons/chevron_left_black_24dp.svg") %>
+          </span>
+          <span id="play_pause_btn" class="control-icon">
+            <%= require("../../static/icons/play_circle_black_24dp.svg") %>
+          </span>
+          <span id="forward_one_btn" class="control-icon">
+            <%= require("../../static/icons/chevron_right_black_24dp.svg") %>
+          </span>
+          <span id="forward_all_btn" class="control-icon">
+            <%= require("../../static/icons/last_page_black_24dp.svg") %>
+          </span>
+          <br>
+          <span id="step-counter">
+          </span>
+        </div>
+        <div class="subpanel" id="obs-subpanel">
+          <img id="obs-image" src="../data/obs/0.png" class="subpanel-image">
+        </div>
+        <div class="subpanel" id="sal-subpanel">
+          <img src="../data/obs/0.png" class="subpanel-image">
+        </div>
+        <div class="subpanel" id="pca-points-subpanel">
+          <svg id="pca-points-graph">
+        </div>
       </div>
-      <div class="subpanel" id="sal-subpanel">
-        <img src="../data/obs/0.png" width=200>
-      </div>
-      <div class="subpanel" id="pca-subpanel" width=200>
-      </div>
-    </div>
-    <script src="../../data/pca.js"></script>
-
+    </d-article>
 	</body>
 </html>
