@@ -1,0 +1,32 @@
+{
+	"title": "Work in progress",
+	"description": "Work in progress.",
+	"authors": [
+		{
+			"author": "Ludwig Schubert",
+			"authorURL": "https://schubert.io/",
+			"affiliation": "OpenAI",
+			"affiliationURL": "https://openai.com"
+		},
+		{
+			"author": "Fake Person",
+			"authorURL": "https://schubert.io/",
+			"affiliation": "Fake Place",
+			"affiliationURL": "https://google.com"
+		}
+	],
+	"katex": {
+		"delimiters": [
+			{
+				"left": "$",
+				"right": "$",
+				"display": false
+			},
+			{
+				"left": "$$",
+				"right": "$$",
+				"display": true
+			}
+		]
+	}
+}

@@ -6,7 +6,13 @@
 		"build": "cross-env NODE_ENV=production webpack --progress --hide-modules",
 		"profile": "cross-env NODE_ENV=production webpack --profile --json > webpack-stats.json"
 	},
-	"dependencies": {},
+	"dependencies": {
+		"@observablehq/plot": "^0.1.0",
+		"d3": "^7.0.0",
+		"jquery": "^3.6.0",
+		"lodash": "^4.17.21",
+		"numpy-loader": "^1.2.0"
+	},
 	"devDependencies": {
 		"@babel/cli": "^7.8.3",
 		"@babel/core": "^7.8.3",

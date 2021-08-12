@@ -5,7 +5,8 @@ var CopyWebpackPlugin = require("copy-webpack-plugin");
 
 module.exports = {
 	entry: {
-		index: "./src/index.js",
+		index: "./src/index/index.js",
+		panel: "./src/panel/panel.js"
 	},
 	resolve: {
 		extensions: [".js", ".html", ".npy", ".json"],
@@ -63,11 +64,20 @@ module.exports = {
 	},
 	plugins: [
 		new HtmlWebpackPlugin({
-			template: "./src/index.ejs",
+			template: "./src/index/index.ejs",
 			filename: "index.html",
 			chunks: ["index"],
 		}),
+		new HtmlWebpackPlugin({
+			template: "./src/panel/panel.ejs",
+			filename: "panel.html",
+			chunks: ["panel"],
+		}),
 		new CopyWebpackPlugin([{ from: "static/" }]),
+		new webpack.ProvidePlugin({
+		  $: 'jquery',
+		  jQuery: 'jquery',
+		});
 	],
 	devServer: {
 		historyApiFallback: true,
