@@ -5,16 +5,16 @@ const d3 = require("d3");
 
 module.exports = class BarPlot {
 
-  constructor(element, data, options) {
+  constructor(element, sampleData, options) {
     this.element = element
 
     this.width = 300;
     this.height = 300;
     this.margin = {top: 25, right: 20, bottom: 35, left: 40};
 
-    this.num_bars = 10
-
-    this.data = data.slice(0, this.num_bars)
+    this.numBars = 10
+    this.fullSampleData = sampleData;
+    this.data = this.fullSampleData[0].slice(0, this.numBars)
 
     this.draw();
   }
@@ -32,8 +32,8 @@ module.exports = class BarPlot {
   }
 
 
-  update(data) {
-    this.data = data.slice(0, this.num_bars)
+  update(step) {
+    this.data = this.fullSampleData[step].slice(0, this.numBars)
 
     this.svg.selectAll("rect")
       .data(this.data)
@@ -47,21 +47,27 @@ module.exports = class BarPlot {
     m = this.margin
 
     this.x = d3.scaleBand()
-      .domain(d3.range(this.num_bars))
+      .domain(d3.range(this.numBars))
       .range([m.left, this.width - m.right])
       .padding(0.1);
 
+    const minY = d3.min(this.fullSampleData, d => d3.min(d.slice(0, this.numBars)));
+    const maxY = d3.max(this.fullSampleData, d => d3.max(d.slice(0, this.numBars)));
+
     this.y = d3.scaleLinear()
-      .domain(d3.extent(this.data)).nice()
+      .domain([minY, maxY]).nice()
       .range([this.height - m.bottom, m.top]);
+
+    console.log(this.y(5))
   }
 
 
   _drawAxes() {
     m = this.margin;
 
-    const xAxis = g => g
+    xAxis = g => g
       .attr("transform", `translate(0,${this.height - this.margin.bottom})`)
+      .attr("class", "x axis")
       .call(d3.axisBottom(this.x).ticks(this.width / 80))
       .call(g => g.append("text")
         .attr("x", this.width)
@@ -69,8 +75,9 @@ module.exports = class BarPlot {
         .attr("fill", "black")
         .attr("text-anchor", "end"));
     
-    const yAxis = g => g
+    yAxis = g => g
       .attr("transform", `translate(${this.margin.left},0)`)
+      .attr("class", "y axis")
       .call(d3.axisLeft(this.y))
       .call(g => g.append("text")
         .attr("x", - this.margin.left)

@@ -33,12 +33,12 @@ module.exports = class PCAScatterplot {
   }
 
 
-  update(sampleData) {
+  update(sampleData, step) {
     this.sampleData = sampleData;
     this.svg.selectAll(".sample-point")
-      .attr("cx", d => this.x(d.hx_loadings[0]))
-      .attr("cy", d => this.y(d.hx_loadings[1]))
-      .attr("fill", d => d["is_selected"] ? "red" : "blue")
+      .attr("cx", d => this.x(d[0]))
+      .attr("cy", d => this.y(d[1]))
+      .attr("fill", (d, i) => (i == step) ? "red" : "blue")
   }
 
 
@@ -46,7 +46,7 @@ module.exports = class PCAScatterplot {
 
     var dim_extents = dim => {
       const baseExtents = d3.extent(this.baseData, d => d[dim]);
-      const sampleExtents = d3.extent(this.sampleData, d => d.hx_loadings[dim]);
+      const sampleExtents = d3.extent(this.sampleData, d => d[dim]);
 
       return [
         Math.min(baseExtents[0], sampleExtents[0]),
@@ -116,9 +116,9 @@ module.exports = class PCAScatterplot {
       .data(this.sampleData)
       .join("circle")
         .attr("class", "sample-point")
-        .attr("cx", d => this.x(d.hx_loadings[0]))
-        .attr("cy", d => this.y(d.hx_loadings[1]))
-        .attr("fill", d => d["is_selected"] ? "red" : "blue")
+        .attr("cx", d => this.x(d[0]))
+        .attr("cy", d => this.y(d[1]))
+        .attr("fill", "blue")
         .attr("r", 3);
   }
 
