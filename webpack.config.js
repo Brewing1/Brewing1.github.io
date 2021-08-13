@@ -81,7 +81,7 @@ module.exports = {
 		new webpack.ProvidePlugin({
 		  $: 'jquery',
 		  jQuery: 'jquery',
-		});
+		})
 	],
 	devServer: {
 		historyApiFallback: true,
