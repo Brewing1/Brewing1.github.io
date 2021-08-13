@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=1200">
+    <title>Panel</title>
+    <script src="https://distill.pub/template.v2.js"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet">
+    <style>
+      <%=require("raw-loader!../../static/panel.css").default %>
+    </style>
+
+
+  </head>
+  <body>
+    <d-article>
+      <div id="panel" class="l-body-outset">
+        
+        <!-- Controls -->
+        <div id="sample-controls">
+          <label for="sample-select">Choose a sample:</label>
+          <select name="sample" id="sample-select">
+          </select>
+        </div>
+        
+        <div id="step-controls">
+          <span id="back_all_btn" class="control-icon">
+            <%= require("../../static/icons/first_page_black_24dp.svg") %>
+          </span>
+          <span id="back_one_btn" class="control-icon">
+            <%= require("../../static/icons/chevron_left_black_24dp.svg") %>
+          </span>
+          <span id="play_pause_btn" class="control-icon">
+            <%= require("../../static/icons/play_circle_black_24dp.svg") %>
+          </span>
+          <span id="forward_one_btn" class="control-icon">
+            <%= require("../../static/icons/chevron_right_black_24dp.svg") %>
+          </span>
+          <span id="forward_all_btn" class="control-icon">
+            <%= require("../../static/icons/last_page_black_24dp.svg") %>
+          </span>
+          <br>
+          <span id="step-counter">
+          </span>
+        </div>
+        
+        <div id="salency-controls">
+          Salency type:<br>
+          <input type="radio" id="action-radio" name="salency_type" value="action" checked>
+          <label for="action-radio">action</label><br>
+          <input type="radio" id="value-radio" name="salency_type" value="value">
+          <label for="value-radio">value</label><br>
+        </div>
+
+        <!-- Videos -->
+        <div class="subpanel" id="obs-subpanel">
+          <img id="obs-image" class="subpanel-image">
+        </div>
+        <div class="subpanel" id="sal-subpanel">
+          <img id="sal-image" class="subpanel-image">
+        </div>
+
+        <!-- Plots -->
+        <div class="subpanel" id="pca-points-subpanel">
+        </div>
+        <div class="subpanel" id="bar-graph-subpanel">
+        </div>
+
+      </div>
+    </d-article>
+	</body>
+</html>
