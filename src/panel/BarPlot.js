@@ -15,6 +15,8 @@ module.exports = class BarPlot {
     this.num_bars = 10
 
     this.data = data.slice(0, this.num_bars)
+
+    this.draw();
   }
 
 

@@ -26,14 +26,6 @@ module.exports = {
 					presets: ["@babel/preset-env"],
 				},
 			},
-			// {
-			// 	test: /\.css$/i,
-			// 	use: [
-   //           		{loader: "style-loader"},
-   //              	{loader: "css-loader"}
-   //          	]
-			// 	// use: ["to-string-loader", "css-loader"],
-			// },
 			{
 				test: /\.(html|svelte)$/,
 				exclude: /node_modules/,
@@ -77,7 +69,9 @@ module.exports = {
 			filename: "panel.html",
 			chunks: ["panel"],
 		}),
-		new CopyWebpackPlugin([{ from: "static/" }]),
+		new CopyWebpackPlugin({
+			patterns: [{ from: "static/" }]
+		}),
 		new webpack.ProvidePlugin({
 		  $: 'jquery',
 		  jQuery: 'jquery',
@@ -90,4 +84,9 @@ module.exports = {
 		contentBase: __dirname + "/docs",
 	},
 	devtool: "inline-source-map",
+	resolve: {
+	  fallback: {
+	    fs: false
+	  },
+	},
 };
