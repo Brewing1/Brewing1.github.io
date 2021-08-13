@@ -1,11 +1,11 @@
 
 const d3 = require("d3");
-
 $ = require('jquery')
+const BarPlot = require('./BarPlot.js')
 
 //////////   Settings    /////////////
 
-const sample_name = "sample_00003"
+const sample_name = "sample_00005"
 
 //////////   Data import    /////////////
 
@@ -26,6 +26,9 @@ var max_step = sample.length - 1
 
 var step = 0
 var sal_type = "action"
+
+barPlot = new BarPlot($("#bar-graph-subpanel").get(0), sample[step].hx_loadings)
+barPlot.draw()
 
 change_step(0);
 
@@ -49,7 +52,7 @@ function change_step(new_step) {
 
   step = new_step
 
-  update_timesteps_points();
+  update_graphs();
 }
 
 d3.select("#back_all_btn").on("click", _ =>
@@ -82,8 +85,8 @@ document.addEventListener('keydown', function(e) {
 
 //////////   Graphing    /////////////
 
-
 pca_plot(d3.select("#pca-points-graph"), base_hx_loadings, sample)
+
 
 function pca_plot(svg, base_data, sample_data) {
   // adapted from https://observablehq.com/@d3/scatterplot
@@ -106,11 +109,11 @@ function pca_plot(svg, base_data, sample_data) {
     ]
   } 
 
-  const x = d3.scaleLinear()
+  var x = d3.scaleLinear()
     .domain(dim_extents(0)).nice()
     .range([margin.left, width - margin.right])
   
-  const y = d3.scaleLinear()
+  var y = d3.scaleLinear()
     .domain(dim_extents(1)).nice()
     .range([height - margin.bottom, margin.top])
 
@@ -161,8 +164,11 @@ function pca_plot(svg, base_data, sample_data) {
       .attr("r", 3);
 }
 
-function update_timesteps_points() {
+
+function update_graphs() {
   d3.select("#pca-points-graph")
     .selectAll(".timestep-point")
     .attr("fill", d => d["is_selected"] ? "red" : "blue")
+
+  barPlot.update(sample[step].hx_loadings)
 }
