@@ -27,19 +27,6 @@ module.exports = {
 				},
 			},
 			{
-				test: /\.(html|svelte)$/,
-				exclude: /node_modules/,
-				loader: "svelte-loader",
-			},
-			{
-				test: /\.(npy|npc)$/,
-				exclude: /node_modules/,
-				loader: "numpy-loader",
-				options: {
-					outputPath: "data/",
-				},
-			},
-			{
 				test: /\.svg$/,
 				exclude: /node_modules/,
 				loader: "svg-inline-loader",
