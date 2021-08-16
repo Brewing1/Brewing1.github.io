@@ -30,7 +30,7 @@ changeSample(sampleNames[0], doChangeStep=false);
 pcaScatterplot = new PCAScatterplot(
   $("#pca-points-subpanel").get(0),
   panelData.base_hx_loadings,
-  sampleData,
+  sampleData.hx_loadings,
 );
 
 changeStep(0);
@@ -56,7 +56,7 @@ function changeStep(newStep) {
   d3.select("#step-counter")
     .text("Step " + step + " of " + maxStep)
 
-  barPlot.update(step)
+  barPlot.update(step, salType)
   pcaScatterplot.update(sampleData, step)
 }
 
@@ -68,7 +68,7 @@ function changeSample(newSample, doChangeStep=true) {
   console.log(newSample)
   sampleName = newSample
   sampleData = panelData.samples[sampleName]
-  maxStep = sampleData.length - 1;
+  maxStep = sampleData.hx_loadings.length - 1;
 
   $("#bar-graph-subpanel").empty();
   barPlot = new BarPlot($("#bar-graph-subpanel").get(0), sampleData);

@@ -30,10 +30,20 @@ def sample_info_for_panel_data(sample_name, pca_components, all_hx_mu, all_hx_si
     Return the data formatted for inclusion in panel_data.json
     """
     sample_path = f"{args.input_directory}/generative/recorded_informinit_gen_samples/{sample_name}"
-    hx = np.load(sample_path + '/agent_hxs.npy') 
+    hx = np.load(sample_path + '/agent_hxs.npy')
+    grad_hx_action = np.load(sample_path + '/grad_hx_action.npy') 
+    grad_hx_value = np.load(sample_path + '/grad_hx_value.npy') 
 
     hx_loadings = pca_transform(hx, pca_components, all_hx_mu, all_hx_sigma).tolist()
-    return hx_loadings
+    # Not entirely clear what the most principled choice is, especially on if we should scale by original hx_sigma.
+    grad_hx_action_loadings = pca_transform(grad_hx_action, pca_components, 0, all_hx_sigma).tolist()
+    grad_hx_value_loadings = pca_transform(grad_hx_value, pca_components, 0, all_hx_sigma).tolist()
+
+    return {
+        "hx_loadings": hx_loadings,
+        "grad_hx_value_loadings": grad_hx_value_loadings,
+        "grad_hx_action_loadings": grad_hx_action_loadings,
+    }
 
 
 def make_img_set_from_arr(path, arr):

@@ -14,7 +14,9 @@ module.exports = class BarPlot {
 
     this.numBars = 10
     this.fullSampleData = sampleData;
-    this.data = this.fullSampleData[0].slice(0, this.numBars)
+    this.data = this.fullSampleData.hx_loadings[0].slice(0, this.numBars)
+
+    this.useColor = true;
 
     this.draw();
   }
@@ -31,17 +33,48 @@ module.exports = class BarPlot {
     this._drawBars();
   }
 
-
-  update(step) {
-    this.data = this.fullSampleData[step].slice(0, this.numBars)
+  update(step, salType) {
+    var colors;
+    if (this.useColor) {
+      const colorData = this.fullSampleData[`grad_hx_${salType}_loadings`];
+      this._createColorScale(colorData);
+      const curentColorData = colorData[step].slice(0, this.numBars);
+      colors = d3.map(curentColorData, this.colorScale);
+    }
+    else {
+      colors = Array(this.numBars).fill(["black"]);
+    }
+    const currentData = d3.zip(this.fullSampleData.hx_loadings[step], colors)
 
     this.svg.selectAll("rect")
-      .data(this.data)
-      .transition(50)
-        .attr("y", (d) => (d>0) ? this.y(d) : this.y(0))
-        .attr("height", d => Math.abs(this.y(0) - this.y(d)))
+      .data(currentData)
+      .transition(10)
+        .attr("y", (d) => (d[0]>0) ? this.y(d[0]) : this.y(0))
+        .attr("height", d => Math.abs(this.y(0) - this.y(d[0])))
+        .attr("fill", d => d[1])
   }
 
+  // update(step) {
+  //   this.data = this.fullSampleData.hx_loadings[step].slice(0, this.numBars)
+
+  //   this.svg.selectAll("rect")
+  //     .data(this.data)
+  //     .transition(10)
+  //       .attr("y", (d) => (d>0) ? this.y(d) : this.y(0))
+  //       .attr("height", d => Math.abs(this.y(0) - this.y(d)))
+  // }
+
+  _2dTruncatedExtent(data_array) {
+    const minVal = d3.min(data_array, d => d3.min(d.slice(0, this.numBars)));
+    const maxVal = d3.max(data_array, d => d3.max(d.slice(0, this.numBars)));
+    return [minVal, maxVal]
+  }
+
+  _createColorScale(colorData) {
+    const extent = this._2dTruncatedExtent(colorData);
+    maxExtent = Math.max(Math.abs(extent[0]), Math.abs(extent[1]))
+    this.colorScale = d3.scaleDiverging([-maxExtent, 0, maxExtent], d3.interpolateRdBu);
+  }
 
   _createScales() {
     m = this.margin
@@ -51,11 +84,8 @@ module.exports = class BarPlot {
       .range([m.left, this.width - m.right])
       .padding(0.1);
 
-    const minY = d3.min(this.fullSampleData, d => d3.min(d.slice(0, this.numBars)));
-    const maxY = d3.max(this.fullSampleData, d => d3.max(d.slice(0, this.numBars)));
-
     this.y = d3.scaleLinear()
-      .domain([minY, maxY]).nice()
+      .domain(this._2dTruncatedExtent(this.fullSampleData.hx_loadings)).nice()
       .range([this.height - m.bottom, m.top]);
 
     console.log(this.y(5))
