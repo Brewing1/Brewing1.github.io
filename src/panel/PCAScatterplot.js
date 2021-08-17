@@ -37,15 +37,29 @@ module.exports = class PCAScatterplot {
   }
 
 
-  update(sampleData, step) {
+  clear() {
+    $(this.element).empty();
+  }
+
+
+  update(sampleData, step, pcaXdim, pcaYdim) {
+
     this.sampleData = sampleData;
+
+    if (this.dimX != pcaXdim || this.dimY != pcaYdim) {
+      this.dimX = pcaXdim;
+      this.dimY = pcaYdim;
+      this.clear();
+      this.draw();
+      console.log(`pca plot re-drawn for new axes ${pcaXdim} and ${pcaYdim}`)
+    }
+
     this.svg.selectAll(".sample-point")
       .data(sampleData)
       .attr("cx", d => this.x(d[this.dimX]))
       .attr("cy", d => this.y(d[this.dimY]))
-      .attr("fill", (d, i) => (i == step) ? "red" : "blue")
+      .attr("fill", (d, i) => (i == step) ? "red" : "blue");
   }
-
 
   _createScales() {
 

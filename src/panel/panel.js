@@ -18,6 +18,8 @@ for (const s_name of sampleNames) {
     .append(`<option value="${s_name}">${s_name}</option>`);
 }
 
+
+
 var sampleName;
 var sampleData; 
 var maxStep;
@@ -33,6 +35,19 @@ pcaScatterplot = new PCAScatterplot(
   sampleData.hx_loadings,
 );
 
+for (var i = 0; i < panelData.base_hx_loadings[0].length; i++) {
+  $("#x-dim-select")
+    .append(`<option value="${i}">${i}</option>`);
+
+  $("#y-dim-select")
+    .append(`<option value="${i}">${i}</option>`);
+}
+
+var pcaXDim = 0
+var pcaYDim = 1
+
+$("#y-dim-select").val(pcaYDim)
+
 changeStep(0);
 
 
@@ -46,25 +61,44 @@ $('input[type=radio][name=salency_type]').change(function() {
 });
 
 function changeStep(newStep) {
-  step = newStep
+  step = newStep;
   
   d3.select("#obs-image")
-    .attr("src", `../data/${sampleName}/obs/${step}.png`)
+    .attr("src", `../data/${sampleName}/obs/${step}.png`);
 
   d3.select("#sal-image")
-    .attr("src", `../data/${sampleName}/sal_${salType}/${step}.png`)
+    .attr("src", `../data/${sampleName}/sal_${salType}/${step}.png`);
 
   d3.select("#step-counter")
-    .text("Step " + step + " of " + maxStep)
+    .text("Step " + step + " of " + maxStep);
 
-  barPlot.update(step, salType)
-  pcaScatterplot.update(sampleData.hx_loadings, step)
+  barPlot.update(step, salType);
+  pcaScatterplot.update(sampleData.hx_loadings, step, pcaXDim, pcaYDim);
 }
+
+function changeDims() {
+  $("#pca-points-subpanel").empty()
+  pcaScatterplot.update()
+}
+
 
 $("#sample-select").on('change', function() {
   changeSample(this.value);
   this.blur(); // defocus the element so left and right key don't mess with it
 });
+
+$("#x-dim-select").on('change', function() {
+  pcaXDim = this.value;
+  changeStep(step)
+  this.blur(); // defocus the element so left and right key don't mess with it
+});
+
+$("#y-dim-select").on('change', function() {
+  pcaYDim = this.value;
+  changeStep(step)
+  this.blur(); // defocus the element so left and right key don't mess with it
+});
+
 
 function changeSample(newSample, doChangeStep=true) {
   console.log(newSample)
