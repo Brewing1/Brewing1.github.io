@@ -40,8 +40,9 @@ changeStep(0);
 
 
 $('input[type=radio][name=salency_type]').change(function() {
-  salType = this.value
-  changeStep(step)
+  salType = this.value;
+  changeStep(step);
+  this.blur(); // defocus the element so left and right key don't mess with it
 });
 
 function changeStep(newStep) {
@@ -57,11 +58,12 @@ function changeStep(newStep) {
     .text("Step " + step + " of " + maxStep)
 
   barPlot.update(step, salType)
-  pcaScatterplot.update(sampleData, step)
+  pcaScatterplot.update(sampleData.hx_loadings, step)
 }
 
 $("#sample-select").on('change', function() {
-  changeSample(this.value)
+  changeSample(this.value);
+  this.blur(); // defocus the element so left and right key don't mess with it
 });
 
 function changeSample(newSample, doChangeStep=true) {

@@ -8,13 +8,17 @@ module.exports = class PCAScatterplot {
   constructor(element, baseData, sampleData, options) {
     this.element = element
 
-    this.width = 300;
-    this.height = 300;
+    size = Math.min($(element).width(),$(element).height());
+    this.width = size;
+    this.height = size;
     this.margin = {top: 25, right: 20, bottom: 35, left: 40};
 
     this.num_base_points = 1000;
     this.baseData = baseData.slice(0, this.num_base_points);
     this.sampleData = sampleData;
+
+    this.dimX = 0;
+    this.dimY = 1;
 
     this.draw()
   }
@@ -36,15 +40,16 @@ module.exports = class PCAScatterplot {
   update(sampleData, step) {
     this.sampleData = sampleData;
     this.svg.selectAll(".sample-point")
-      .attr("cx", d => this.x(d[0]))
-      .attr("cy", d => this.y(d[1]))
+      .data(sampleData)
+      .attr("cx", d => this.x(d[this.dimX]))
+      .attr("cy", d => this.y(d[this.dimY]))
       .attr("fill", (d, i) => (i == step) ? "red" : "blue")
   }
 
 
   _createScales() {
 
-    var dim_extents = dim => {
+    var dimExtents = dim => {
       const baseExtents = d3.extent(this.baseData, d => d[dim]);
       const sampleExtents = d3.extent(this.sampleData, d => d[dim]);
 
@@ -57,11 +62,11 @@ module.exports = class PCAScatterplot {
     m = this.margin
 
     this.x = d3.scaleLinear()
-      .domain(dim_extents(0)).nice()
+      .domain(dimExtents(this.dimX)).nice()
       .range([m.left, this.width - m.right])
     
     this.y = d3.scaleLinear()
-      .domain(dim_extents(1)).nice()
+      .domain(dimExtents(this.dimY)).nice()
       .range([this.height - m.bottom, m.top])
   }
 
@@ -77,7 +82,7 @@ module.exports = class PCAScatterplot {
         .attr("y", this.margin.bottom - 4)
         .attr("fill", "black")
         .attr("text-anchor", "end")
-        .text("0th pca dimension"));
+        .text(`dimension ${this.dimX}`))
     
     const yAxis = g => g
       .attr("transform", `translate(${this.margin.left},0)`)
@@ -87,7 +92,7 @@ module.exports = class PCAScatterplot {
         .attr("y", 10)
         .attr("fill", "black")
         .attr("text-anchor", "start")
-        .text("1st pca dimension"))
+        .text(`dimension ${this.dimY}`))
 
     this.svg.append("g")
         .call(xAxis);
@@ -102,8 +107,8 @@ module.exports = class PCAScatterplot {
     .selectAll("circle")
     .data(this.baseData)
     .join("circle")
-      .attr("cx", d => this.x(d[0]))
-      .attr("cy", d => this.y(d[1]))
+      .attr("cx", d => this.x(d[this.dimX]))
+      .attr("cy", d => this.y(d[this.dimY]))
       .attr("fill", "black")
       .attr("fill-opacity", .2)
       .attr("r", 1);
@@ -116,8 +121,8 @@ module.exports = class PCAScatterplot {
       .data(this.sampleData)
       .join("circle")
         .attr("class", "sample-point")
-        .attr("cx", d => this.x(d[0]))
-        .attr("cy", d => this.y(d[1]))
+        .attr("cx", d => this.x(d[this.dimX]))
+        .attr("cy", d => this.y(d[this.dimX]))
         .attr("fill", "blue")
         .attr("r", 3);
   }

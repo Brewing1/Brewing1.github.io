@@ -6,13 +6,14 @@ const d3 = require("d3");
 module.exports = class BarPlot {
 
   constructor(element, sampleData, options) {
-    this.element = element
+    this.element = element;
 
-    this.width = 300;
-    this.height = 300;
+    size = Math.min($(element).width(),$(element).height());
+    this.width = size;
+    this.height = size;
     this.margin = {top: 25, right: 20, bottom: 35, left: 40};
 
-    this.numBars = 10
+    this.numBars = 28;
     this.fullSampleData = sampleData;
     this.data = this.fullSampleData.hx_loadings[0].slice(0, this.numBars)
 
