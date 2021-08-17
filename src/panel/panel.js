@@ -134,12 +134,26 @@ d3.select("#forward_all_btn").on("click", _ =>
 );
 
 document.addEventListener('keydown', function(e) {
-    switch (e.keyCode) {
-        case 37:
-            changeStep(Math.max(0, step - 1));
-            break;
-        case 39:
-            changeStep(Math.min(maxStep, step + 1));
-            break;
+  switch (e.keyCode) {
+    case 37:
+      changeStep(Math.max(0, step - 1));
+      break;
+    case 38:
+      $("#sample-select > option:selected")
+        .prop("selected", false)
+        .next()
+        .prop("selected", true);
+      changeSample($("#sample-select").val());
+      break;
+    case 39:
+      changeStep(Math.min(maxStep, step + 1));
+      break;
+    case 40:
+      $("#sample-select > option:selected")
+        .prop("selected", false)
+        .prev()
+        .prop("selected", true);
+      changeSample($("#sample-select").val());
+      break;
     }
 });
