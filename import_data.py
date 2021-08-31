@@ -95,7 +95,7 @@ def run():
         hx_in_pca = np.load(hx_analysis_dir + '/hx_pca_1000.npy')
         with open(args.output_directory+"/panel_data.json", 'w') as f:
             json.dump({
-                "base_hx_loadings": hx_in_pca[:, :20].tolist(),
+                "base_hx_loadings": hx_in_pca[:1000, :20].tolist(),
                 "samples": {
                     sample_name: sample_info_for_panel_data(
                         sample_name,

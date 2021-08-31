@@ -2,25 +2,26 @@
 //  - https://elliotbentley.com/blog/a-better-way-to-structure-d3-code/
 
 const d3 = require("d3");
+_ = require('lodash');
 
 module.exports = class PCAScatterplot {
 
-  constructor(element, baseData, sampleData, options) {
+  constructor(element, baseData, options) {
     this.element = element
 
-    size = Math.min($(element).width(),$(element).height());
-    this.width = size;
-    this.height = size;
-    this.margin = {top: 25, right: 20, bottom: 35, left: 40};
+    this.width = $(element).width();
+    this.height = this.width;
+    this.margin = _.get(options, "margin", {top: 20, right: 15, bottom: 30, left: 25});
 
-    this.num_base_points = 1000;
-    this.baseData = baseData.slice(0, this.num_base_points);
-    this.sampleData = sampleData;
+    this.numBasePoints = _.get(options, "numBasePoints", 1000);
+    this.baseData = baseData.slice(0, this.numBasePoints);
 
-    this.dimX = 0;
-    this.dimY = 1;
+    this.dimX = _.get(options, "dimX", 0);
+    this.dimY = _.get(options, "dimY", 1);
 
-    this.draw()
+    this.sampleData = [];
+
+    this.draw();
   }
 
 
@@ -33,7 +34,6 @@ module.exports = class PCAScatterplot {
     this._createScales();
     this._drawAxes();
     this._drawBase();
-    this._drawSample();
   }
 
 
@@ -42,28 +42,36 @@ module.exports = class PCAScatterplot {
   }
 
 
-  update(sampleData, step, pcaXdim, pcaYdim) {
+  changeSample(sampleData) {
+    this.sampleLoadings = sampleData.hx_loadings;
+    console.log("scatterplot changing sample to ", sampleData)
+    this._drawSample();
+    this.changeStep(0);
+  }
 
-    this.sampleData = sampleData;
 
-    if (this.dimX != pcaXdim || this.dimY != pcaYdim) {
-      this.dimX = pcaXdim;
-      this.dimY = pcaYdim;
-      this.clear();
-      this.draw();
-      console.log(`pca plot re-drawn for new axes ${pcaXdim} and ${pcaYdim}`)
-    }
+  changeDims(xDim, yDim) {
+    this.dimX = xDim;
+    this.dimY = yDim;
+    this.clear();
+    this.draw();
+    this._drawSample();
+    console.log(`pca plot re-drawn for new axes ${xDim} and ${yDim}`)
+  }
 
+
+  changeStep(step) {
     this.svg.selectAll(".sample-point")
-      .data(sampleData)
-      .attr("cx", d => this.x(d[this.dimX]))
-      .attr("cy", d => this.y(d[this.dimY]))
       .attr("fill", (d, i) => (i == step) ? "red" : "blue");
   }
+
 
   _createScales() {
 
     var dimExtents = dim => {
+      // just on base, for now
+      return d3.extent(this.baseData, d => d[dim])
+
       const baseExtents = d3.extent(this.baseData, d => d[dim]);
       const sampleExtents = d3.extent(this.sampleData, d => d[dim]);
 
@@ -130,13 +138,15 @@ module.exports = class PCAScatterplot {
 
 
   _drawSample() {
+    this.svg.selectAll(".sample-group").remove();
     this.svg.append("g")
+      .attr("class", "sample-group")
       .selectAll("circle")
-      .data(this.sampleData)
+      .data(this.sampleLoadings)
       .join("circle")
         .attr("class", "sample-point")
         .attr("cx", d => this.x(d[this.dimX]))
-        .attr("cy", d => this.y(d[this.dimX]))
+        .attr("cy", d => this.y(d[this.dimY]))
         .attr("fill", "blue")
         .attr("r", 3);
   }

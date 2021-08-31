@@ -6,7 +6,10 @@
   <script src="https://distill.pub/template.v2.js"></script>
   <style>
     <%=require("raw-loader!../../static/style.css").default %>
+    <%=require("raw-loader!../../static/panel.css").default %>
   </style>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet">
 </head>
 
 <body>
@@ -56,6 +59,14 @@
       </video>
       <figcaption style="text-align: center;">Our generative model. <b>Left</b>: generative model. <b>Right</b>: what the agent sees.</figcaption>
     </figure>
+
+    <h4>Panel samples</h4>
+    <h5>Without salency</h5>
+    <div id="figure-1">
+    </div>
+    <h5>With salency</h5>
+    <div id="figure-2">
+    </div>
 
     <h4>Hot reloading</h4>
     <p>Your browser can automatically refresh when your editor saves. This should work by default, and you can disable
