@@ -66,8 +66,9 @@ module.exports = class Panel {
   }
 
 
-  changeSample(sampleName, doChangeStep = true) {
-    console.assert(this.sampleNames.includes(sampleName))
+  changeSample(sampleName, doChangeSalencyType = false, doChangeStep = true) {
+    console.assert(this.sampleNames.includes(sampleName));
+    console.log(`changing sample to ${sampleName}`);
 
     this.currentSample = sampleName;
     this.sampleData = panelData.samples[sampleName]
@@ -79,6 +80,9 @@ module.exports = class Panel {
     if (this.displayScatterPlot) {
       this.scatterPlot.changeSample(this.sampleData);
     }
+    if (doChangeSalencyType) {
+      this.changeSalencyType(this.salencyType);
+    }
     if (doChangeStep) {
       this.changeStep(0);
     }
@@ -88,13 +92,17 @@ module.exports = class Panel {
     this._initialize_html(options);
     this._initialize_graphs(options);
 
-    this.changeSample(this.sampleNames[0]);
+    this.changeSample(this.sampleNames[0], doChangeSalencyType=true);
     this._intialize_controls();
 
   }
 
   changeSalencyType(salencyType) {
-
+    console.log("chaning salency type to " + salencyType)
+    this.salencyType = salencyType
+    if (this.displayBarChart) {
+      this.barChart.changeSalencyType(this.salencyType);
+    }
   }
 
   changeStep(newStep) {

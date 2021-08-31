@@ -28,9 +28,10 @@ module.exports = class BarChart {
     this._drawBars();
   }
 
-  changeSalType(salType) {
+  changeSalencyType(salencyType) {
+    console.log(`changing sal type to ${salencyType}, this.usecolor=${this.useColor} `)
     if (this.useColor) {
-      this.colorData = this.fullSampleData[`grad_hx_${salType}_loadings`];
+      this.colorData = this.fullSampleData[`grad_hx_${salencyType}_loadings`];
       this._createColorScale();
     }
     

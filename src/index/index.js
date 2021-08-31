@@ -24,8 +24,10 @@ const fig2 = new Panel(
 		sampleNames: ["sample_00000", "sample_00001"],
 		displaySalency: true,
 		salencySelect: false,
-		defaultSalency: "value"
-
+		defaultSalency: "value",
+		barChartOptions: {
+			useColor: true,
+		},
 	}
 );
 
