@@ -8,9 +8,8 @@ const p = new Panel(
   {
     sampleNames: ["sample_00000", "sample_00001"],
     displaySalency: true,
-    salencySelect: false,
-    defaultSalency: "value",
-    panelLayout: "panel-grid-2-2"
+    salencyTypes: ["value", "action"],
+    panelLayout: "panel-grid-2-2",
   }
 );
 

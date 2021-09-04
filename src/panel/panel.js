@@ -66,9 +66,8 @@ module.exports = class Panel {
   }
 
 
-  changeSample(sampleName, doChangeSalencyType = false, doChangeStep = true) {
+  changeSample(sampleName) {
     console.assert(this.sampleNames.includes(sampleName));
-    console.log(`changing sample to ${sampleName}`);
 
     this.currentSample = sampleName;
     this.sampleData = panelData.samples[sampleName]
@@ -80,29 +79,31 @@ module.exports = class Panel {
     if (this.displayScatterPlot) {
       this.scatterPlot.changeSample(this.sampleData);
     }
-    if (doChangeSalencyType) {
-      this.changeSalencyType(this.salencyType);
-    }
-    if (doChangeStep) {
-      this.changeStep(0);
-    }
   }
 
   _initialize(options) {
     this._initialize_html(options);
     this._initialize_graphs(options);
 
-    this.changeSample(this.sampleNames[0], doChangeSalencyType=true);
+    this.changeSample(this.sampleNames[0])
+    this.step = 0;
+    if (this.displaySalency) {
+      this.changeSalencyType(this.salencyType)
+    }
+    this.changeStep(0);
     this._intialize_controls();
-
   }
 
   changeSalencyType(salencyType) {
-    console.log("chaning salency type to " + salencyType)
-    this.salencyType = salencyType
+    console.assert(salencyType !== undefined)
+
+    this.salencyType = salencyType;
     if (this.displayBarChart) {
       this.barChart.changeSalencyType(this.salencyType);
+      this.barChart.changeStep(this.step); // recolour
     }
+    this.select("sal-image")
+      .attr("src", `../data/${this.currentSample}/sal_${this.salencyType}/${this.step}.png`);
   }
 
   changeStep(newStep) {
@@ -126,7 +127,6 @@ module.exports = class Panel {
   }
  
   changeDims() {
-    console.log(this)
     const xDim = this.select("x-dim-select").val();
     const yDim = this.select("y-dim-select").val();
     this.scatterPlot.changeDims(xDim, yDim);
@@ -171,12 +171,20 @@ module.exports = class Panel {
     const panelLayout = _.get(options, "panelLayout", `panel-grid-1-${panelData.length}`);
     console.log(`using layout ${panelLayout}`);
 
-    salencySelect = _.get(options, "salencySelect", false)
-    if ( this.displaySalency && !salencySelect ) {
-      console.assert("defaultSalency" in options);
-      this.salencyType = options.defaultSalency;
+    var salencySelect = null;
+    var salencyTypes = null;
+    if ( this.displaySalency ) {
+      console.assert("salencyTypes" in options);
+      salencyTypes = options.salencyTypes
+      if ( _.isArray(salencyTypes)) {
+        salencySelect = true;
+        this.salencyType = salencyTypes[0];
+      } else {
+        console.assert(_.isString(salencyTypes))
+        salencySelect = false;
+        this.salencyType = salencyTypes;
+      }
     }
-
 
     panelHtml = panelTemplate({
       id: this.id,
@@ -188,12 +196,13 @@ module.exports = class Panel {
       panelLayout: panelLayout,
 
       salencySelect: salencySelect,
+      salencyTypes: salencyTypes,
 
       dimSelect: true,
       pcaDims: _.range(28),
       defaultXDim: 0,
       defaultYDim: 1,
-  });
+    });
 
     $(this.element).html(panelHtml);
   }
@@ -226,36 +235,51 @@ module.exports = class Panel {
   }
 
   _intialize_controls(options) {
-    this.select("back_all_btn").click( _ =>
-      this.changeStep(0)
-    );
+    const self = this;
 
-    this.select("back_one_btn").click(this._back_one_step.bind(this));
+    this.select("back_all_btn").click(function() {
+      self.changeStep(0);
+      this.blur();
+    });
 
-    this.select("forward_one_btn").click(this._forward_one_step.bind(this));
+    this.select("back_one_btn").click(function() {
+      self._back_one_step();
+      this.blur();
+    });
 
+    this.select("forward_one_btn").click(function() {
+      self._forward_one_step();
+      this.blur();
+    });
+
+    //todo 
     this.select("forward_all_btn").click(this._forward_all_steps.bind(this));
 
-    // awkward workaround for javascript this keword being context dependant
-    const changeSampleFn = this.changeSample.bind(this);
     this.select("sample-select").on('change', function() {
-      // within fn, this refers to the select element
-      changeSampleFn(this.value);
-      this.blur(); // defocus the element so left and right key don't mess with it
+      self.changeSample(this.value);
+      self.changeStep(0);
+      this.blur();
     });
 
     const changeDimsFn = this.changeDims.bind(this);
     this.select("x-dim-select").on('change', function() {
-      changeDimsFn(this.value);
+      self.changeDims();
+      this.blur();
+    });
+    this.select("y-dim-select").on('change', function() {
+      self.changeDims();
       this.blur();
     });
     this.select("x-dim-select").val(this.defaultXDim);
-
-    this.select("y-dim-select").on('change', function() {
-      changeDimsFn(this.value);
-      this.blur();
-    });
     this.select("y-dim-select").val(this.defaultYDim);
+
+    this.select("salency-controls")
+        .find('input[type=radio][name=salency_type]')
+        .val([this.salencyType])
+        .change(function() {
+          self.changeSalencyType(this.value);
+          this.blur();
+        });
   }
 
   keydown(e) {
