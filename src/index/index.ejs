@@ -6,7 +6,10 @@
   <script src="https://distill.pub/template.v2.js"></script>
   <style>
     <%=require("raw-loader!../../static/style.css").default %>
+    <%=require("raw-loader!../../static/panel.css").default %>
   </style>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet">
 </head>
 
 <body>
@@ -56,6 +59,14 @@
       </video>
       <figcaption style="text-align: center;">Our generative model. <b>Left</b>: generative model. <b>Right</b>: what the agent sees.</figcaption>
     </figure>
+
+    <h4>Panel samples</h4>
+    <h5>Without salency</h5>
+    <div id="figure-1">
+    </div>
+    <h5>With salency</h5>
+    <div id="figure-2">
+    </div>
 
     <h4>Hot reloading</h4>
     <p>Your browser can automatically refresh when your editor saves. This should work by default, and you can disable
@@ -310,18 +321,6 @@
 
     <h4>Interactive Figures</h4>
 
-    <p>
-      Here's a dynamically instantiated "figure". We use Intersection Observers to allow loading resource-heavy
-      figures only when readers scroll close to them. The code for this is in <code>src/index.js</code>.
-    </p>
-
-    <d-figure id="svelte-example-dfigure">
-      <figure>
-        <div id="svelte-example-target"></div>
-        <figcaption>And a static figcaption. You can use citations<d-cite key="mercier2011humans"></d-cite> in this
-          figcaption, but not in text added by javascript.</figcaption>
-      </figure>
-    </d-figure>
 
     <p>You can't use citation tags (<code>d-cite</code>) in figures that are dynamically loaded using Javascript.
       Distill statically

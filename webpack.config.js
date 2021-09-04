@@ -6,7 +6,7 @@ var CopyWebpackPlugin = require("copy-webpack-plugin");
 module.exports = {
 	entry: {
 		index: "./src/index/index.js",
-		panel: "./src/panel/panel.js"
+		panel: "./src/panel/panel-view.js"
 	},
 	resolve: {
 		extensions: [".js", ".html", ".npy", ".json"],
@@ -27,17 +27,18 @@ module.exports = {
 				},
 			},
 			{
-				test: /\.(html|svelte)$/,
-				exclude: /node_modules/,
-				loader: "svelte-loader",
+			    test: /\.hbs$/,
+			    loader: "handlebars-loader",
+			    // query: { inlineRequires: '\/static\/' }
 			},
 			{
-				test: /\.(npy|npc)$/,
-				exclude: /node_modules/,
-				loader: "numpy-loader",
-				options: {
-					outputPath: "data/",
-				},
+			    test: /\.(png|jpg|gif|svg)$/,
+			    use: {
+			        loader: "file-loader",
+			        options: {
+			            esModule: false,
+			        },
+			    },
 			},
 			{
 				test: /\.svg$/,
@@ -48,15 +49,9 @@ module.exports = {
 					removingTagAttrs: ["font-family"],
 				},
 			},
-			{
-				test: /\.(png|jpg|jpeg)$/,
-				exclude: /node_modules/,
-				loader: "file",
-				options: {
-					outputPath: "images/",
-				},
-			},
+
 		],
+
 	},
 	plugins: [
 		new HtmlWebpackPlugin({
@@ -70,11 +65,13 @@ module.exports = {
 			chunks: ["panel"],
 		}),
 		new CopyWebpackPlugin({
-			patterns: [{ from: "static/" }]
+			patterns: [{
+				from: "static/",
+			}]
 		}),
 		new webpack.ProvidePlugin({
 		  $: 'jquery',
-		  jQuery: 'jquery',
+		  jQuery: 'jquery'
 		})
 	],
 	devServer: {
@@ -84,9 +81,4 @@ module.exports = {
 		contentBase: __dirname + "/docs",
 	},
 	devtool: "inline-source-map",
-	resolve: {
-	  fallback: {
-	    fs: false
-	  },
-	},
 };

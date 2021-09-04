@@ -1,14 +1,39 @@
 // Hot reloading
-import * as _unused from "raw-loader!./index.ejs";
+// import * as _unused from "raw-loader!./index.ejs";
 // TODO: disable before publishing
 
-import Example from "./diagrams/svelte-example.svelte";
 
-// lazily initialize any diagram below the fold. E.G:
-const exampleTag = document.getElementById("svelte-example-dfigure");
-let example;
-exampleTag.addEventListener("ready", () => {
-	const target = exampleTag.querySelector("#svelte-example-target");
-	example = new Example({ target });
+$ = require('jquery');
+const Panel = require('../panel/Panel.js');
+
+
+const fig1 = new Panel(
+	$("#figure-1").get(0),
+	"fig1",
+	{
+		sampleNames: ["sample_00000", "sample_00001"],
+		displaySalency: false,
+
+	}
+);
+
+const fig2 = new Panel(
+	$("#figure-2").get(0),
+	"fig2",
+	{
+		sampleNames: ["sample_00000", "sample_00001"],
+		displaySalency: true,
+		salencyTypes: ["value", "action"],
+		barChartOptions: {
+			useColor: true,
+		},
+		panelLayout: "panel-grid-2-2"
+	}
+);
+
+
+
+document.addEventListener('keydown', function(e) {
+	// Todo: should direct keydown event to the appropriate panel based on page position.
+	fig1.keydown(e)
 });
-
