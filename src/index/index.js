@@ -28,6 +28,7 @@ const fig2 = new Panel(
 		barChartOptions: {
 			useColor: true,
 		},
+		panelLayout: "panel-grid-2-2"
 	}
 );
 
