@@ -18,8 +18,8 @@ The data import script requires output of the preprocessing scripts in the `/tra
 
 You can run the script from the base of the website repo with
 ```
-$ python import_data --samples [num samples to import] --input_directory [path to the train-procgen-pythorch repo] --[path to where you want the data exported]
+$ python import_data --samples [num samples to import] --input_directory [path to the train-procgen-pythorch repo] --output_directory [path to where you want the data exported]
 ```
 
 ### Panel view
-When the server is running locally, you can visit `localhost:8000/panel.html` to interact with the data.
+When the server is running locally, you can visit `localhost:8000/panel.html` to interact with the data. If there is data in `static/localData` it will use this data by default. If not, it will use the data in `static/data`.
