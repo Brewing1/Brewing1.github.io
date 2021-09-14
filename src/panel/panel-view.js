@@ -2,19 +2,26 @@
 $ = require('jquery');
 const Panel = require('./Panel.js');
 
+
+var dataLocation = "data"
+try {
+  const data = require(`../../static/localData/panel_data.json`);
+  dataLocation = "localData";
+  console.log("using localData folder!")
+} catch {}
+
+
 const p = new Panel(
   $("#panel").get(0),
   "panel",
   {
-    sampleNames: ["sample_00000", "sample_00001"],
     displaySalency: true,
     salencyTypes: ["value", "action"],
     panelLayout: "panel-grid-2-2",
+    dataLocation: dataLocation,
   }
 );
 
-
 document.addEventListener('keydown', function(e) {
-  // Todo: should direct keydown event to the appropriate panel based on page position.
   p.keydown(e)
 });

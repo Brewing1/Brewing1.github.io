@@ -7,8 +7,6 @@ const panelTemplate = require("./panel_template.hbs");
 const BarChart = require('./BarPlot.js');
 const PCAScatterplot = require('./PCAScatterplot.js');
 
-const panelData = require("../../static/data/panel_data.json");
-
 module.exports = class Panel {
 
   constructor(element, id, options={}) {
@@ -51,13 +49,17 @@ module.exports = class Panel {
     this.element = element;
     this.id = id;
 
+    console.log(options)
     // panels to use
     this.displayObs         = _.get(options, "displayObs",         true);
     this.displaySalency     = _.get(options, "displaySalency",     true);
     this.displayScatterPlot = _.get(options, "displayScatterPlot", true);
     this.displayBarChart    = _.get(options, "displayBarChart",    true);
 
-    this.sampleNames = _.get(options, "sampleNames", Object.keys(panelData.samples));
+    this.dataLocation = _.get(options, "dataLocation", "data")
+    this.panelData = require(`../../static/${this.dataLocation}/panel_data.json`)
+    console.log("data from " + this.dataLocation, this.panelData)
+    this.sampleNames = _.get(options, "sampleNames", Object.keys(this.panelData.samples));
 
     this.defaultXDim = _.get(options, "defaultXDim", 0);
     this.defaultYDim = _.get(options, "defaultYDim", 1);
@@ -70,7 +72,7 @@ module.exports = class Panel {
     console.assert(this.sampleNames.includes(sampleName));
 
     this.currentSample = sampleName;
-    this.sampleData = panelData.samples[sampleName]
+    this.sampleData = this.panelData.samples[sampleName]
     this.maxStep = this.sampleData.hx_loadings.length - 1;
 
     if (this.displayBarChart) {
@@ -103,7 +105,7 @@ module.exports = class Panel {
       this.barChart.changeStep(this.step); // recolour
     }
     this.select("sal-image")
-      .attr("src", `../data/${this.currentSample}/sal_${this.salencyType}/${this.step}.png`);
+      .attr("src", `../${this.dataLocation}/${this.currentSample}/sal_${this.salencyType}/${this.step}.png`);
   }
 
   changeStep(newStep) {
@@ -112,11 +114,11 @@ module.exports = class Panel {
     
     if(this.displayObs) {
       this.select("obs-image")
-        .attr("src", `../data/${this.currentSample}/obs/${this.step}.png`);
+        .attr("src", `../${this.dataLocation}/${this.currentSample}/obs/${this.step}.png`);
     }
     if(this.displaySalency) {
       this.select("sal-image")
-        .attr("src", `../data/${this.currentSample}/sal_${this.salencyType}/${this.step}.png`);
+        .attr("src", `../${this.dataLocation}/${this.currentSample}/sal_${this.salencyType}/${this.step}.png`);
     }
 
     this.select("step-counter")
@@ -138,37 +140,37 @@ module.exports = class Panel {
 
   _initialize_html(options) {
     
-    var panelData = []
+    var panelLayoutData = []
     if (this.displayObs) {
-      panelData.push({
+      panelLayoutData.push({
         title: "Agent Observations:",
         panelId: "obs",
         hasImg: true
       })
     }
     if (this.displaySalency) {
-      panelData.push({
+      panelLayoutData.push({
         title: "Salency Map:",
         panelId: "sal",
         hasImg: true
       })
     }     
     if (this.displayScatterPlot) {
-      panelData.push({
+      panelLayoutData.push({
         title: "PCA Scatterplot:",
         panelId: "scatterPlot",
         hasImg: false
       })
     }     
     if (this.displayBarChart) {
-      panelData.push({
+      panelLayoutData.push({
         title: "PCA Bar Chart:",
         panelId: "barChart",
         hasImg: false
       })
     }
 
-    const panelLayout = _.get(options, "panelLayout", `panel-grid-1-${panelData.length}`);
+    const panelLayout = _.get(options, "panelLayout", `panel-grid-1-${panelLayoutData.length}`);
     console.log(`using layout ${panelLayout}`);
 
     var salencySelect = null;
@@ -192,7 +194,7 @@ module.exports = class Panel {
       sampleSelect: (this.sampleNames.length > 1),
       sampleNames: this.sampleNames,
 
-      panels: panelData,
+      panels: panelLayoutData,
       panelLayout: panelLayout,
 
       salencySelect: salencySelect,
@@ -211,7 +213,7 @@ module.exports = class Panel {
     if (this.displayScatterPlot) {
       this.scatterPlot = new PCAScatterplot(
         this.select("scatterPlot-content").get(0),
-        panelData.base_hx_loadings,
+        this.panelData.base_hx_loadings,
          _.get(options, "scatterPlotOptions", {}));
     }
 
