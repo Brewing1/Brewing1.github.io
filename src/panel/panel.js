@@ -84,8 +84,8 @@ module.exports = class Panel {
   }
 
   _initialize(options) {
-    this._initialize_html(options);
-    this._initialize_graphs(options);
+    this._initializeHtml(options);
+    this._initializeGraphs(options);
 
     this.changeSample(this.sampleNames[0])
     this.step = 0;
@@ -93,7 +93,7 @@ module.exports = class Panel {
       this.changeSalencyType(this.salencyType)
     }
     this.changeStep(0);
-    this._intialize_controls();
+    this._intializeControls();
   }
 
   changeSalencyType(salencyType) {
@@ -138,7 +138,7 @@ module.exports = class Panel {
     return $(`#${this.id}-${id}`)
   }
 
-  _initialize_html(options) {
+  _initializeHtml(options) {
     
     var panelLayoutData = []
     if (this.displayObs) {
@@ -209,7 +209,7 @@ module.exports = class Panel {
     $(this.element).html(panelHtml);
   }
 
-  _initialize_graphs(options) {
+  _initializeGraphs(options) {
     if (this.displayScatterPlot) {
       this.scatterPlot = new PCAScatterplot(
         this.select("scatterPlot-content").get(0),
@@ -224,19 +224,46 @@ module.exports = class Panel {
     }
   }
 
-  _back_one_step() {
+  _backOneStep() {
     this.changeStep(Math.max(0, this.step - 1));
   }
 
-  _forward_one_step() {
+  _forwardOneStep() {
     this.changeStep(Math.min(this.maxStep, this.step + 1));
   }
 
-  _forward_all_steps() {
-    this.changeStep(this.maxStep);
+  _playStep(restart = false) {
+    const nextStep = (this.step + 1) % (this.maxStep + 1);
+    this.changeStep(nextStep);
+    // if at end of sample, pause for a second
+    if (this.step === this.maxStep) {
+      this._pause(changeSymbol=false);
+      setTimeout(this._play.bind(this), 1000);
+    }
   }
 
-  _intialize_controls(options) {
+  _play() {
+    if (!this.playing) {
+      console.log("playing!");
+      this.select("play_pause_btn").text("pause_circle");
+      clearInterval(this.playingIntervalId);
+      this.playingIntervalId = setInterval(this._playStep.bind(this), 250);
+      this.playing = true;
+    }
+  }
+
+  _pause(changeSymbol=true) {
+    if (this.playing) {
+      console.log("paused!");
+      if (changeSymbol) {
+        this.select("play_pause_btn").text("play_circle");
+      }
+      clearInterval(this.playingIntervalId);
+      this.playing = false;
+    }
+  }
+
+  _intializeControls(options) {
     const self = this;
 
     this.select("back_all_btn").click(function() {
@@ -245,17 +272,30 @@ module.exports = class Panel {
     });
 
     this.select("back_one_btn").click(function() {
-      self._back_one_step();
+      self._backOneStep();
       this.blur();
     });
 
     this.select("forward_one_btn").click(function() {
-      self._forward_one_step();
+      self._forwardOneStep();
       this.blur();
     });
 
     //todo 
-    this.select("forward_all_btn").click(this._forward_all_steps.bind(this));
+    this.select("forward_all_btn").click(function() {
+      self.changeStep(self.maxStep);
+      this.blur();
+    });
+
+    this.playing = false;
+    this.select("play_pause_btn").click(function() {
+      if (!self.playing) {
+        self._play();
+      } else {
+        self._pause();      
+      }
+      this.blur();
+    });
 
     this.select("sample-select").on('change', function() {
       self.changeSample(this.value);
@@ -287,7 +327,7 @@ module.exports = class Panel {
   keydown(e) {
     switch (e.keyCode) {
       case 37:
-        this._back_one_step();
+        this._backOneStep();
         break;
       case 38:
         $("#sample-select > option:selected")
@@ -297,7 +337,7 @@ module.exports = class Panel {
         changeSample($("#sample-select").val());
         break;
       case 39:
-        this._forward_one_step();
+        this._forwardOneStep();
         break;
       case 40:
         $("#sample-select > option:selected")
