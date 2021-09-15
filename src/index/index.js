@@ -7,9 +7,9 @@ $ = require('jquery');
 const Panel = require('../panel/Panel.js');
 
 
-const fig1 = new Panel(
-	$("#panel-1").get(0),
-	"panel1",
+const basicPanel = new Panel(
+	$("#basic-panel").get(0),
+	"basic-panel",
 	{
 		sampleNames: ["sample_00000", "sample_00001"],
 		displaySalency: false,
@@ -17,9 +17,20 @@ const fig1 = new Panel(
 	}
 );
 
-const fig2 = new Panel(
-	$("#panel-2").get(0),
-	"panel2",
+const maximalActivationPanel = new Panel(
+	$("#max-act-panel").get(0),
+	"max-act-panel",
+	{
+		sampleNames: ["sample_00000", "sample_00001"],
+		displaySalency: false,
+
+	}
+);
+
+
+const salencyPanel = new Panel(
+	$("#salency-panel").get(0),
+	"salency-panel",
 	{
 		sampleNames: ["sample_00000", "sample_00001"],
 		displaySalency: true,
@@ -30,6 +41,22 @@ const fig2 = new Panel(
 		panelLayout: "panel-grid-2-2"
 	}
 );
+
+
+const behaviourPanel = new Panel(
+	$("#behaviour-panel").get(0),
+	"behaviour-panel",
+	{
+		sampleNames: ["sample_00000", "sample_00001"],
+		displaySalency: true,
+		salencyTypes: ["value", "action"],
+		barChartOptions: {
+			useColor: true,
+		},
+		panelLayout: "panel-grid-2-2"
+	}
+);
+
 
 
 
