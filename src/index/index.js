@@ -8,8 +8,8 @@ const Panel = require('../panel/Panel.js');
 
 
 const fig1 = new Panel(
-	$("#figure-1").get(0),
-	"fig1",
+	$("#panel-1").get(0),
+	"panel1",
 	{
 		sampleNames: ["sample_00000", "sample_00001"],
 		displaySalency: false,
@@ -18,8 +18,8 @@ const fig1 = new Panel(
 );
 
 const fig2 = new Panel(
-	$("#figure-2").get(0),
-	"fig2",
+	$("#panel-2").get(0),
+	"panel2",
 	{
 		sampleNames: ["sample_00000", "sample_00001"],
 		displaySalency: true,

@@ -9,7 +9,7 @@
     <%=require("raw-loader!../../static/panel.css").default %>
   </style>
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
-      rel="stylesheet">
+    rel="stylesheet">
 </head>
 
 <body>
@@ -21,53 +21,257 @@
   </d-front-matter>
 
   <d-title>
-    <h1>Work in progress</h1>
-    <p>Work in progress</p>
+    <h1>Saliency as causality: Interpreting the neural mechanisms of RL agent behaviour</h1>
+    <p>We show that simulating an agent's environment within a neural network enables us to use gradients to study the causal mechanisms of the agent's behaviour.</p>
   </d-title>
 
-  <d-article>
 
+	
+  <d-article>
+      <i> TODO: Headline Figure: CoinRun: What we see; What the agent sees; Our generative model that simulates the agent inside the environment; Saliency map of what causes agent to take action at timestep t. </i>
     <d-contents>
       <nav class="l-text figcaption">
         <h3>Contents</h3>
-        <div><a href="#introduction">Introduction</a></div>
-        <div><a href="#coinrun">Our CoinRun model</a></div>
-        <div><a href="#analysis">Model analysis</a></div>
+        <div><a href="#introduction">Introduction</a></div> <! --- TODO: Fix the hyperlinks --->
+        <div><a href="#coinrun">A recurrent environment simulator</a></div>
+        <div><a href="#analysis">Feature visualisation for recurrent agents</a></div>
+        <div><a href="#diversity-hypothesis">Dissecting the causal mechanisms of behaviour</a></div>
+        <div><a href="#feature-visualization">Validating our interpretations through interventions</a></div>
+        <div><a href="#attribution">Discussion</a></div>
         <ul>
-          <li><a href="#dissecting-failure">Dissecting failure</a></li>
-          <li><a href="#hallucinations">Hallucinations</a></li>
-          <li><a href="#model-editing">Model editing</a></li>
+          <li><a href="#dissecting-failure">Limitations of our method</a></li>
+          <li><a href="#hallucinations">New possibilities</a></li>
         </ul>
-        <div><a href="#diversity-hypothesis">The diversity hypothesis</a></div>
-        <div><a href="#feature-visualization">Feature visualization</a></div>
-        <div><a href="#attribution">Attribution</a></div>
-        <div><a href="#questions">Questions for further research</a></div>
       </nav>
     </d-contents>
     <div>
       <p>
-        Welcome to a Distill example article: meant to get you writing up your research quickly. Let's demo some
-        features:
+        The last half-decade has seen deep reinforcement learning agents learn to solve many exciting 	tasks, from beating humans in Go and Starcraft to solving Rubix cubes with a robotic hand. As real-world deployment of RL agents grows, we're going to want to understand the causal mechanisms of the agents' behaviour. This means looking inside its neural networks. But unlike convolutional image classifier networks, there has been less success in interpreting the representations learned by deep RL agents. Why is analyzing the networks of RL agents so different?
       </p>
       <p>
-        Note the the whitespace below will only fill up if it is part of this particular div
+        In a standard feedforward network, the pattern of activations in a layer cause the particular pattern of activations in the next layer up. Causality is crucial here - the input causes particular activations in one layer, which in turn directly cause the activations in the next layer, and so on through the network. Because neural networks are fully differentiable, if we want to understand what inputs cause a neuron x to maximally light up in a conv net, we can BP through the layers as in feature visualisation and attribution maps (cite featviz; building blocks). In a sense, backpropagation of gradients lets us trace causality back through the layers of the network.
+      </p>
+
+    </div>
+    <figure>
+      <video style="width: 100%;" loop controls muted>
+        <source src="videos/sample_0_50000_1.mp4" type="video/mp4">
+      </video>
+      <figcaption style="text-align: center;">
+      <ul>
+      <li>TODO: Footnote: Given that many modern deep RL agents use recurrent neural networks, it's worthwhile to note that these methods work in principle even for recurrent networks thanks to BPTT. </li>
+      <li>TODO: Figure: an animated diagram of a conv net activating one layer then activating the next. </li>
+       <li>TODO: Another diagram that shows a visualisation of the maximally exciting image..
+       </figcaption></li>
+       </ul>
+    </figure>
+
+
+    <div>
+      <p>
+        By contrast to standard neural networks, deep RL agents are situated in an environment. We can't use the same trick for RL agents because causality flows through both the agent's neural networks <i>and</i> its environment.
+      </p>
+
+
+    </div>
+    <figure>
+      <video style="width: 100%;" loop controls muted>
+        <source src="videos/sample_0_50000_1.mp4" type="video/mp4">
+      </video>
+      <figcaption style="text-align: center;">
+      <ul>
+      <li> TODO: Footnote: ref to external memory and autostigmergy. </li>
+      <li> TODO: An animated diagram of an MDP graph where each node is lighting up consecutively. </li>
+      </ul>
+      </figcaption>
+    </figure>
+
+    <div>
+      <p>
+        In most cases, the environment is not differentiable. This means we can't use gradient-based methods to ask what causes a particular neuron activate at a particular timestep. To complicate matters further, what we actually want to understand in RL agents is the causal mechanisms of behaviour, where behaviour is a <i>sequence</i> of actions in a particular environmental context.
+      </p>
+
+    </div>
+    <figure>
+      <video style="width: 100%;" loop controls muted>
+        <source src="videos/sample_0_50000_1.mp4" type="video/mp4">
+      </video>
+      <figcaption style="text-align: center;">
+      <ul>
+      <li> TODO: Footnote: Justifying definition of behaviour. robot hand crushing human or grabbing pencil. </li>
+      <li> TODO: A diagram illustrating a theoretical case of autostig where the MDP diagram only lights up the env nodes. </li>
+
+      </figcaption>
+    </figure>
+
+
+    <div>
+      <p>
+        Previous work has skirted this issue. They've either focussed on xyz(refs). But this fails to give a complete causal explanation of the neural mechanisms of agent behaviour.
+      </p>
+      <i> Work to critique: - Deletang - no focus on representations. But they get causality right. - Rupprecht - no focus on temporal structure and impossible in principle. - Hilton - only focused on vision, not task representations or temporal structure. </i>
+      <p>
+        In this article we overcome these issues. We first train a differentiable simulator of the environment. This permits us to backpropagate gradients back through time through both the environment and the agent (if the agent is recurrent). In turn, this permits the use gradient-based features visualisation and attribution maps to generate causal explanations of the neural mechanisms of RL agents' behaviour. We believe that making these methods available for use in RL agents will be as important for deeply understanding the neural activity of RL agents as they have been for convolutional image classifiers. Our investigation motivates a shift of focus from a purely-feature based interpretation of RL agent's networks toward a dynamics-based interpretation. To demonstrate the validity of the interpretations of the agent's neural activity that our method produced, we also control the agents' neural dynamics to generate predictable changes in behaviour.
+      </p>
+    </div>
+
+    <h2>Results</h2>
+    <h3>Simulating the environment in a recurrent network</h3>
+
+    <div>
+      <p>
+        We developed a solution to this issue that works in theory environment (in practice, some environments may require too much computation). We trained a generative model to simulate the MDP, permitting us to study how agents use internal and external memory to organise behaviour. It's a VAE that simulates agent-environment rollouts... etc.
+      </p>
+      <p>
+        The agent is a component of the VAE decoder. But while the VAE is training, the agent's weights are fixed, so in the decoder only the environment dynamics are learned. The actions produced by the agent influence the how the environment unrolls. The environment dynamics are independent of the specific agent used in the decoder, demonstrated in figXXX where we use a trained vs untrained agent. In the third panel the agent isnt even implemented by a neural network - it is hardcoded only to  chooses "jump right". In all cases, the environment dynamics remain roughly realistic. This is important for preserving external memory in cases where the agent uses it to control its behaviour.
       </p>
     </div>
     <figure>
       <video style="width: 100%;" loop controls muted>
         <source src="videos/sample_0_50000_1.mp4" type="video/mp4">
       </video>
-      <figcaption style="text-align: center;">Our generative model. <b>Left</b>: generative model. <b>Right</b>: what the agent sees.</figcaption>
+      <figcaption style="text-align: center;">TODO: Figure that depicts the architecture. It would be nice if it were animated, but not essential.</figcaption>
     </figure>
 
-    <h4>Panel samples</h4>
-    <h5>Without salency</h5>
-    <div id="figure-1">
+    <h3>Optimising generated samples to maximise/minimise certain neurons' activity</h3>
+
+    <div>
+      <p>
+        This builds on previous work that use generative visualisation to understand RL agents (cite Rupprecht). But previous work only generated single image frames, not image sequences, and therefore could not be used to interpret how behaviour is coordinated through time.
+      </p>
+      <p>
+        Since the generative model is fully differentiable, we can optimise the VAE latent space vector used by the generator generates the samples so that they have certain interesting properties, such as cases where the agent experiences large drops in value (unexpected failures) or cases where the agent takes specific sequences of actions (like consistently moving backwards).
+      </p>
     </div>
-    <h5>With salency</h5>
-    <div id="figure-2">
+    <figure>
+      <video style="width: 100%;" loop controls muted>
+        <source src="videos/sample_0_50000_1.mp4" type="video/mp4">
+      </video>
+      <figcaption style="text-align: center;">TODO: Figure that depicts samples that have been optimized for different target functions. This can be a panel so that a user can just select the target function name and see the associated videos. Should include hx neuron target function samples discussed below. The hx neuron target functions should be the default display.
+      </figcaption>
+    </figure>
+
+    <div>
+      <p>
+        We can even optimize the activity of hidden state neurons such that they are maximally or minimally activated, a method as is commonly used to interpret vision networks. But when we do this, we find that most neurons in the agent's hidden state are difficult to interpret. It's not clear what they encode. This hints at important differences between the interpretation of RL agents and convolutional networks.
+      </p>
+      <p>
+        When representations associated with RL (task representations) have been studied in neuroscience, they have exhibited strong 'mixed-selectivity' - they appear to be selective for multiple task features (cite papers from review). Features in the input tend to activate <i>groups of neurons</i>, also called <i>directions in neural statespace</i>. Dimensionality reduction techniques can help identify those directions in neural statespace. PCA, the dimensionality reduction method that we use here, can intuitively be thought of as identifying the groups of neurons that most commonly fire together. Stated more accurately, PCA identifies the directions in neural statespace that explain most of the variance of their firing.
+      </p>
+    </div>
+    <figure>
+      <div id="panel-1">
+      </div>
+      <figcaption style="text-align: center;">TODO: Figure that depicts pca plot with option for which PCs to choose. 3 panels. It's a video of the agent observations (no saliency) and the hx as it moves through pca space with bar chart (no saliency either).</figcaption>
+    </figure>
+
+    <div>
+      <p>
+        When we generate agent-environment rollouts that maximally activate agent's hidden state neurons in the directions of the PCs, we find that the visualisations look more meaningful. Here we find directions that appear to correspond to XYZ.
+      </p>
+    </div>
+    <figure>
+      <video style="width: 100%;" loop controls muted>
+        <source src="videos/sample_0_50000_1.mp4" type="video/mp4">
+      </video>
+      <figcaption style="text-align: center;">Same 3 panel figure as above (has obs, pca, and barchart, no saliency of obs or on barchart) but  for samples that maximise each of the PCs (or NMFs if it happens to be what you use for the bar chart)</figcaption>
+    </figure>
+
+    <h3>Using saliency to dissect the causal mechanisms of behaviour</h3>
+
+    <div>
+      <p>
+        So far, the evidence that indicates that certain directions in neural statespace represent certain task features has been correlative. We want to be able to tell if the features we've identified actually <i>cause</i> the activity to move in that direction in neural statespace. In neuroscience, showing causation is usually difficult and requires interventional experiments. But in our generative model, it is easy; we can use attribution/saliency maps. Saliency maps identify how much each input or neuron causes downstream neuron to fire. We can therefore explore causality in our simulated system by analysing the gradients of certain neurons with respect to others.
+      </p>
+      <p>
+        For example, we can measure how much each directions in the agent's neural statespace contributes to a particular action by measuring the alignment of the saliency vector with that statespace direction. Blue colours mean those directions (groups of neurons) positively contributed to that action, and red colours indicate negative contributions.
+      </p>
+    </div>
+    <figure>
+      <div id="panel-2">
+      </div>
+      <figcaption style="text-align: center;">TODO: One of the main figures: Four panels. Obs, obs-saliency, PCA, pca-barchart with saliency. It should have a bunch of samples that tell the story of the specific XYZ variables that we identified a few paragraphs above. Some probably work out, but some probably don't. E.g. we might have got the buzzsaw direction right but the box direction wrong because it also assigns saliency to thin ledges as well as boxes.</figcaption>
+    </figure>
+
+    <div>
+      <p>
+        We've just shown how directions in the agent's neural state space causally respond to observations of specific features in the environment. But the hidden state does more than respond to what the agent sees - it also determines behaviour. We can identify how much an action a certain timestep is caused by observations of components of the agent's neural statespace (figxxx). These samples depict an agent that jumps over a buzzsaw in the 20th timestep. The saliency plots depict the contribution of the observation and the directions in the agent's neural statespace to that action. We can see by the saliency map that the buzzsaw contributes to the jumping action just before the jump. The buzzsaw-selective direction in neural statespace also contributes to the jumping action.
+      </p>
+    </div>
+    <figure>
+      <video style="width: 100%;" loop controls muted>
+        <source src="videos/sample_0_50000_1.mp4" type="video/mp4">
+      </video>
+      <figcaption style="text-align: center;">TODO: Another one of the main figures: Four panels. Obs, obs-saliency, PCA, pca-barchart with saliency. It should have a bunch of samples that depict the action/behaviour that we're trying to explain. </figcaption>
+    </figure>
+
+    <div>
+      <p>
+        Behaviours are more than single actions - they are a sequence of actions in a particular environmental context. In our generative model, behaviours can be described by sequences of vectors: the activities of the environment simulator network and action logits in sequential timesteps. We can therefore describe behaviours by a canonical set of vectors averaged over many instances of such behaviours. If we measure the contribution of observation pixels and agent hidden state directions to the alignment of the environment activity vectors and action vectors with the vectors that are canonical of that behaviour, we can determine how much they 'caused' that behaviour.
+      </p>
+      <p>
+        Consider the behaviour "jumping onto a chasm island" (TODO story text here and describe figure)
+      </p>
+
+    <h3>Validating our interpretations by modifying the agent's neural dynamics</h3>
+    <div>
+      <p>
+        Our understanding of a neural network is only as good as the predictions it enables us to make about it. We therefore tried to predictably control the agent's behaviour. To do this, we 'swap' certain directions in the agent's neural statespace: for example, at any timestep where the agent's networks cause its hidden state to move in the direction of the buzzsaw-representation, we instead move it in the direction of the box-representation.
+      </p>
+    </div>
+    <figure>
+      <video style="width: 100%;" loop controls muted>
+        <source src="videos/sample_0_50000_1.mp4" type="video/mp4">
+      </video>
+      <figcaption style="text-align: center;">TODO: Figure. 4 panels. Top 2 panels are agent observations and bar chart, no saliency on either. Bottom two panels are the same but for samples where the directions have not been swapped. </figcaption>
+    </figure>
+
+    <div>
+      <p>
+        It is safe for the agent to land on boxes, but the agent dies if it lands on buzzsaws. In samples where the buzzsaw direction is swapped for the box direction, we see that the agent jumps onto buzzsaws much more often.
+      </p>
+      <i> TODO: Statistics. Maybe a bar chart to depict. % of samples with deaths by buzzsaw. % of episodes of where the agent jumps on a box. Both stats with and without swap of buzzsaw direction and box direction. </i>
     </div>
 
+    <div>
+      <p>
+        Similarly, when we replace the chasm-with-island direction with the chasm direction, the agent dies by jumping into chasms much more often, as would be expected if the agent thought it were going to land safely on an island.
+      </p>
+      <i> TODO: Statistics. Maybe a bar chart to depict. % samples where the agent dies by falling into chasms. % samples where agent lands on an chasm island. Both stats with and without swap of buzzsaw direction and box direction.</i>
+    </div>
+
+    <h2>Discussion</h2>
+
+    <div>
+      <p>
+        Using a generative environment simulation, we have begun to understand the neural dynamics that govern the behaviour of a simple deep RL agent. Importantly, we have been able to identify the <i>causal</i> components of these dynamics and use our understanding to predict the results of modifications to the agent.
+      </p>
+      <p>
+        In line with previous work (cite  Activation atlases, that French author, anything in the review on point), we found that combining several interpretability methods together has yielded much deeper understanding than any individual method alone. Chiming with other work (cite activation atlases, Hilton, etc), we have found two combinations to be particularly useful: 1) combining dimensionality reduction methods with saliency maps and 2) combining saliency maps with generative feature visualization. We believe that finding other useful combinations of interpretability methods is an exciting avenue of future research.
+      </p>
+      <p>
+        At least for RL agents, our investigation motivates a shift of focus from a purely-feature based interpretation of a neural network toward dynamics-based interpretation of RL agents' networks. We also highlight the necessity of studying both internal and external memory for understanding the causal mechanisms of agent behaviour. We believe these emphases will be important to ensure that our interpretations of RL agents do not contain blind-spots.
+      </p>
+
+      <p>Our method has limitations:</p>
+      <ul>
+        <li> <p><strong>Learning an environment simulator can be a challenge</strong>: It may be hard to simulate all environments well enough for this method to work. Indeed, we made the simulator&#39;s job easier by turning off the background images so that the backgrounds were only black. Even then, samples from our simulator exhibit some imperfections such as resumption after reaching the coin. And games with richer environmental dynamics, such as CaveFlyer, looked out of reach of a model of our size, though we did not train a CaveFlyer-environment simulator to completion.  However, our environment simulator (an LSTM with 1024 units with a shallow unsampling convolutional decoder) is relatively small and architecturally primitive; it is very likely possible to train better environment simulators using more modern architectures. </p></li>
+        <li> <p><strong>Deterministic dynamics</strong>: The simulations generated here explore only deterministic sequences of modal actions. They therefore do not explore behaviour that may be non-modal, which may therefore exclude a potentially large proportion of important behaviours.</p> </li>
+        <li> <p><strong>Other agents</strong>: The method we propose here works for agents that are fully differentiable (since we pass gradients through the stochastic sampling of actions). It might not be as straightforward to adapt the method to agents with non-differentiable components, such as those that use symbolic components.</p> </li>
+      </ul>
+      <p>Despite these limitations, the approach opens up many exciting new possibilities for deep RL agent interpretation:</p>
+      <ul>
+        <li> <p><strong>Layer-by-layer analysis</strong>: Here we focused our analyses only on the agent&#39;s hidden state. This is only one layer of the agent. Generative visualisation has been used to build up a layer-wise understanding of convolutional image classifier networks and the same is possible here. Understanding all of the layers of the agent (and to some extent the environment simulator) is necessary to understand how the agent transforms its various inputs within and across timesteps to compute its behaviour. </p> </li>
+        <li> <p><strong>Safe training and un-training of the agent:</strong> While training our generative model, we kept the weights of the agent fixed and trained only the weights of the environment simulator. But it is also possible to fix the weights of the environment simulator and retrain the agent. If we can identify undesirable behaviours exhibited by the agent in simulation (for example by optimizing for generating samples where the agent assigns high value to states humans deem bad), we may be able to retrain the agent by generating examples of that behaviour and penalizing the agent from within the safety of the simulation. </p> </li>
+        <li> <p><strong>Scaling to more complex agents and tasks</strong>: The agent and task-environment studied here, although non-trivial, are nevertheless simple compared with what is possible. Larger agents trained on more interesting and complicated tasks may yield more interesting task representations. Although we mentioned scaling as a potential limitation, there is nevertheless hope for scaling our method to highly capable future agents. One source of hope is the representational capacity of large networks seems capable of learning surprisingly rich representations of the world. Another potential source of hope is that future agents may well be model-based and therefore learn their own model of the environment. We may be able to leverage their internal world model to supplement the external environment simulator; we may therefore need only to train an external environment simulator to learn the inaccuracies in the agents&#39; world model and learn to represent those environmental variables that the agent is using as external memory. The method may thus scale with the capability of the agent.</p> </li>
+        <li> <p><strong>Artificial neuroethology</strong>: The behaviours we analyzed here were chosen by hand, but it would be better to systematically identify behaviours using unsupervised learning so that we can comprehensively study their neural mechanisms. This endeavour has a name: artificial neuroethology (cite Beer, Cliff, Merel etc). The method proposed here has all the necessary ingredients to do so: representations of environmental variables, actions, and agent neural activity. And, perhaps for the first time, we also have a straightforward way to identify the environmental variables that are causally relevant for agent behaviour -- saliency maps over dimensions of the environment representation.</p> </li>
+        <li> <p><strong>A tool for neuroscience</strong>: Computational neuroscientists often study the solutions learned by artificial neural networks in order to generate hypotheses about the solutions to tasks learned by animals. But studying the causal structure of the solutions learned by artificial RL agents has been a challenge due to the non-differentiability of the environment. Our method offers a way to study the solutions to naturalistic (deterministic) tasks that artificial agents learn, which will serve as a useful tool for neuroscientific hypothesis generation. </p> </li>
+        <li> <p><strong>Training agents in natively differentiable environments</strong>: Given the potential difficulty of training environment simulations for more complex environments, we may be better to work with agents that are trained in environments that are designed to be differentiable (cite), since our approach suggests that environment differentiability is useful for agent interpretation.</p> </li>
+      </ul>
+
+    <h1>End of article</h1>
+    <h1>End of article</h1>
+    <h2>Just retaining the below hints because they'll probably be useful as a reference. </h2>
     <h4>Hot reloading</h4>
     <p>Your browser can automatically refresh when your editor saves. This should work by default, and you can disable
       it in <code>index.js</code>. Sometimes hot reloading isn't fully compatible with all types of code, so you may
