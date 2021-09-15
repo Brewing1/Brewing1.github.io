@@ -7,6 +7,12 @@ $ = require('jquery');
 const Panel = require('../panel/Panel.js');
 
 
+/**
+ * TODO: Figure that depicts pca plot with option for which
+ * PCs to choose. 3 panels. It's a video of the agent
+ * observations (no saliency) and the hx as it moves through
+ * pca space with bar chart (no saliency either).
+**/
 const basicPanel = new Panel(
 	$("#basic-panel").get(0),
 	"basic-panel",
@@ -17,6 +23,12 @@ const basicPanel = new Panel(
 	}
 );
 
+/**
+ * Same 3 panel figure as above (has obs, pca, and barchart,
+ * no saliency of obs or on barchart) but for samples that 
+ * maximise each of the PCs (or NMFs if it happens to be what
+ * you use for the bar chart)
+ **/
 const maximalActivationPanel = new Panel(
 	$("#max-act-panel").get(0),
 	"max-act-panel",
@@ -27,7 +39,17 @@ const maximalActivationPanel = new Panel(
 	}
 );
 
-
+/**
+ * TODO: One of the main figures: Four panels.
+ * Obs, obs-saliency, PCA, pca-barchart with saliency.
+ * It should have a bunch of samples that tell the story of the
+ * specific XYZ variables that we identified a few paragraphs above.
+ * Some probably work out, but some probably don't.
+ * E.g. we might have got the buzzsaw direction right but the box
+ * direction wrong because it also assigns saliency to thin ledges
+ * as well as boxes.
+ * 
+ **/
 const salencyPanel = new Panel(
 	$("#salency-panel").get(0),
 	"salency-panel",
@@ -42,7 +64,12 @@ const salencyPanel = new Panel(
 	}
 );
 
-
+/**
+ * TODO: Another one of the main figures: Four panels.
+ * Obs, obs-saliency, PCA, pca-barchart with saliency.
+ * It should have a bunch of samples that depict the action/behaviour
+ * that we're trying to explain.
+ **/
 const behaviourPanel = new Panel(
 	$("#behaviour-panel").get(0),
 	"behaviour-panel",
@@ -57,7 +84,14 @@ const behaviourPanel = new Panel(
 	}
 );
 
+/**
+ * TODO: Figure. 4 panels. Top 2 panels are agent
+ * observations and bar chart, no saliency on either.
+ * Bottom two panels are the same but for samples where
+ * the directions have not been swapped.
+ **/
 
+// NOT DONE
 
 
 document.addEventListener('keydown', function(e) {
