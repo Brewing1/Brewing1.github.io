@@ -93,8 +93,18 @@ const behaviourPanel = new Panel(
 
 // NOT DONE
 
+const panelList = [basicPanel, maximalActivationPanel, salencyPanel, behaviourPanel]
 
 document.addEventListener('keydown', function(e) {
-	// Todo: should direct keydown event to the appropriate panel based on page position.
-	fig1.keydown(e)
+	onScreen = panelList.filter(function(p) {
+		const midpoint = $(p.element).offset().top + $(p.element).outerHeight()/2;
+    	const top_of_screen = $(window).scrollTop();
+		const bottom_of_screen = top_of_screen + $(window).innerHeight();
+		return ((midpoint > top_of_screen) && (midpoint < bottom_of_screen))
+	})
+	console.log(onScreen)
+
+	if (onScreen.length>0) {
+		onScreen[0].keydown(e);
+	}
 });
