@@ -16,6 +16,10 @@ module.exports = class PCAScatterplot {
     this.numBasePoints = _.get(options, "numBasePoints", 1000);
     this.baseData = baseData.slice(0, this.numBasePoints);
 
+    this.basePointSize = _.get(options, "basePointSize", 1);
+    this.basePointOpacity = _.get(options, "basePointOpacity", .2);
+    this.samplePointSize = _.get(options, "samplePointSize", 3);
+
     this.dimX = _.get(options, "dimX", 0);
     this.dimY = _.get(options, "dimY", 1);
 
@@ -61,8 +65,9 @@ module.exports = class PCAScatterplot {
 
 
   changeStep(step) {
-    this.svg.selectAll(".sample-point")
-      .attr("fill", (d, i) => (i == step) ? "red" : "blue");
+    this.highlightPoint
+      .attr("cx", this.x(this.sampleLoadings[step][this.dimX]))
+      .attr("cy", this.y(this.sampleLoadings[step][this.dimY]));
   }
 
 
@@ -132,23 +137,51 @@ module.exports = class PCAScatterplot {
       .attr("cx", d => this.x(d[this.dimX]))
       .attr("cy", d => this.y(d[this.dimY]))
       .attr("fill", "black")
-      .attr("fill-opacity", .2)
-      .attr("r", 1);
+      .attr("fill-opacity", this.basePointOpacity)
+      .attr("r", this.basePointSize);
   }
 
 
   _drawSample() {
-    this.svg.selectAll(".sample-group").remove();
-    this.svg.append("g")
-      .attr("class", "sample-group")
+    if (typeof this.sampleGroup !== 'undefined') {
+      console.log(this.sampleGroup)
+      this.sampleGroup.remove();
+    }
+
+    this.sampleGroup = this.svg.append("g")
+      .attr("class", "sample-group");
+
+    const line = d3.line()
+      .x(d => this.x(d[this.dimX]))
+      .y(d => this.y(d[this.dimY]));
+
+    console.log(this.sampleGroup, this.sampleLoadings)
+
+    this.sampleGroup
+      .append("path")
+      .datum(this.sampleLoadings)
+      .attr("fill", "none")
+      .attr("stroke", "steelblue")
+      .attr("stroke-width", 1.5)
+      .attr("d", line);
+
+    this.sampleGroup
       .selectAll("circle")
       .data(this.sampleLoadings)
       .join("circle")
         .attr("class", "sample-point")
         .attr("cx", d => this.x(d[this.dimX]))
         .attr("cy", d => this.y(d[this.dimY]))
-        .attr("fill", "blue")
-        .attr("r", 3);
+        .attr("stroke", "steelblue")
+        .attr("fill", "white")
+        .attr("r", this.samplePointSize);
+
+    this.highlightPoint = this.sampleGroup
+      .append("circle")
+      .attr("fill", "red")
+      .attr("r", this.samplePointSize)
+      .attr("cx", this.x(this.sampleLoadings[0][this.dimX]))
+      .attr("cy", this.y(this.sampleLoadings[0][this.dimY]));
   }
 
 }
