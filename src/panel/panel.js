@@ -330,21 +330,23 @@ module.exports = class Panel {
         this._backOneStep();
         break;
       case 38:
-        $("#sample-select > option:selected")
+        this.select("sample-select > option:selected")
           .prop("selected", false)
           .next()
           .prop("selected", true);
-        changeSample($("#sample-select").val());
+        this.changeSample(this.select("sample-select").val());
+        this.changeStep(0);
         break;
       case 39:
         this._forwardOneStep();
         break;
       case 40:
-        $("#sample-select > option:selected")
+        this.select("sample-select > option:selected")
           .prop("selected", false)
           .prev()
           .prop("selected", true);
-        changeSample($("#sample-select").val());
+        this.changeSample(this.select("sample-select").val());
+        this.changeStep(0);
         break;
     }
   }
