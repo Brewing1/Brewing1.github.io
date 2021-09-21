@@ -14,6 +14,8 @@ module.exports = class BarChart {
 
     this.numBars = _.get(options, "numBars", 28);
     this.useColor = _.get(options, "useColor", false);
+
+    this.ylims = _.get(options, "ylims", [-6, 6])
   }
 
 
@@ -86,8 +88,12 @@ module.exports = class BarChart {
       .range([m.left, this.width - m.right])
       .padding(0.1);
 
+    const yDomain = (this.ylims === null) ? 
+      this._2dTruncatedExtent(this.fullSampleData.hx_loadings) :
+      this.ylims
+
     this.y = d3.scaleLinear()
-      .domain(this._2dTruncatedExtent(this.fullSampleData.hx_loadings)).nice()
+      .domain(yDomain).nice()
       .range([this.height - m.bottom, m.top]);
   }
 
