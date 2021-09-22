@@ -1,6 +1,6 @@
 
 $ = require('jquery');
-const Panel = require('./Panel.js');
+const Panel = require('./panel.js');
 
 
 var dataLocation = "data"
@@ -16,7 +16,7 @@ const p = new Panel(
   "panel",
   {
     displaySalency: true,
-    salencyTypes: ["value", "action"],
+    salencyTypes: ["value", "action", "hx_direction_1", "hx_direction_2"],
     panelLayout: "panel-grid-2-2",
     dataLocation: dataLocation,
   }

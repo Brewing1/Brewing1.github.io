@@ -25,25 +25,56 @@ def pca_transform(X, components, original_mu, original_sigma):
     return X_scaled @ components.T
 
 
-def sample_info_for_panel_data(sample_name, pca_components, all_hx_mu, all_hx_sigma, args):
+def project_gradients_into_pc_space(grad_data, pca_components, original_sigma):
+    sigma = np.diag(original_sigma)
+    grad_data = grad_data.T  # So each column is a grad vector for a hx
+    scaled_pc_comps = pca_components @ sigma  # PCs calculated on X'=(X-mu)/sigma are scaled so it's like they were calculated on X
+    projected_grads = scaled_pc_comps @ grad_data  # grads are projected onto the scaled PCs
+    return projected_grads.T
+
+
+def sample_info_for_panel_data(sample_name, pca_components, all_hx_mu,
+                               all_hx_sigma, args):
     """
     Return the data formatted for inclusion in panel_data.json
     """
     sample_path = f"{args.input_directory}/generative/recorded_informinit_gen_samples/{sample_name}"
     hx = np.load(sample_path + '/agent_hxs.npy')
-    grad_hx_action = np.load(sample_path + '/grad_hx_action.npy') 
-    grad_hx_value = np.load(sample_path + '/grad_hx_value.npy') 
+    grad_hx_action = np.load(sample_path + '/grad_hx_action.npy')
+    grad_hx_value = np.load(sample_path + '/grad_hx_value.npy')
+    min_pc_directions = 1
+    max_pc_directions = 3 + 1
+    grad_hx_pcs = [np.load(sample_path + '/grad_hx_hx_direction_%i.npy' % idx)
+                   for idx in range(min_pc_directions, max_pc_directions)]
 
-    hx_loadings = pca_transform(hx, pca_components, all_hx_mu, all_hx_sigma).tolist()
+    hx_loadings = pca_transform(hx, pca_components, all_hx_mu,
+                                all_hx_sigma).tolist()
     # Not entirely clear what the most principled choice is, especially on if we should scale by original hx_sigma.
-    grad_hx_action_loadings = pca_transform(grad_hx_action, pca_components, 0, all_hx_sigma).tolist()
-    grad_hx_value_loadings = pca_transform(grad_hx_value, pca_components, 0, all_hx_sigma).tolist()
+    grad_hx_action_loadings = project_gradients_into_pc_space(grad_hx_action,
+                                                              pca_components,
+                                                              all_hx_sigma).tolist()
+    grad_hx_value_loadings = project_gradients_into_pc_space(grad_hx_value,
+                                                             pca_components,
+                                                             all_hx_sigma).tolist()
 
-    return {
+    loadings_dict = {
         "hx_loadings": hx_loadings,
         "grad_hx_value_loadings": grad_hx_value_loadings,
         "grad_hx_action_loadings": grad_hx_action_loadings,
     }
+
+    # Now do the same iteratively for the PC direction loadings
+    grad_hx_direction_loadings_dict = {}
+    for idx, grads_hx_pc_direction in zip(
+            range(min_pc_directions, max_pc_directions), grad_hx_pcs):
+        grad_hx_direction_loadings_dict.update(
+            {'grad_hx_hx_direction_%i_loadings' % idx:
+                 project_gradients_into_pc_space(grad_hx_value, pca_components,
+                                                 all_hx_sigma).tolist()})
+
+    loadings_dict.update(grad_hx_direction_loadings_dict)
+
+    return loadings_dict
 
 
 def make_img_set_from_arr(path, arr):
@@ -68,6 +99,11 @@ def save_sample_images(sample_name, args):
     make_img_set_from_arr(f"{sample_out}/sal_action", sal_action)
     make_img_set_from_arr(f"{sample_out}/sal_value", sal_value)
 
+    # Now do iteratively for PC direction saliency
+    for idx in range(1, 4):
+        sal = np.load(sample_in + '/grad_processed_obs_hx_direction_%i.npy' % idx)
+        make_img_set_from_arr(f"{sample_out}/sal_hx_direction_%i" % idx, sal)
+
 
 def run():
     args = parse_args()
@@ -76,13 +112,13 @@ def run():
 
     hx_analysis_dir = f"{args.input_directory}/analysis/hx_analysis_precomp"
 
-    pca_components = np.load(f"{hx_analysis_dir}/pcomponents_1000.npy")
-    all_hx_mu = np.load(f"{hx_analysis_dir}/hx_mu_1000.npy")
-    all_hx_sigma = np.load(f"{hx_analysis_dir}/hx_std_1000.npy")
+    pca_components = np.load(f"{hx_analysis_dir}/pcomponents_4000.npy")
+    all_hx_mu = np.load(f"{hx_analysis_dir}/hx_mu_4000.npy")
+    all_hx_sigma = np.load(f"{hx_analysis_dir}/hx_std_4000.npy")
 
     print(f"Output folder: {os.path.abspath(args.output_directory)}");
     print("This folder will be deleted and replaced with exported data.")
-    
+
     confirm = input("Continue? y/[n]: ")
     if confirm.lower() in ["y", "yes"]:
 
@@ -92,8 +128,8 @@ def run():
         os.mkdir(args.output_directory)
 
         # output panel_data.json
-        hx_in_pca = np.load(hx_analysis_dir + '/hx_pca_1000.npy')
-        with open(args.output_directory+"/panel_data.json", 'w') as f:
+        hx_in_pca = np.load(hx_analysis_dir + '/hx_pca_4000.npy')
+        with open(args.output_directory + "/panel_data.json", 'w') as f:
             json.dump({
                 "base_hx_loadings": hx_in_pca[:1000, :20].tolist(),
                 "samples": {
@@ -115,8 +151,6 @@ def run():
 
     else:
         print("Process cancelled!")
-
-
 
 
 if __name__ == "__main__":
