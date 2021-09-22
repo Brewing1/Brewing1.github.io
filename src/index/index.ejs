@@ -46,10 +46,10 @@
     </d-contents>
     <div>
       <p>
-        The last half-decade has seen deep reinforcement learning agents learn to solve many exciting 	tasks, from beating humans in Go and Starcraft to solving Rubix cubes with a robotic hand. As real-world deployment of RL agents grows, we're going to want to understand the causal mechanisms of the agents' behaviour. This means looking inside its neural networks. But unlike convolutional image classifier networks, there has been less success in interpreting the representations learned by deep RL agents. Why is analyzing the networks of RL agents so different?
+        The last half-decade has seen deep reinforcement learning (RL) agents learn to solve many exciting tasks, from beating humans in Go and Starcraft to solving Rubix cubes with a robotic hand. As real-world deployment of RL agents grows, there's an increasing need to understand the causal mechanisms of their behaviours (cite Deletang). This means looking inside their neural networks. But unlike convolutional image classifier networks, there has been much less success in interpreting the representations learned by deep RL agents. Why is analyzing the networks of RL agents so different?
       </p>
       <p>
-        In a standard feedforward network, the pattern of activations in a layer cause the particular pattern of activations in the next layer up. Causality is crucial here - the input causes particular activations in one layer, which in turn directly cause the activations in the next layer, and so on through the network. Because neural networks are fully differentiable, if we want to understand what inputs cause a neuron x to maximally light up in a conv net, we can BP through the layers as in feature visualisation and attribution maps (cite featviz; building blocks). In a sense, backpropagation of gradients lets us trace causality back through the layers of the network.
+       Causality provides a useful lense to understand the difficulty. In a standard feedforward network, the pattern of activations in one layer <i>cause</i> the particular pattern of activations in the next layer up, and so on through the network, from inputs to outputs. Because neural networks are fully differentiable, if we want to understand what inputs cause a neuron x to maximally light up in a feedforward network, we can backpropagate gradients of neuron x's activation (with respect to the inputs) through the layers to probe which inputs are most responsible for neuron x's activation. This tool is used in feature visualisation and attribution maps (cite featviz; building blocks). In a sense, backpropagation of gradients lets us trace causality back through the layers of the network.
       </p>
 
     </div>
@@ -60,7 +60,7 @@
       <figcaption style="text-align: center;">
       <ul>
       <li>TODO: Footnote: Given that many modern deep RL agents use recurrent neural networks, it's worthwhile to note that these methods work in principle even for recurrent networks thanks to BPTT. </li>
-      <li>TODO: Figure: an animated diagram of a conv net activating one layer then activating the next. </li>
+      <li>TODO: Figure: an animated diagram of a csonv net activating one layer then activating the next. </li>
        <li>TODO: Another diagram that shows a visualisation of the maximally exciting image..
        </figcaption></li>
        </ul>
@@ -69,7 +69,7 @@
 
     <div>
       <p>
-        By contrast to standard neural networks, deep RL agents are situated in an environment. We can't use the same trick for RL agents because causality flows through both the agent's neural networks <i>and</i> its environment.
+        By contrast to standard neural networks, deep RL agents are situated <i>in an environment</i>. We can't use the same trick for RL agents because causality flows forward through both the agent's neural networks <i>and</i> its environment. For example: If an agent presses a lightswitch, causing a light to turn on, the agent's action caused its visual neurons to activate even though there are no 'action-neuron-to-visual-neuron' connections. The causality flowed through the environment, not through the agent's neural networks. 
       </p>
 
 
@@ -88,7 +88,7 @@
 
     <div>
       <p>
-        In most cases, the environment is not differentiable. This means we can't use gradient-based methods to ask what causes a particular neuron activate at a particular timestep. To complicate matters further, what we actually want to understand in RL agents is the causal mechanisms of behaviour, where behaviour is a <i>sequence</i> of actions in a particular environmental context.
+        In most cases, the environment is not differentiable. This means we can't use gradient-based methods to ask what causes a neuron in a deep RL agent to have a particular activation at a particular timestep. To complicate matters further, we don't just want to study single neurons at single timesteps; what we actually want to understand in RL agents is the causal (neural) mechanisms of behaviour, where behaviour is a <i>sequence</i> of actions in a particular environmental context.
       </p>
 
     </div>
@@ -107,11 +107,17 @@
 
     <div>
       <p>
-        Previous work has skirted this issue. They've either focussed on xyz(refs). But this fails to give a complete causal explanation of the neural mechanisms of agent behaviour.
+        Previous work has skirted around these issues, typically by: 
+        <ul>
+          <li>Avoiding studying neural causal mechanisms entirely and focusing on external causes (cite Deletang);</li>
+         <li> Focusing on studying the neural causal mechanisms of single actions at single timesteps (cite Rupprecht)</li>
+         <li> Studying only the convolutional vision networks of feedforward (not recurrent) agents, without regard for understanding how behaviour is organised <i>through time</i> and without regard for the representations that link what the agent sees to how it acts.</li>
+Previous work therefore fails to explain the causal neural mechanisms of agent behaviour.
+        </ul>
       </p>
-      <i> Work to critique: - Deletang - no focus on representations. But they get causality right. - Rupprecht - no focus on temporal structure and impossible in principle. - Hilton - only focused on vision, not task representations or temporal structure. </i>
+      
       <p>
-        In this article we overcome these issues. We first train a differentiable simulator of the environment. This permits us to backpropagate gradients back through time through both the environment and the agent (if the agent is recurrent). In turn, this permits the use gradient-based features visualisation and attribution maps to generate causal explanations of the neural mechanisms of RL agents' behaviour. We believe that making these methods available for use in RL agents will be as important for deeply understanding the neural activity of RL agents as they have been for convolutional image classifiers. Our investigation motivates a shift of focus from a purely-feature based interpretation of RL agent's networks toward a dynamics-based interpretation. To demonstrate the validity of the interpretations of the agent's neural activity that our method produced, we also control the agents' neural dynamics to generate predictable changes in behaviour.
+        In this article we address these issues. We first train a differentiable simulator of the environment in a recurrent neural network (cite Chiappa). This permits us to backpropagate gradients backwards through time, through both the environment and the agent (if the agent is recurrent). In turn, this permits the use of gradient-based causal attribution maps to generate explanations of the neural mechanisms of RL agents' behaviour. We believe that making gradient-based interpretability methods applicable to RL agents will be as important for understanding the neural activity of agents as they have been for understanding convolutional image classifiers. Our investigation motivates a shift of focus from a purely static feature-based interpretation of RL agent's networks toward a dynamics-based interpretation. To demonstrate the validity of the interpretations of the agent's neural activity that our method produced, we also manually modify the agents' neural dynamics and predict the changes in behaviour that were caused by our modifications.
       </p>
     </div>
 
@@ -120,7 +126,7 @@
 
     <div>
       <p>
-        We developed a solution to this issue that works in theory environment (in practice, some environments may require too much computation). We trained a generative model to simulate the MDP, permitting us to study how agents use internal and external memory to organise behaviour. It's a VAE that simulates agent-environment rollouts... etc.
+        We developed a solution to agent interpretability that works in any environment (in practice, some environments may require too much computation). We trained a generative model to simulate the MDP, permitting us to study how agents use internal and external memory to organise behaviour. It's a VAE that simulates agent-environment rollouts... etc.
       </p>
       <p>
         The agent is a component of the VAE decoder. But while the VAE is training, the agent's weights are fixed, so in the decoder only the environment dynamics are learned. The actions produced by the agent influence the how the environment unrolls. The environment dynamics are independent of the specific agent used in the decoder, demonstrated in figXXX where we use a trained vs untrained agent. In the third panel the agent isnt even implemented by a neural network - it is hardcoded only to  chooses "jump right". In all cases, the environment dynamics remain roughly realistic. This is important for preserving external memory in cases where the agent uses it to control its behaviour.
