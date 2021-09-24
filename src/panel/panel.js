@@ -2,10 +2,10 @@ const d3 = require("d3");
 $ = require('jquery');
 _ = require('lodash');
 
-const panelTemplate = require("./panel_template.hbs");
+const panelTemplate = require("./panel-template.hbs");
 
-const BarChart = require('./BarPlot.js');
-const PCAScatterplot = require('./PCAScatterplot.js');
+const BarChart = require('./bar-plot.js');
+const PCAScatterplot = require('./pca-scatterplot.js');
 
 module.exports = class Panel {
 

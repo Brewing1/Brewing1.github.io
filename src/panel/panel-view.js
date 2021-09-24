@@ -1,6 +1,6 @@
 
 $ = require('jquery');
-const Panel = require('./Panel.js');
+const Panel = require('./panel.js');
 
 
 var dataLocation = "data"

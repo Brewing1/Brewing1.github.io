@@ -4,7 +4,7 @@
 
 
 $ = require('jquery');
-const Panel = require('../panel/Panel.js');
+const Panel = require('../panel/panel.js');
 
 
 /**
