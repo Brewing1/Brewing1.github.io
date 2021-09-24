@@ -27,6 +27,30 @@
 	margin: 10px;
 }
 
+/* Make controls appear to the left of the subpanels */
+#salency-panel .panel-grid-2-2 {
+	display: flex;
+}
+
+#salency-panel .panel-controls {
+	flex-direction: column;
+}
+
+#salency-panel .left-controls {
+	display:flex;
+	flex-direction: column;
+	justify-content: flex-end;
+	margin-bottom: 60px;
+}
+
+#salency-panel .center-controls {
+	flex: 0 1 auto;
+	text-align: center;
+}
+#salency-panel .right-controls {
+	margin-top: 60px;
+}
+
 .panel-grid-2-2 .subpanels-div {
 	display: flex;
 	flex-wrap: wrap;

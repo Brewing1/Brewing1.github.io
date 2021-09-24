@@ -164,7 +164,7 @@ Previous work therefore fails to explain the causal neural mechanisms of agent b
         When representations associated with RL (task representations) have been studied in neuroscience, they have exhibited strong 'mixed-selectivity' - they appear to be selective for multiple task features (cite papers from review). Features in the input tend to activate <i>groups of neurons</i>, also called <i>directions in neural statespace</i>. Dimensionality reduction techniques can help identify those directions in neural statespace. PCA, the dimensionality reduction method that we use here, can intuitively be thought of as identifying the groups of neurons that most commonly fire together. Stated more accurately, PCA identifies the directions in neural statespace that explain most of the variance of their firing.
       </p>
     </div>
-    <figure class="l-page">
+    <figure class="wide-fig">
       <div id="basic-panel">
       </div>
       <figcaption style="text-align: center;">TODO: Figure that depicts pca plot with option for which PCs to choose. 3 panels. It's a video of the agent observations (no saliency) and the hx as it moves through pca space with bar chart (no saliency either).</figcaption>
@@ -175,7 +175,7 @@ Previous work therefore fails to explain the causal neural mechanisms of agent b
         When we generate agent-environment rollouts that maximally activate agent's hidden state neurons in the directions of the PCs, we find that the visualisations look more meaningful. Here we find directions that appear to correspond to XYZ.
       </p>
     </div>
-    <figure class="l-page">
+    <figure class="wide-fig">
       <div id="max-act-panel">
       </div>
       <figcaption style="text-align: center;">Same 3 panel figure as above (has obs, pca, and barchart, no saliency of obs or on barchart) but  for samples that maximise each of the PCs (or NMFs if it happens to be what you use for the bar chart)</figcaption>
@@ -191,7 +191,7 @@ Previous work therefore fails to explain the causal neural mechanisms of agent b
         For example, we can measure how much each directions in the agent's neural statespace contributes to a particular action by measuring the alignment of the saliency vector with that statespace direction. Blue colours mean those directions (groups of neurons) positively contributed to that action, and red colours indicate negative contributions.
       </p>
     </div>
-    <figure>
+    <figure class="wide-fig">
       <div id="salency-panel">
       </div>
       <figcaption style="text-align: center;">TODO: One of the main figures: Four panels. Obs, obs-saliency, PCA, pca-barchart with saliency. It should have a bunch of samples that tell the story of the specific XYZ variables that we identified a few paragraphs above. Some probably work out, but some probably don't. E.g. we might have got the buzzsaw direction right but the box direction wrong because it also assigns saliency to thin ledges as well as boxes.</figcaption>
@@ -207,7 +207,11 @@ Previous work therefore fails to explain the causal neural mechanisms of agent b
       </div>
       <figcaption style="text-align: center;">TODO: Another one of the main figures: Four panels. Obs, obs-saliency, PCA, pca-barchart with saliency. It should have a bunch of samples that depict the action/behaviour that we're trying to explain. </figcaption>
     </figure>
-
+    <figure class="wide-fig">
+      <div id="behaviour-panel2">
+      </div>
+      <figcaption style="text-align: center;">TODO: Another one of the main figures: Four panels. Obs, obs-saliency, PCA, pca-barchart with saliency. It should have a bunch of samples that depict the action/behaviour that we're trying to explain. </figcaption>
+    </figure>
     <div>
       <p>
         Behaviours are more than single actions - they are a sequence of actions in a particular environmental context. In our generative model, behaviours can be described by sequences of vectors: the activities of the environment simulator network and action logits in sequential timesteps. We can therefore describe behaviours by a canonical set of vectors averaged over many instances of such behaviours. If we measure the contribution of observation pixels and agent hidden state directions to the alignment of the environment activity vectors and action vectors with the vectors that are canonical of that behaviour, we can determine how much they 'caused' that behaviour.

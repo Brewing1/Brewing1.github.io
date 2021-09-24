@@ -99,6 +99,21 @@ const behaviourPanel = new Panel(
 	}
 );
 
+// Fake plot for testing panel layout
+const behaviourPanel2 = new Panel(
+	$("#behaviour-panel2").get(0),
+	"behaviour-panel2",
+	{
+		sampleNames: ["sample_00000", "sample_00001"],
+		displaySalency: true,
+		salencyTypes: ["value", "action"],
+		barChartOptions: {
+			useColor: true,
+		},
+		panelLayout: "panel-grid-1-4"
+	}
+);
+
 /**
  * TODO: Figure. 4 panels. Top 2 panels are agent
  * observations and bar chart, no saliency on either.
