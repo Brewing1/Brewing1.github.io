@@ -5,7 +5,22 @@
 
 $ = require('jquery');
 const Panel = require('../panel/panel.js');
+const MDP = require('../mdp.js');
 
+
+/**
+ * TODO: Loop the animation. Currently something weird with async and babel not cooperating.
+ * Tried https://techstrology.com/react-async-await-regeneratorruntime-is-not-defined-babel-6/, but
+ * that caused: "ES Modules may not assign module.exports or exports.*, Use ESM export
+ * syntax,instead: ./src/panel/BarPlot.js".
+ * Then tried https://github.com/babel/babel/issues/12731 but that screwed other things up :)
+**/
+// async function loopMDPAnimation () {
+	// const mdpAnimation = MDP.createMDP();
+	// await new Promise(r => setTimeout(r, 5000));
+// };
+// loopMDPAnimation();
+const mdpAnimation = MDP.createMDP("#mdp-animation");
 
 /**
  * TODO: Figure that depicts pca plot with option for which
