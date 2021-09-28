@@ -18,6 +18,9 @@ const p = new Panel(
     displaySalency: true,
     salencyTypes: ["value", "action"],
     panelLayout: "panel-grid-2-2",
+    barChartOptions: {
+			useColor: true,
+		},
     dataLocation: dataLocation,
   }
 );

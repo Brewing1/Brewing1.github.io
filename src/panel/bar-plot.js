@@ -31,15 +31,13 @@ module.exports = class BarChart {
   }
 
   changeSalencyType(salencyType) {
-    if (this.useColor) {
-      this.colorData = this.fullSampleData[`grad_hx_${salencyType}_loadings`];
-      this._createColorScale();
-    }
+    this.salencyType = salencyType
+    this._updateColorData();
   }
 
   changeStep(step) {
     var colors;
-    if (this.useColor) {
+    if (this.useColor && this.hasOwnProperty('colorData')) {
       const curentColorData = this.colorData[step].slice(0, this.numBars);
       colors = d3.map(curentColorData, this.colorScale);
     } else {
@@ -60,6 +58,8 @@ module.exports = class BarChart {
 
     this.fullSampleData = sampleData;
     this.data = this.fullSampleData.hx_loadings[0].slice(0, this.numBars)
+
+    this._updateColorData();
     this.draw();
   }
 
@@ -67,6 +67,14 @@ module.exports = class BarChart {
     $(this.element).empty();
   }
 
+  _updateColorData() {
+    // this can be called before the salency type has been set
+    // if so it will be called again, so we do nothing.
+    if (this.useColor && this.hasOwnProperty('salencyType')) {
+      this.colorData = this.fullSampleData[`grad_hx_${this.salencyType}_loadings`];
+      this._createColorScale();
+    }
+  }
 
   _2dTruncatedExtent(data_array) {
     const minVal = d3.min(data_array, d => d3.min(d.slice(0, this.numBars)));
