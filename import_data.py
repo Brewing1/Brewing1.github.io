@@ -76,9 +76,11 @@ def run():
 
     hx_analysis_dir = f"{args.input_directory}/analysis/hx_analysis_precomp"
 
-    pca_components = np.load(f"{hx_analysis_dir}/pcomponents_1000.npy")
-    all_hx_mu = np.load(f"{hx_analysis_dir}/hx_mu_1000.npy")
-    all_hx_sigma = np.load(f"{hx_analysis_dir}/hx_std_1000.npy")
+    n_suffix = 4000
+
+    pca_components = np.load(f"{hx_analysis_dir}/pcomponents_{n_suffix}.npy")
+    all_hx_mu = np.load(f"{hx_analysis_dir}/hx_mu_{n_suffix}.npy")
+    all_hx_sigma = np.load(f"{hx_analysis_dir}/hx_std_{n_suffix}.npy")
 
     print(f"Output folder: {os.path.abspath(args.output_directory)}");
     print("This folder will be deleted and replaced with exported data.")
@@ -92,7 +94,7 @@ def run():
         os.mkdir(args.output_directory)
 
         # output panel_data.json
-        hx_in_pca = np.load(hx_analysis_dir + '/hx_pca_1000.npy')
+        hx_in_pca = np.load(f"{hx_analysis_dir}/hx_pca_{n_suffix}.npy")
         with open(args.output_directory+"/panel_data.json", 'w') as f:
             json.dump({
                 "base_hx_loadings": hx_in_pca[:1000, :20].tolist(),
