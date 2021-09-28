@@ -74,17 +74,16 @@
 
 
     </div>
-    <figure>
-      <video style="width: 100%;" loop controls muted>
-        <source src="videos/sample_0_50000_1.mp4" type="video/mp4">
-      </video>
+    <d-figure>
+      <div id="mdp-animation">
+      </div>
       <figcaption style="text-align: center;">
       <ul>
       <li> TODO: Footnote: ref to external memory and autostigmergy. </li>
       <li> TODO: An animated diagram of an MDP graph where each node is lighting up consecutively. </li>
       </ul>
       </figcaption>
-    </figure>
+    </d-figure>
 
     <div>
       <p>
@@ -165,7 +164,7 @@ Previous work therefore fails to explain the causal neural mechanisms of agent b
         When representations associated with RL (task representations) have been studied in neuroscience, they have exhibited strong 'mixed-selectivity' - they appear to be selective for multiple task features (cite papers from review). Features in the input tend to activate <i>groups of neurons</i>, also called <i>directions in neural statespace</i>. Dimensionality reduction techniques can help identify those directions in neural statespace. PCA, the dimensionality reduction method that we use here, can intuitively be thought of as identifying the groups of neurons that most commonly fire together. Stated more accurately, PCA identifies the directions in neural statespace that explain most of the variance of their firing.
       </p>
     </div>
-    <figure>
+    <figure class="l-page">
       <div id="basic-panel">
       </div>
       <figcaption style="text-align: center;">TODO: Figure that depicts pca plot with option for which PCs to choose. 3 panels. It's a video of the agent observations (no saliency) and the hx as it moves through pca space with bar chart (no saliency either).</figcaption>
@@ -176,7 +175,7 @@ Previous work therefore fails to explain the causal neural mechanisms of agent b
         When we generate agent-environment rollouts that maximally activate agent's hidden state neurons in the directions of the PCs, we find that the visualisations look more meaningful. Here we find directions that appear to correspond to XYZ.
       </p>
     </div>
-    <figure>
+    <figure class="l-page">
       <div id="max-act-panel">
       </div>
       <figcaption style="text-align: center;">Same 3 panel figure as above (has obs, pca, and barchart, no saliency of obs or on barchart) but  for samples that maximise each of the PCs (or NMFs if it happens to be what you use for the bar chart)</figcaption>

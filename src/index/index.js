@@ -4,8 +4,11 @@
 
 
 $ = require('jquery');
-const Panel = require('../panel/Panel.js');
+const Panel = require('../panel/panel.js');
+const MDP = require('../mdp.js');
 
+
+const mdpAnimation = MDP.createMDP("#mdp-animation");
 
 /**
  * TODO: Figure that depicts pca plot with option for which
