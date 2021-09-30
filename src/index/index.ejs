@@ -22,7 +22,7 @@
 
   <d-title>
     <h1>Saliency as causality: Interpreting the neural mechanisms of RL agent behaviour</h1>
-    <p>We show that simulating an agent's environment within a neural network enables us to use gradients to study the causal mechanisms of the agent's behaviour.</p>
+    <p>We show that simulating an agent's environment within a neural network enables the use of gradients to study the causal mechanisms of the agent's behaviour.</p>
   </d-title>
 
 
@@ -69,7 +69,7 @@
 
     <div>
       <p>
-        By contrast to standard neural networks, deep RL agents are situated <i>in an environment</i>. We can't use the same trick for RL agents because causality flows forward through both the agent's neural networks <i>and</i> its environment. For example: If an agent presses a lightswitch, causing a light to turn on, the agent's action caused its visual neurons to activate even though there are no 'action-neuron-to-visual-neuron' connections. The causality flowed through the environment, not through the agent's neural networks. 
+        By contrast to standard neural networks, deep RL agents are situated <i>in an environment</i>. We can't use the same trick for RL agents because causality flows forward through both the agent's neural networks <i>and</i> its environment. For example: If an agent presses a lightswitch, causing a light to turn on, the agent's action caused its visual neurons to activate even though there are no 'action-neuron-to-visual-neuron' connections. The causality flowed through the environment, not through the agent's internal memory. When causality flows through the environment, we call this `external memory'. 
       </p>
 
 
@@ -125,12 +125,9 @@
 
     <div>
       <p>
-        We developed a solution to agent interpretability that works theoretically in any environment, although in practice some environments may require too much computation. We trained a generative model to simulate the agent-environment system, permitting us to study how agents use internal and external memory to organise behaviour; in other words, it permits us to study how causality flows forward in time through both the agent and the environment. 
+        We trained a generative model to simulate the agent-environment system, permitting us to study how agents use internal and external memory to organise behaviour; in other words, it permits us to study how causality flows forward in time through both the agent and the environment. Our method works theoretically in any environment (although in practice some environments may require too much computation). 
        
-        Specifically, our model is a variational autoencoder (VAE)(cite Kingma and Welling) that uses a recurrent environment simulator (cite Chiappa) as its decoder. It's a VAE that simulates agent-environment rollouts... etc.
-      </p>
-      <p>
-        The agent is a component of the VAE decoder. But while the VAE is training, the agent's weights are fixed, so in the decoder only the environment dynamics are learned. The actions produced by the agent influence the how the environment unrolls. The environment dynamics are independent of the specific agent used in the decoder, demonstrated in figXXX where we use a trained vs untrained agent. In the third panel the agent isnt even implemented by a neural network - it is hardcoded only to  chooses "jump right". In all cases, the environment dynamics remain roughly realistic. This is important for preserving external memory in cases where the agent uses it to control its behaviour.
+        Our model is a variational autoencoder (VAE)(cite Kingma and Welling) that uses a recurrent environment simulator (cite Chiappa) as its decoder. The agent is a component of the VAE decoder. But while the VAE is training, the agent's weights are fixed, so only the environment dynamics are learned. The actions produced by the agent influence the how the environment unrolls. The environment dynamics are independent of the specific agent used in the decoder, demonstrated in figXXX where we use a trained vs untrained agent. In the third panel the agent isnt even implemented by a neural network - it is hardcoded only to  chooses "jump right". In all cases, the environment dynamics remain roughly realistic. This is important for preserving external memory in cases where the agent uses it to control its behaviour.
       </p>
     </div>
     <figure>
