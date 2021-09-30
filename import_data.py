@@ -69,7 +69,7 @@ def sample_info_for_panel_data(sample_name, pca_components, all_hx_mu,
             range(min_pc_directions, max_pc_directions), grad_hx_pcs):
         grad_hx_direction_loadings_dict.update(
             {'grad_hx_hx_direction_%i_loadings' % idx:
-                 project_gradients_into_pc_space(grad_hx_value, pca_components,
+                 project_gradients_into_pc_space(grads_hx_pc_direction, pca_components,
                                                  all_hx_sigma).tolist()})
 
     loadings_dict.update(grad_hx_direction_loadings_dict)
