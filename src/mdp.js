@@ -116,7 +116,7 @@ export function createMDP(tagId) {
             .delay(function(){return loopSpeed - getCircDelay(this.parentNode.getAttribute("circle-row"), this.getAttribute("circle-col"))})
             .style("opacity", 0)
           .transition()
-            .delay(function(){return 2000 + getCircDelay(this.parentNode.getAttribute("circle-row"), this.getAttribute("circle-col"))})
+            .delay(function(){return 500 + getCircDelay(this.parentNode.getAttribute("circle-row"), this.getAttribute("circle-col"))})
             .on("start", repeat);
       });
     
@@ -160,7 +160,7 @@ export function createMDP(tagId) {
             // .duration(1000)
             .style("opacity", 0)
           .transition()
-            .delay(function(){return 2000 + getCircDelay(this.parentNode.parentNode.getAttribute("circle-row"), this.parentNode.getAttribute("circle-col"))})
+            .delay(function(){return 500 + getCircDelay(this.parentNode.parentNode.getAttribute("circle-row"), this.parentNode.getAttribute("circle-col"))})
             .on("start", repeat);
       });
 
@@ -251,14 +251,12 @@ export function createMDP(tagId) {
             .attr("stroke", "black")
           .transition()
             .delay(function(){return loopSpeed - getArrowDelay(this.getAttribute("arrow-idx"))})
-            // .duration(arrowSpeed)
-            .attr("x1", d=>d[0][0])
-            .attr("y1", d=>d[0][1])
             .attr("x2", d=>d[0][0])
             .attr("y2", d=>d[0][1])
             .attr("marker-end", "none")
+            .attr("stroke-width", 0)
           .transition()
-            .delay(function(){return 2000 + getArrowDelay(this.getAttribute("arrow-idx"))})
+            .delay(function(){return 500 + getArrowDelay(this.getAttribute("arrow-idx"))})
             .on("start", repeat);
       })
 
