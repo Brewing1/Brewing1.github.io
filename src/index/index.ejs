@@ -125,10 +125,11 @@ Previous work therefore fails to explain the causal neural mechanisms of agent b
 
     <div>
       <p>
-        We developed a solution to agent interpretability that works in any environment (in practice, some environments may require too much computation). We trained a generative model to simulate the MDP, permitting us to study how agents use internal and external memory to organise behaviour. It's a VAE that simulates agent-environment rollouts... etc.
+        We developed a solution to agent interpretability that works in any environment (in practice, some environments may require too much computation). We trained a generative model to simulate the MDP, permitting us to study how agents use internal and external memory to organise behaviour. It's a VAE that simulates agent-environment rollouts... etc.   
       </p>
       <p>
         The agent is a component of the VAE decoder. But while the VAE is training, the agent's weights are fixed, so in the decoder only the environment dynamics are learned. The actions produced by the agent influence the how the environment unrolls. The environment dynamics are independent of the specific agent used in the decoder, demonstrated in figXXX where we use a trained vs untrained agent. In the third panel the agent isnt even implemented by a neural network - it is hardcoded only to  chooses "jump right". In all cases, the environment dynamics remain roughly realistic. This is important for preserving external memory in cases where the agent uses it to control its behaviour.
+	While there are similarities, our approach stands in contrast to recent model-based RL approaches train a environment model so that the agent can use it in order to represent latent environmental variables (cite Ha and Schmidhuber 2018) or to plan (cite Buesing et al. 2018; Hafner et al. 2018/2020, other refs). Instead, the environment model we train is separate from the agent and is not how the agent represents the world or selects its actions. It is a stand-in for the external environment that the agent was trained in; less a 'mental model of the world', more 'The Matrix'.
       </p>
     </div>
     <figure>
