@@ -145,7 +145,7 @@ def run():
                 }
             }, f)
 
-        # make a folder for each sample for images 
+        # make a folder for each sample for images
         for sample in sample_names:
             save_sample_images(sample, args)
 
@@ -157,4 +157,3 @@ def run():
 
 if __name__ == "__main__":
     run()
-
