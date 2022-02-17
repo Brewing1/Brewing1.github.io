@@ -175,12 +175,16 @@ module.exports = class Panel {
 
     var salencySelect = null;
     var salencyTypes = null;
+    // Whether to use a dropdown or radio buttons
+    this.salencyDropdown = false;
+
     if ( this.displaySalency ) {
       console.assert("salencyTypes" in options);
       salencyTypes = options.salencyTypes
       if ( _.isArray(salencyTypes)) {
         salencySelect = true;
         this.salencyType = salencyTypes[0];
+        this.salencyDropdown = salencyTypes.length > 2
       } else {
         console.assert(_.isString(salencyTypes))
         salencySelect = false;
@@ -199,6 +203,7 @@ module.exports = class Panel {
 
       salencySelect: salencySelect,
       salencyTypes: salencyTypes,
+      salencyDropdown: this.salencyDropdown,
 
       dimSelect: true,
       pcaDims: _.range(28),
@@ -315,13 +320,16 @@ module.exports = class Panel {
     this.select("x-dim-select").val(this.defaultXDim);
     this.select("y-dim-select").val(this.defaultYDim);
 
-    this.select("salency-controls")
-        .find('input[type=radio][name=salency_type]')
-        .val([this.salencyType])
-        .change(function() {
-          self.changeSalencyType(this.value);
-          this.blur();
-        });
+    // Select element based on whether it is a dropdown or radio input
+    var salencyElement = this.salencyDropdown
+                         ? this.select("salency-select")
+                         : this.select("salency-controls").find('input[type=radio]')
+    // Set the default salencyType in the radio button or checkbox
+    salencyElement.val([this.salencyType]);
+    salencyElement.on('change', function() {
+      self.changeSalencyType(this.value);
+      this.blur();
+    });
   }
 
   keydown(e) {

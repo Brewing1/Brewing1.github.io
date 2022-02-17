@@ -13,7 +13,7 @@
       {{/if}}
       {{#if dimSelect}}
         <div id="{{id}}-x-pca-dim-control">
-          <label for="{{id}}-x-dim-select">PCA dim on x-axis</label>
+          <label for="{{id}}-x-dim-select">PCA dim on x-axis:</label>
           <select name="pca-dim-x" id="{{id}}-x-dim-select">
             {{#each pcaDims}}
               <option value="{{this}}">{{this}}</option>
@@ -22,7 +22,7 @@
         </div>
         
         <div id="{{id}}-y-pca-dim-control">
-          <label for="{{id}}-y-dim-select">PCA dim on y-axis</label>
+          <label for="{{id}}-y-dim-select">PCA dim on y-axis:</label>
           <select name="pca-dim-y" id="{{id}}-y-dim-select">
             {{#each pcaDims}}
               <option value="{{this}}">{{this}}</option>
@@ -57,11 +57,21 @@
 
     <div id="{{id}}-salency-controls" class="right-controls">
       {{#if salencySelect}}
-        Salency type:<br>
-        {{#each salencyTypes}}
-          <input type="radio" id="{{../id}}-sal-radio-{{this}}" name="salency_type" value="{{this}}">
-          <label for="{{../id}}-sal-radio-{{this}}">{{this}}</label><br>
-        {{/each}}
+        <label for="{{id}}-salency-select">Salency type:</label>
+        {{#if salencyDropdown}}
+          <select name="salency" id="{{id}}-salency-select">
+            {{#each salencyTypes}}
+              <option value="{{this}}">{{this}}</option>
+            {{/each}}
+          </select>
+        {{else}}
+          {{!-- Salency type:<br> --}}
+          <br>
+          {{#each salencyTypes}}
+            <input type="radio" id="{{../id}}-sal-radio-{{this}}" name="{{../id}}-salency_type" value="{{this}}">
+            <label for="{{../id}}-sal-radio-{{this}}">{{this}}</label><br>
+          {{/each}}
+        {{/if}}
       {{/if}}
     </div>
   </div>
