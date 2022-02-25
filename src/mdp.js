@@ -55,11 +55,11 @@ export function createMDP(tagId) {
   const getNodeType = function(rowIdx, colIdx) {
     // The name of each node (S, O, A, M)
     if (rowIdx == 0) {
-      return "S"
+      return "w"
     } else if (rowIdx == 1) {
-      return colIdx % 2 == 0 ? "O" : "A"
+      return colIdx % 2 == 0 ? "o" : "a"
     } else {
-      return "M"
+      return "h"
     }
   }
   const getTimeStep = function(rowIdx, colIdx) {
@@ -75,12 +75,8 @@ export function createMDP(tagId) {
   // turned out to be much messier
   const getText = (rowIdx, colIdx) => getNodeType(rowIdx, colIdx) + "<sub>" + getTimeStep(rowIdx, colIdx) + "</sub>"
   const getTextPosition = function(rowIdx, colIdx, d) {
-    // S is a small letter, needs to be shifted less for the first timestep
-    if (rowIdx == 0 && colIdx == 0) {
+    if (colIdx == 0 || (rowIdx == 1 && colIdx == 1)) {
       return d[0] - radius * (2/5)
-    } else if (colIdx == 0 || (rowIdx == 1 && colIdx == 1)) {
-      // Set position for the first timestep
-      return d[0] - radius * (1/2)
     } else {
       return d[0] - radius * (3/4)
     }
@@ -269,7 +265,7 @@ export function createMDP(tagId) {
   svg.append("text").attr("x", legBox.x + 15).attr("y", legBox.y + 5).text("Environment").style("font-size", "15px").attr("alignment-baseline","middle")
   svg.append("text").attr("x", legBox.x + 15).attr("y", legBox.y + 5 + legSpacing).text("Observation").style("font-size", "15px").attr("alignment-baseline","middle")
   svg.append("text").attr("x", legBox.x + 15).attr("y", legBox.y + 5 + legSpacing*2).text("Action").style("font-size", "15px").attr("alignment-baseline","middle")
-  svg.append("text").attr("x", legBox.x + 15).attr("y", legBox.y + 5 + legSpacing*3).text("Memory").style("font-size", "15px").attr("alignment-baseline","middle")
+  svg.append("text").attr("x", legBox.x + 15).attr("y", legBox.y + 5 + legSpacing*3).text("Agent hidden state").style("font-size", "15px").attr("alignment-baseline","middle")
 
   return svg.node()
 }
