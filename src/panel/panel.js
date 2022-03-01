@@ -64,6 +64,15 @@ module.exports = class Panel {
     this.defaultXDim = _.get(options, "defaultXDim", 0);
     this.defaultYDim = _.get(options, "defaultYDim", 1);
 
+    // Maps action numbers to thick arrows https://www.htmlsymbols.xyz/arrow-symbols
+    this.arrowMap = {
+      0: "\u2B0B", 1: "\u2B05", 2: "\u2B09",
+      3: "\u2B07", 4: "\u2205", 5: "\u2B06",
+      6: "\u2B0A", 7: "\u27A1", 8: "\u2B08",
+      9: "\u2205", 10: "\u2205", 11: "\u2205",
+      12: "\u2205", 13: "\u2205", 14: "\u2205"
+    }
+
     this._initialize(options)
   }
 
@@ -123,6 +132,9 @@ module.exports = class Panel {
 
     this.select("step-counter")
       .text("Step " + this.step + " of " + this.maxStep);
+
+    this.select("action-direction")
+      .text("Agent action: " + this.arrowMap[this.sampleData.actions[this.step]]);
 
     this.barChart.changeStep(this.step);
     this.scatterPlot.changeStep(this.step);
