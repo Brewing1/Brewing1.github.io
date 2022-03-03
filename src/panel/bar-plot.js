@@ -30,8 +30,8 @@ module.exports = class BarChart {
     this._drawBars();
   }
 
-  changeSalencyType(salencyType) {
-    this.salencyType = salencyType
+  changeSaliencyType(saliencyType) {
+    this.saliencyType = saliencyType
     this._updateColorData();
   }
 
@@ -68,10 +68,10 @@ module.exports = class BarChart {
   }
 
   _updateColorData() {
-    // this can be called before the salency type has been set
+    // this can be called before the saliency type has been set
     // if so it will be called again, so we do nothing.
-    if (this.useColor && this.hasOwnProperty('salencyType')) {
-      this.colorData = this.fullSampleData[`grad_hx_${this.salencyType}_loadings`];
+    if (this.useColor && this.hasOwnProperty('saliencyType')) {
+      this.colorData = this.fullSampleData[`grad_hx_${this.saliencyType}_loadings`];
       this._createColorScale();
     }
   }

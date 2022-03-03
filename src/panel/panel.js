@@ -21,7 +21,7 @@ module.exports = class Panel {
      * // Panels
      * 
      * displayObs: boolean
-     * displaySalency: boolean, also determines if color is added to the
+     * displaySaliency: boolean, also determines if color is added to the
      *  bar chart
      * displayScatterPlot: boolean
      * displayBarChart: boolean
@@ -32,13 +32,13 @@ module.exports = class Panel {
      * 
      * 
      * 
-     * useSalency: boolean, on if to plot salencyData. This determines the
-     *  precence of the salency-coded observation image, and salency colors
+     * useSaliency: boolean, on if to plot saliencyData. This determines the
+     *  precence of the saliency-coded observation image, and saliency colors
      *  on the bar chart
-     * salencySelect: boolean, if a selector for salency is given
-     * defaultSalency: string, must be provided if useSalency is true but
-     *  not salencySelect. Can also be provided as the initial setting for
-     *  the salencySelector.
+     * saliencySelect: boolean, if a selector for saliency is given
+     * defaultSaliency: string, must be provided if useSaliency is true but
+     *  not saliencySelect. Can also be provided as the initial setting for
+     *  the saliencySelector.
      * 
      * 
      * scatterPlotOptions: dictionary to parameterize the scatterplot
@@ -52,7 +52,7 @@ module.exports = class Panel {
     console.log(options)
     // panels to use
     this.displayObs         = _.get(options, "displayObs",         true);
-    this.displaySalency     = _.get(options, "displaySalency",     true);
+    this.displaySaliency     = _.get(options, "displaySaliency",     true);
     this.displayScatterPlot = _.get(options, "displayScatterPlot", true);
     this.displayBarChart    = _.get(options, "displayBarChart",    true);
 
@@ -98,23 +98,23 @@ module.exports = class Panel {
 
     this.changeSample(this.sampleNames[0])
     this.step = 0;
-    if (this.displaySalency) {
-      this.changeSalencyType(this.salencyType)
+    if (this.displaySaliency) {
+      this.changeSaliencyType(this.saliencyType)
     }
     this.changeStep(0);
     this._intializeControls();
   }
 
-  changeSalencyType(salencyType) {
-    console.assert(salencyType !== undefined)
+  changeSaliencyType(saliencyType) {
+    console.assert(saliencyType !== undefined)
 
-    this.salencyType = salencyType;
+    this.saliencyType = saliencyType;
     if (this.displayBarChart) {
-      this.barChart.changeSalencyType(this.salencyType);
+      this.barChart.changeSaliencyType(this.saliencyType);
       this.barChart.changeStep(this.step); // recolour
     }
     this.select("sal-image")
-      .attr("src", `../${this.dataLocation}/${this.currentSample}/sal_${this.salencyType}/${this.step}.png`);
+      .attr("src", `../${this.dataLocation}/${this.currentSample}/sal_${this.saliencyType}/${this.step}.png`);
   }
 
   changeStep(newStep) {
@@ -125,9 +125,9 @@ module.exports = class Panel {
       this.select("obs-image")
         .attr("src", `../${this.dataLocation}/${this.currentSample}/obs/${this.step}.png`);
     }
-    if(this.displaySalency) {
+    if(this.displaySaliency) {
       this.select("sal-image")
-        .attr("src", `../${this.dataLocation}/${this.currentSample}/sal_${this.salencyType}/${this.step}.png`);
+        .attr("src", `../${this.dataLocation}/${this.currentSample}/sal_${this.saliencyType}/${this.step}.png`);
     }
 
     this.select("step-counter")
@@ -163,9 +163,9 @@ module.exports = class Panel {
         hasImg: true
       })
     }
-    if (this.displaySalency) {
+    if (this.displaySaliency) {
       panelLayoutData.push({
-        title: "Salency Map:",
+        title: "Saliency Map:",
         panelId: "sal",
         hasImg: true
       })
@@ -188,22 +188,22 @@ module.exports = class Panel {
     const panelLayout = _.get(options, "panelLayout", `panel-grid-1-${panelLayoutData.length}`);
     console.log(`using layout ${panelLayout}`);
 
-    var salencySelect = null;
-    var salencyTypes = null;
+    var saliencySelect = null;
+    var saliencyTypes = null;
     // Whether to use a dropdown or radio buttons
-    this.salencyDropdown = false;
+    this.saliencyDropdown = false;
 
-    if ( this.displaySalency ) {
-      console.assert("salencyTypes" in options);
-      salencyTypes = options.salencyTypes
-      if ( _.isArray(salencyTypes)) {
-        salencySelect = true;
-        this.salencyType = salencyTypes[0];
-        this.salencyDropdown = salencyTypes.length > 2
+    if ( this.displaySaliency ) {
+      console.assert("saliencyTypes" in options);
+      saliencyTypes = options.saliencyTypes
+      if ( _.isArray(saliencyTypes)) {
+        saliencySelect = true;
+        this.saliencyType = saliencyTypes[0];
+        this.saliencyDropdown = saliencyTypes.length > 2
       } else {
-        console.assert(_.isString(salencyTypes))
-        salencySelect = false;
-        this.salencyType = salencyTypes;
+        console.assert(_.isString(saliencyTypes))
+        saliencySelect = false;
+        this.saliencyType = saliencyTypes;
       }
     }
 
@@ -216,9 +216,9 @@ module.exports = class Panel {
       panels: panelLayoutData,
       panelLayout: panelLayout,
 
-      salencySelect: salencySelect,
-      salencyTypes: salencyTypes,
-      salencyDropdown: this.salencyDropdown,
+      saliencySelect: saliencySelect,
+      saliencyTypes: saliencyTypes,
+      saliencyDropdown: this.saliencyDropdown,
 
       dimSelect: true,
       pcaDims: _.range(28),
@@ -336,13 +336,13 @@ module.exports = class Panel {
     this.select("y-dim-select").val(this.defaultYDim);
 
     // Select element based on whether it is a dropdown or radio input
-    var salencyElement = this.salencyDropdown
-                         ? this.select("salency-select")
-                         : this.select("salency-controls").find('input[type=radio]')
-    // Set the default salencyType in the radio button or checkbox
-    salencyElement.val([this.salencyType]);
-    salencyElement.on('change', function() {
-      self.changeSalencyType(this.value);
+    var saliencyElement = this.saliencyDropdown
+                         ? this.select("saliency-select")
+                         : this.select("saliency-controls").find('input[type=radio]')
+    // Set the default saliencyType in the radio button or checkbox
+    saliencyElement.val([this.saliencyType]);
+    saliencyElement.on('change', function() {
+      self.changeSaliencyType(this.value);
       this.blur();
     });
   }

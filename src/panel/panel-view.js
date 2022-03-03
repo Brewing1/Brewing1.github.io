@@ -15,8 +15,8 @@ const p = new Panel(
   $("#panel").get(0),
   "panel",
   {
-    displaySalency: true,
-    salencyTypes: ["value", "action", "hx_direction_1", "hx_direction_2"],
+    displaySaliency: true,
+    saliencyTypes: ["value", "action", "hx_direction_1", "hx_direction_2"],
     panelLayout: "panel-grid-2-2",
     barChartOptions: {
 			useColor: true,
