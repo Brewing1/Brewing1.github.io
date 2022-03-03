@@ -136,6 +136,9 @@ module.exports = class Panel {
     this.select("action-direction")
       .text("Agent action: " + this.arrowMap[this.sampleData.actions[this.step]]);
 
+    this.select("saliency-step")
+      .text("Saliency step: " + this.sampleData.saliency_step);
+
     this.barChart.changeStep(this.step);
     this.scatterPlot.changeStep(this.step);
   }

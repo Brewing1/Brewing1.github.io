@@ -67,6 +67,7 @@
               <option value="{{this}}">{{this}}</option>
             {{/each}}
           </select>
+          <br>
         {{else}}
           <br>
           {{#each salencyTypes}}
@@ -74,6 +75,8 @@
             <label for="{{../id}}-sal-radio-{{this}}">{{this}}</label><br>
           {{/each}}
         {{/if}}
+        <span id="{{id}}-saliency-step">
+        </span>
       {{/if}}
     </div>
   </div>
