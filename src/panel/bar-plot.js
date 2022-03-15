@@ -12,7 +12,7 @@ module.exports = class BarChart {
     this.height = this.width;
     this.margin = _.get(options, "margin", {top: 20, right: 15, bottom: 30, left: 25});
 
-    this.numBars = _.get(options, "numBars", 28);
+    this.numBars = _.get(options, "numBars", 16);
     this.useColor = _.get(options, "useColor", false);
 
     this.ylims = _.get(options, "ylims", [-6, 6])

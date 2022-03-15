@@ -97,11 +97,11 @@ module.exports = class Panel {
     this._initializeGraphs(options);
 
     this.changeSample(this.sampleNames[0])
-    this.step = 0;
+    this.step = 4;
     if (this.displaySaliency) {
       this.changeSaliencyType(this.saliencyType)
     }
-    this.changeStep(0);
+    this.changeStep(4);
     this._intializeControls();
   }
 
@@ -221,7 +221,7 @@ module.exports = class Panel {
       saliencyDropdown: this.saliencyDropdown,
 
       dimSelect: true,
-      pcaDims: _.range(28),
+      pcaDims: _.range(16),
       defaultXDim: 0,
       defaultYDim: 1,
     });
@@ -319,7 +319,7 @@ module.exports = class Panel {
 
     this.select("sample-select").on('change', function() {
       self.changeSample(this.value);
-      self.changeStep(0);
+      self.changeStep(4);
       this.blur();
     });
 
@@ -358,7 +358,7 @@ module.exports = class Panel {
           .next()
           .prop("selected", true);
         this.changeSample(this.select("sample-select").val());
-        this.changeStep(0);
+        this.changeStep(4);
         break;
       case 39:
         this._forwardOneStep();
@@ -369,7 +369,7 @@ module.exports = class Panel {
           .prev()
           .prop("selected", true);
         this.changeSample(this.select("sample-select").val());
-        this.changeStep(0);
+        this.changeStep(4);
         break;
     }
   }
