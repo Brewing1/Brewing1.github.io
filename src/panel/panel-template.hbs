@@ -13,7 +13,7 @@
       {{/if}}
       {{#if dimSelect}}
         <div id="{{id}}-x-pca-dim-control">
-          <label for="{{id}}-x-dim-select">PCA dim on x-axis</label>
+          <label for="{{id}}-x-dim-select">PCA dim on x-axis:</label>
           <select name="pca-dim-x" id="{{id}}-x-dim-select">
             {{#each pcaDims}}
               <option value="{{this}}">{{this}}</option>
@@ -22,7 +22,7 @@
         </div>
         
         <div id="{{id}}-y-pca-dim-control">
-          <label for="{{id}}-y-dim-select">PCA dim on y-axis</label>
+          <label for="{{id}}-y-dim-select">PCA dim on y-axis:</label>
           <select name="pca-dim-y" id="{{id}}-y-dim-select">
             {{#each pcaDims}}
               <option value="{{this}}">{{this}}</option>
@@ -53,15 +53,30 @@
       <br>
       <span id="{{id}}-step-counter">
       </span>
+      <br>
+      <span id="{{id}}-action-direction">
+      </span>
     </div>
 
     <div id="{{id}}-saliency-controls" class="right-controls">
       {{#if saliencySelect}}
-        Saliency type:<br>
-        {{#each saliencyTypes}}
-          <input type="radio" id="{{../id}}-sal-radio-{{this}}" name="saliency_type" value="{{this}}">
-          <label for="{{../id}}-sal-radio-{{this}}">{{this}}</label><br>
-        {{/each}}
+        <label for="{{id}}-saliency-select">Saliency type:</label>
+        {{#if saliencyDropdown}}
+          <select name="saliency" id="{{id}}-saliency-select">
+            {{#each saliencyTypes}}
+              <option value="{{this}}">{{this}}</option>
+            {{/each}}
+          </select>
+          <br>
+        {{else}}
+          <br>
+          {{#each saliencyTypes}}
+            <input type="radio" id="{{../id}}-sal-radio-{{this}}" name="{{../id}}-saliency_type" value="{{this}}">
+            <label for="{{../id}}-sal-radio-{{this}}">{{this}}</label><br>
+          {{/each}}
+        {{/if}}
+        <span id="{{id}}-saliency-step">
+        </span>
       {{/if}}
     </div>
   </div>

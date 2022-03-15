@@ -32,7 +32,7 @@
     <d-contents>
       <nav class="l-text figcaption">
         <h3>Contents</h3>
-        <div><a href="#introduction">Introduction</a></div> <! --- TODO: Fix the hyperlinks --->
+        <div><a href="#introduction">Introduction</a></div>
         <div><a href="#coinrun">A recurrent environment simulator</a></div>
         <div><a href="#analysis">Feature visualisation for recurrent agents</a></div>
         <div><a href="#diversity-hypothesis">Dissecting the causal mechanisms of behaviour</a></div>
@@ -46,7 +46,7 @@
     </d-contents>
     <div>
       <p>
-        The last half-decade has seen deep reinforcement learning (RL) agents learn to solve many exciting tasks, from beating humans in Go and Starcraft to solving Rubix cubes with a robotic hand. As real-world deployment of RL agents grows, there's an increasing need to understand the causal mechanisms of their behaviours (cite Deletang). This means looking inside their neural networks. But unlike convolutional image classifier networks, there has been much less success in interpreting the representations learned by deep RL agents. Why is analyzing the networks of RL agents so different?
+        The last half-decade has seen deep reinforcement learning (RL) agents learn to solve many exciting tasks, from beating humans in Go and Starcraft to solving Rubix cubes with a robotic hand. As real-world deployment of RL agents grows, there's an increasing need to understand the causal mechanisms of their behaviours <d-cite key="deletang2021"></d-cite>. This means looking inside their neural networks. But unlike convolutional image classifier networks, there has been much less success in interpreting the representations learned by deep RL agents. Why is analyzing the networks of RL agents so different?
       </p>
       <p>
        Causality provides a useful lense to understand the difficulty. In a standard feedforward network, the pattern of activations in one layer <i>cause</i> the particular pattern of activations in the next layer up, and so on through the network, from inputs to outputs. Because neural networks are fully differentiable, if we want to understand what inputs cause a neuron x to maximally light up in a feedforward network, we can backpropagate gradients of neuron x's activation (with respect to the inputs) through the layers to probe which inputs are most responsible for neuron x's activation. This tool is used in feature visualisation and attribution maps (cite featviz; building blocks). In a sense, backpropagation of gradients lets us trace causality back through the layers of the network.
