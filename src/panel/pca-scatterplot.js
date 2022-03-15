@@ -50,7 +50,7 @@ module.exports = class PCAScatterplot {
     this.sampleLoadings = sampleData.hx_loadings;
     console.log("scatterplot changing sample to ", sampleData)
     this._drawSample();
-    this.changeStep(0);
+    this.changeStep(4);
   }
 
 

@@ -21,7 +21,7 @@ const basicPanel = new Panel(
 	"basic-panel",
 	{
 		sampleNames: ["sample_00000", "sample_00001"],
-		displaySalency: false,
+		displaySaliency: false,
 
 	}
 );
@@ -37,7 +37,7 @@ const maximalActivationPanel = new Panel(
 	"max-act-panel",
 	{
 		sampleNames: ["sample_00000", "sample_00001"],
-		displaySalency: false,
+		displaySaliency: false,
 
 	}
 );
@@ -53,13 +53,13 @@ const maximalActivationPanel = new Panel(
  * as well as boxes.
  * 
  **/
-const salencyPanel = new Panel(
-	$("#salency-panel").get(0),
-	"salency-panel",
+const saliencyPanel = new Panel(
+	$("#saliency-panel").get(0),
+	"saliency-panel",
 	{
 		sampleNames: ["sample_00000", "sample_00001"],
-		displaySalency: true,
-		salencyTypes: ["value", "action"],
+		displaySaliency: true,
+		saliencyTypes: ["value", "action"],
 		barChartOptions: {
 			useColor: true,
 		},
@@ -78,8 +78,8 @@ const behaviourPanel = new Panel(
 	"behaviour-panel",
 	{
 		sampleNames: ["sample_00000", "sample_00001"],
-		displaySalency: true,
-		salencyTypes: ["value", "action"],
+		displaySaliency: true,
+		saliencyTypes: ["value", "action"],
 		barChartOptions: {
 			useColor: true,
 		},
@@ -96,7 +96,7 @@ const behaviourPanel = new Panel(
 
 // NOT DONE
 
-const panelList = [basicPanel, maximalActivationPanel, salencyPanel, behaviourPanel]
+const panelList = [basicPanel, maximalActivationPanel, saliencyPanel, behaviourPanel]
 
 document.addEventListener('keydown', function(e) {
 	onScreen = panelList.filter(function(p) {

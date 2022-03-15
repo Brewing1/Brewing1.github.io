@@ -2,18 +2,25 @@
 	"title": "Work in progress",
 	"description": "Work in progress.",
 	"authors": [
-		{
-			"author": "Ludwig Schubert",
-			"authorURL": "https://schubert.io/",
-			"affiliation": "OpenAI",
-			"affiliationURL": "https://openai.com"
-		},
-		{
-			"author": "Fake Person",
-			"authorURL": "https://schubert.io/",
-			"affiliation": "Fake Place",
-			"affiliationURL": "https://google.com"
-		}
+        {
+            "author": "Lee Sharkey",
+            "authorURL": "https://leesharkey.github.io/",
+            "affiliation": "ETH Zurich and University of Zurich",
+            "affiliationURL": "https://openai.com"
+        },
+        {
+            "author": "Daniel Braun",
+            "authorURL": "https://schubert.io/",
+            "affiliation": "University of Sydney",
+            "affiliationURL": "https://google.com"
+        },
+        {
+            "author": "Full author list TBD",
+            "authorURL": "https://schubert.io/",
+            "affiliation": "University of Sydney",
+            "affiliationURL": "https://google.com"
+        }
+
 	],
 	"katex": {
 		"delimiters": [
