@@ -5,7 +5,7 @@ _ = require('lodash');
 const panelTemplate = require("./panel-template.hbs");
 
 const BarChart = require('./bar-plot.js');
-const PCAScatterplot = require('./pca-scatterplot.js');
+const ICAScatterplot = require('./ica-scatterplot.js');
 
 module.exports = class Panel {
 
@@ -172,14 +172,14 @@ module.exports = class Panel {
     }     
     if (this.displayScatterPlot) {
       panelLayoutData.push({
-        title: "PCA Scatterplot:",
+        title: "ICA Scatterplot:",
         panelId: "scatterPlot",
         hasImg: false
       })
     }     
     if (this.displayBarChart) {
       panelLayoutData.push({
-        title: "PCA Bar Chart:",
+        title: "ICA Bar Chart:",
         panelId: "barChart",
         hasImg: false
       })
@@ -221,7 +221,7 @@ module.exports = class Panel {
       saliencyDropdown: this.saliencyDropdown,
 
       dimSelect: true,
-      pcaDims: _.range(16),
+      icaDims: _.range(16),
       defaultXDim: 0,
       defaultYDim: 1,
     });
@@ -231,7 +231,7 @@ module.exports = class Panel {
 
   _initializeGraphs(options) {
     if (this.displayScatterPlot) {
-      this.scatterPlot = new PCAScatterplot(
+      this.scatterPlot = new ICAScatterplot(
         this.select("scatterPlot-content").get(0),
         this.panelData.base_hx_loadings,
          _.get(options, "scatterPlotOptions", {}));

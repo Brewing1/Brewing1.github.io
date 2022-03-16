@@ -166,18 +166,18 @@
     <figure class="l-page">
       <div id="basic-panel">
       </div>
-      <figcaption style="text-align: center;">TODO: Figure that depicts pca plot with option for which PCs to choose. 3 panels. It's a video of the agent observations (no saliency) and the hx as it moves through pca space with bar chart (no saliency either).</figcaption>
+      <figcaption style="text-align: center;">TODO: Figure that depicts ica plot with option for which ICs to choose. 3 panels. It's a video of the agent observations (no saliency) and the hx as it moves through pca space with bar chart (no saliency either).</figcaption>
     </figure>
 
     <div>
       <p>
-        When we generate agent-environment rollouts that maximally activate agent's hidden state neurons in the directions of the PCs, we find that the visualisations look more meaningful. Here we find directions that appear to correspond to XYZ.
+        When we generate agent-environment rollouts that maximally activate agent's hidden state neurons in the directions of the ICs, we find that the visualisations look more meaningful. Here we find directions that appear to correspond to XYZ.
       </p>
     </div>
     <figure class="l-page">
       <div id="max-act-panel">
       </div>
-      <figcaption style="text-align: center;">Same 3 panel figure as above (has obs, pca, and barchart, no saliency of obs or on barchart) but  for samples that maximise each of the PCs (or NMFs if it happens to be what you use for the bar chart)</figcaption>
+      <figcaption style="text-align: center;">Same 3 panel figure as above (has obs, ica, and barchart, no saliency of obs or on barchart) but  for samples that maximise each of the ICs (or NMFs if it happens to be what you use for the bar chart)</figcaption>
     </figure>
 
     <h3>Using saliency to dissect the causal mechanisms of behaviour</h3>
@@ -193,7 +193,7 @@
     <figure>
       <div id="saliency-panel">
       </div>
-      <figcaption style="text-align: center;">TODO: One of the main figures: Four panels. Obs, obs-saliency, PCA, pca-barchart with saliency. It should have a bunch of samples that tell the story of the specific XYZ variables that we identified a few paragraphs above. Some probably work out, but some probably don't. E.g. we might have got the buzzsaw direction right but the box direction wrong because it also assigns saliency to thin ledges as well as boxes.</figcaption>
+      <figcaption style="text-align: center;">TODO: One of the main figures: Four panels. Obs, obs-saliency, PCA, ica-barchart with saliency. It should have a bunch of samples that tell the story of the specific XYZ variables that we identified a few paragraphs above. Some probably work out, but some probably don't. E.g. we might have got the buzzsaw direction right but the box direction wrong because it also assigns saliency to thin ledges as well as boxes.</figcaption>
     </figure>
 
     <div>
@@ -204,7 +204,7 @@
     <figure>
       <div id="behaviour-panel">
       </div>
-      <figcaption style="text-align: center;">TODO: Another one of the main figures: Four panels. Obs, obs-saliency, PCA, pca-barchart with saliency. It should have a bunch of samples that depict the action/behaviour that we're trying to explain. </figcaption>
+      <figcaption style="text-align: center;">TODO: Another one of the main figures: Four panels. Obs, obs-saliency, PCA, ica-barchart with saliency. It should have a bunch of samples that depict the action/behaviour that we're trying to explain. </figcaption>
     </figure>
 
     <div>

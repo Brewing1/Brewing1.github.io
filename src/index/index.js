@@ -11,10 +11,10 @@ const MDP = require('../mdp.js');
 const mdpAnimation = MDP.createMDP("#mdp-animation");
 
 /**
- * TODO: Figure that depicts pca plot with option for which
- * PCs to choose. 3 panels. It's a video of the agent
+ * TODO: Figure that depicts ica plot with option for which
+ * ICs to choose. 3 panels. It's a video of the agent
  * observations (no saliency) and the hx as it moves through
- * pca space with bar chart (no saliency either).
+ * ica space with bar chart (no saliency either).
 **/
 const basicPanel = new Panel(
 	$("#basic-panel").get(0),
@@ -27,9 +27,9 @@ const basicPanel = new Panel(
 );
 
 /**
- * Same 3 panel figure as above (has obs, pca, and barchart,
+ * Same 3 panel figure as above (has obs, ica, and barchart,
  * no saliency of obs or on barchart) but for samples that 
- * maximise each of the PCs (or NMFs if it happens to be what
+ * maximise each of the ICs (or NMFs if it happens to be what
  * you use for the bar chart)
  **/
 const maximalActivationPanel = new Panel(
@@ -44,7 +44,7 @@ const maximalActivationPanel = new Panel(
 
 /**
  * TODO: One of the main figures: Four panels.
- * Obs, obs-saliency, PCA, pca-barchart with saliency.
+ * Obs, obs-saliency, ICA, ica-barchart with saliency.
  * It should have a bunch of samples that tell the story of the
  * specific XYZ variables that we identified a few paragraphs above.
  * Some probably work out, but some probably don't.
@@ -69,7 +69,7 @@ const saliencyPanel = new Panel(
 
 /**
  * TODO: Another one of the main figures: Four panels.
- * Obs, obs-saliency, PCA, pca-barchart with saliency.
+ * Obs, obs-saliency, ICA, ica-barchart with saliency.
  * It should have a bunch of samples that depict the action/behaviour
  * that we're trying to explain.
  **/

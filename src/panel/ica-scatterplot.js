@@ -4,7 +4,7 @@
 const d3 = require("d3");
 _ = require('lodash');
 
-module.exports = class PCAScatterplot {
+module.exports = class ICAScatterplot {
 
   constructor(element, baseData, options) {
     this.element = element
@@ -60,7 +60,7 @@ module.exports = class PCAScatterplot {
     this.clear();
     this.draw();
     this._drawSample();
-    console.log(`pca plot re-drawn for new axes ${xDim} and ${yDim}`)
+    console.log(`ica plot re-drawn for new axes ${xDim} and ${yDim}`)
   }
 
 

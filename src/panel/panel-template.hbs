@@ -12,19 +12,19 @@
         </div>
       {{/if}}
       {{#if dimSelect}}
-        <div id="{{id}}-x-pca-dim-control">
-          <label for="{{id}}-x-dim-select">PCA dim on x-axis:</label>
-          <select name="pca-dim-x" id="{{id}}-x-dim-select">
-            {{#each pcaDims}}
+        <div id="{{id}}-x-ica-dim-control">
+          <label for="{{id}}-x-dim-select">IC on x-axis:</label>
+          <select name="ica-dim-x" id="{{id}}-x-dim-select">
+            {{#each icaDims}}
               <option value="{{this}}">{{this}}</option>
             {{/each}}
           </select>
         </div>
         
-        <div id="{{id}}-y-pca-dim-control">
-          <label for="{{id}}-y-dim-select">PCA dim on y-axis:</label>
-          <select name="pca-dim-y" id="{{id}}-y-dim-select">
-            {{#each pcaDims}}
+        <div id="{{id}}-y-ica-dim-control">
+          <label for="{{id}}-y-dim-select">IC on y-axis:</label>
+          <select name="ica-dim-y" id="{{id}}-y-dim-select">
+            {{#each icaDims}}
               <option value="{{this}}">{{this}}</option>
             {{/each}}
           </select>
