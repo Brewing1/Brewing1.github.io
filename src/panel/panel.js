@@ -64,6 +64,8 @@ module.exports = class Panel {
     this.defaultXDim = _.get(options, "defaultXDim", 0);
     this.defaultYDim = _.get(options, "defaultYDim", 1);
 
+    this.defaultStep = _.get(options, "defaultStep", 4);
+
     // Maps action numbers to thick arrows https://www.htmlsymbols.xyz/arrow-symbols
     this.arrowMap = {
       0: "\u2B0B", 1: "\u2B05", 2: "\u2B09",
@@ -106,7 +108,7 @@ module.exports = class Panel {
 
     this.changeSample(this.sampleNames[0]);
     // Initialise the starting step for all panels
-    this.changeStep(4);
+    this.changeStep(this.defaultStep);
 
     if (this.displaySaliency) {
       this.changeSaliencyType(this.saliencyType);
@@ -225,8 +227,8 @@ module.exports = class Panel {
 
       dimSelect: true,
       icaDims: _.range(16),
-      defaultXDim: 0,
-      defaultYDim: 1,
+      defaultXDim: this.defaultXDim,
+      defaultYDim: this.defaultXDim,
     });
 
     $(this.element).html(panelHtml);
@@ -361,7 +363,7 @@ module.exports = class Panel {
           .next()
           .prop("selected", true);
         this.changeSample(this.select("sample-select").val());
-        this.changeStep(4);
+        this.changeStep(this.defaultStep);
         break;
       case 39:
         this._forwardOneStep();
@@ -372,7 +374,7 @@ module.exports = class Panel {
           .prev()
           .prop("selected", true);
         this.changeSample(this.select("sample-select").val());
-        this.changeStep(4);
+        this.changeStep(this.defaultStep);
         break;
     }
   }
