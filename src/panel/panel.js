@@ -49,16 +49,16 @@ module.exports = class Panel {
     this.element = element;
     this.id = id;
 
-    console.log(options)
+    console.log(options);
     // panels to use
     this.displayObs         = _.get(options, "displayObs",         true);
     this.displaySaliency     = _.get(options, "displaySaliency",     true);
     this.displayScatterPlot = _.get(options, "displayScatterPlot", true);
     this.displayBarChart    = _.get(options, "displayBarChart",    true);
 
-    this.dataLocation = _.get(options, "dataLocation", "data")
-    this.panelData = require(`../../static/${this.dataLocation}/panel_data.json`)
-    console.log("data from " + this.dataLocation, this.panelData)
+    this.dataLocation = _.get(options, "dataLocation", "data");
+    this.panelData = require(`../../static/${this.dataLocation}/panel_data.json`);
+    console.log("data from " + this.dataLocation, this.panelData);
     this.sampleNames = _.get(options, "sampleNames", Object.keys(this.panelData.samples));
 
     this.defaultXDim = _.get(options, "defaultXDim", 0);
@@ -71,9 +71,9 @@ module.exports = class Panel {
       6: "\u2B0A", 7: "\u27A1", 8: "\u2B08",
       9: "\u2205", 10: "\u2205", 11: "\u2205",
       12: "\u2205", 13: "\u2205", 14: "\u2205"
-    }
+    };
 
-    this._initialize(options)
+    this._initialize(options);
   }
 
 
@@ -81,9 +81,17 @@ module.exports = class Panel {
     console.assert(this.sampleNames.includes(sampleName));
 
     this.currentSample = sampleName;
-    this.sampleData = this.panelData.samples[sampleName]
+    this.sampleData = this.panelData.samples[sampleName];
     this.maxStep = this.sampleData.hx_loadings.length - 1;
 
+    if (this.displayObs) {
+      this.select("obs-image")
+        .attr("src", `../${this.dataLocation}/${this.currentSample}/obs.png`);
+    }
+    if (this.displaySaliency) {
+      this.select("sal-image")
+        .attr("src", `../${this.dataLocation}/${this.currentSample}/sal_${this.saliencyType}.png`);
+    }
     if (this.displayBarChart) {
       this.barChart.changeSample(this.sampleData);
     }
@@ -96,17 +104,18 @@ module.exports = class Panel {
     this._initializeHtml(options);
     this._initializeGraphs(options);
 
-    this.changeSample(this.sampleNames[0])
-    this.step = 4;
-    if (this.displaySaliency) {
-      this.changeSaliencyType(this.saliencyType)
-    }
+    this.changeSample(this.sampleNames[0]);
+    // Initialise the starting step for all panels
     this.changeStep(4);
+
+    if (this.displaySaliency) {
+      this.changeSaliencyType(this.saliencyType);
+    }
     this._intializeControls();
   }
 
   changeSaliencyType(saliencyType) {
-    console.assert(saliencyType !== undefined)
+    console.assert(saliencyType !== undefined);
 
     this.saliencyType = saliencyType;
     if (this.displayBarChart) {
@@ -114,21 +123,15 @@ module.exports = class Panel {
       this.barChart.changeStep(this.step); // recolour
     }
     this.select("sal-image")
-      .attr("src", `../${this.dataLocation}/${this.currentSample}/sal_${this.saliencyType}/${this.step}.png`);
+      .attr("src", `../${this.dataLocation}/${this.currentSample}/sal_${this.saliencyType}.png`);
   }
 
   changeStep(newStep) {
     this.step = newStep;
     console.log(`changing step to ${this.step}`)
-    
-    if(this.displayObs) {
-      this.select("obs-image")
-        .attr("src", `../${this.dataLocation}/${this.currentSample}/obs/${this.step}.png`);
-    }
-    if(this.displaySaliency) {
-      this.select("sal-image")
-        .attr("src", `../${this.dataLocation}/${this.currentSample}/sal_${this.saliencyType}/${this.step}.png`);
-    }
+
+    // Shift the images left/right according to this.step
+    $(`.subpanel-image img`).css("left", `${this.step*-100}%`)
 
     this.select("step-counter")
       .text("Step " + this.step + " of " + this.maxStep);

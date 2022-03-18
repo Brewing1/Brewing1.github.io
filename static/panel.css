@@ -38,6 +38,15 @@
 	margin-top: 20px;
 }
 
+/* Allow a subpanel to better position sections of concatenated images */
+.subpanel-image {
+	overflow: hidden;
+}
+.subpanel-image img{
+	position: relative;
+	width: 1000%;
+}
+
 /*.subpanel-0 {
 	grid-area: subpanel-0;
 }
@@ -56,10 +65,6 @@
 
 .control-icon svg {
 	width: 25px;
-}
-
-.subpanel img {
-	width: 100%;
 }
 
 .subpanel hr {
