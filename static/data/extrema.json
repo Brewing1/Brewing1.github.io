@@ -389,27 +389,26 @@
     },
     "saliency_step": {
         "high": {
-            "0": [
-                "sample_00010"
-            ],
+            "0": [],
             "1": [],
             "2": [],
             "3": [],
             "4": [
-                "sample_00006",
-                "sample_00008"
+                "sample_00006"
             ],
             "5": [],
             "6": [
-                "sample_00001",
-                "sample_00010"
+                "sample_00001"
             ],
             "7": [
                 "sample_00008"
             ],
-            "8": [],
+            "8": [
+                "sample_00002"
+            ],
             "9": [
-                "sample_00001"
+                "sample_00001",
+                "sample_00010"
             ],
             "10": [],
             "11": [
@@ -418,16 +417,12 @@
             ],
             "12": [
                 "sample_00000",
-                "sample_00003",
-                "sample_00004"
+                "sample_00003"
             ],
             "13": [
-                "sample_00001",
-                "sample_00010"
+                "sample_00001"
             ],
             "14": [
-                "sample_00001",
-                "sample_00008",
                 "sample_00010"
             ],
             "15": [
@@ -437,63 +432,62 @@
         "middle": {
             "0": [
                 "sample_00004",
-                "sample_00006"
+                "sample_00006",
+                "sample_00007"
             ],
             "1": [],
             "2": [
+                "sample_00000",
                 "sample_00004",
+                "sample_00009"
+            ],
+            "3": [],
+            "4": [
+                "sample_00001",
+                "sample_00008"
+            ],
+            "5": [],
+            "6": [
+                "sample_00007",
                 "sample_00011"
             ],
-            "3": [
-                "sample_00000",
-                "sample_00003",
-                "sample_00007"
-            ],
-            "4": [
-                "sample_00003"
-            ],
-            "5": [
-                "sample_00001",
-                "sample_00005"
-            ],
-            "6": [],
             "7": [
-                "sample_00000",
-                "sample_00003"
+                "sample_00003",
+                "sample_00007",
+                "sample_00009"
             ],
             "8": [
-                "sample_00007"
+                "sample_00007",
+                "sample_00008"
             ],
             "9": [
+                "sample_00000",
                 "sample_00006"
             ],
             "10": [
-                "sample_00002"
+                "sample_00007"
             ],
             "11": [
-                "sample_00002",
-                "sample_00004"
+                "sample_00004",
+                "sample_00007",
+                "sample_00009"
             ],
             "12": [
                 "sample_00011"
             ],
             "13": [],
             "14": [],
-            "15": [
-                "sample_00000"
-            ]
+            "15": []
         },
         "low": {
             "0": [
                 "sample_00000",
-                "sample_00001",
-                "sample_00009"
+                "sample_00001"
             ],
             "1": [
                 "sample_00000",
                 "sample_00001",
                 "sample_00004",
-                "sample_00005",
                 "sample_00007",
                 "sample_00008",
                 "sample_00009",
@@ -501,16 +495,16 @@
                 "sample_00011"
             ],
             "2": [
-                "sample_00000",
+                "sample_00001",
                 "sample_00002",
                 "sample_00003",
                 "sample_00005",
                 "sample_00008",
-                "sample_00009"
+                "sample_00011"
             ],
             "3": [
+                "sample_00000",
                 "sample_00001",
-                "sample_00002",
                 "sample_00004",
                 "sample_00005",
                 "sample_00008",
@@ -518,12 +512,13 @@
             ],
             "4": [
                 "sample_00000",
-                "sample_00001",
+                "sample_00003",
                 "sample_00004",
                 "sample_00010"
             ],
             "5": [
                 "sample_00000",
+                "sample_00001",
                 "sample_00002",
                 "sample_00003",
                 "sample_00004",
@@ -534,14 +529,13 @@
             ],
             "6": [
                 "sample_00006",
-                "sample_00007",
                 "sample_00008",
                 "sample_00009"
             ],
             "7": [
+                "sample_00000",
                 "sample_00002",
                 "sample_00004",
-                "sample_00007",
                 "sample_00011"
             ],
             "8": [
@@ -561,36 +555,35 @@
             ],
             "10": [
                 "sample_00001",
-                "sample_00005",
                 "sample_00006",
                 "sample_00009",
                 "sample_00010",
                 "sample_00011"
             ],
             "11": [
-                "sample_00007",
-                "sample_00009",
                 "sample_00010",
                 "sample_00011"
             ],
             "12": [
                 "sample_00001",
                 "sample_00002",
-                "sample_00007",
-                "sample_00008"
+                "sample_00007"
             ],
             "13": [
                 "sample_00005",
                 "sample_00006",
                 "sample_00007",
-                "sample_00009"
+                "sample_00008"
             ],
             "14": [
+                "sample_00001",
                 "sample_00002",
+                "sample_00008",
                 "sample_00009",
                 "sample_00011"
             ],
             "15": [
+                "sample_00000",
                 "sample_00001",
                 "sample_00004",
                 "sample_00007",
