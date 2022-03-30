@@ -317,14 +317,14 @@ module.exports = class Panel {
       if (!self.playing) {
         self._play();
       } else {
-        self._pause();      
+        self._pause();
       }
       this.blur();
     });
 
     this.select("sample-select").on('change', function() {
       self.changeSample(this.value);
-      self.changeStep(4);
+      self.changeStep(self.defaultStep);
       this.blur();
     });
 
