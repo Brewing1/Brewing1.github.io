@@ -1,6 +1,7 @@
 // Adapted from:
 //  - https://elliotbentley.com/blog/a-better-way-to-structure-d3-code/
 
+const { minIndex } = require("d3");
 const d3 = require("d3");
 _ = require('lodash');
 
@@ -48,7 +49,6 @@ module.exports = class ICAScatterplot {
 
   changeSample(sampleData) {
     this.sampleLoadings = sampleData.hx_loadings;
-    console.log("scatterplot changing sample to ", sampleData)
     this._drawSample();
     this.changeStep(4);
   }
@@ -60,7 +60,6 @@ module.exports = class ICAScatterplot {
     this.clear();
     this.draw();
     this._drawSample();
-    console.log(`ica plot re-drawn for new axes ${xDim} and ${yDim}`)
   }
 
 
@@ -73,34 +72,24 @@ module.exports = class ICAScatterplot {
 
   _createScales() {
 
-    var dimExtents = dim => {
+    this.dimExtents = dim => {
       // just on base, for now
       return d3.extent(this.baseData, d => d[dim])
-
-      const baseExtents = d3.extent(this.baseData, d => d[dim]);
-      const sampleExtents = d3.extent(this.sampleData, d => d[dim]);
-
-      return [
-        Math.min(baseExtents[0], sampleExtents[0]),
-        Math.max(baseExtents[1], sampleExtents[1])
-      ]
     }
 
-    m = this.margin
-
     this.x = d3.scaleLinear()
-      .domain(dimExtents(this.dimX)).nice()
-      .range([m.left, this.width - m.right])
+      .domain(this.dimExtents(this.dimX)).nice()
+      .range([this.margin.left, this.width - this.margin.right])
+      .clamp(true)
     
     this.y = d3.scaleLinear()
-      .domain(dimExtents(this.dimY)).nice()
-      .range([this.height - m.bottom, m.top])
+      .domain(this.dimExtents(this.dimY)).nice()
+      .range([this.height - this.margin.bottom, this.margin.top])
+      .clamp(true)
   }
 
 
   _drawAxes() {
-    m = this.margin;
-
     const xAxis = g => g
       .attr("transform", `translate(0,${this.height - this.margin.bottom})`)
       .call(d3.axisBottom(this.x).ticks(this.width / 80))
@@ -144,7 +133,6 @@ module.exports = class ICAScatterplot {
 
   _drawSample() {
     if (typeof this.sampleGroup !== 'undefined') {
-      console.log(this.sampleGroup)
       this.sampleGroup.remove();
     }
 
@@ -155,7 +143,6 @@ module.exports = class ICAScatterplot {
       .x(d => this.x(d[this.dimX]))
       .y(d => this.y(d[this.dimY]));
 
-    console.log(this.sampleGroup, this.sampleLoadings)
 
     this.sampleGroup
       .append("path")
@@ -172,9 +159,9 @@ module.exports = class ICAScatterplot {
         .attr("class", "sample-point")
         .attr("cx", d => this.x(d[this.dimX]))
         .attr("cy", d => this.y(d[this.dimY]))
-        .attr("stroke", "steelblue")
-        .attr("fill", "white")
-        .attr("r", this.samplePointSize);
+        .attr("stroke", d => this._sampleClamped(d) ? null : "steelblue")
+        .attr("fill", d => this._sampleClamped(d) ? "grey" : "white")
+        .attr("r", d => this._sampleClamped(d) ? this.samplePointSize * 4 / 5 : this.samplePointSize);
 
     this.highlightPoint = this.sampleGroup
       .append("circle")
@@ -182,6 +169,17 @@ module.exports = class ICAScatterplot {
       .attr("r", this.samplePointSize)
       .attr("cx", this.x(this.sampleLoadings[0][this.dimX]))
       .attr("cy", this.y(this.sampleLoadings[0][this.dimY]));
+  }
+
+  _sampleClamped(d) {
+    const [minX, maxX] = this.x.domain();
+    const [minY, maxY] = this.y.domain();
+    return (
+      d[this.dimX] < minX
+      || d[this.dimX] > maxX
+      || d[this.dimY] < minY
+      || d[this.dimY] > maxY
+    );
   }
 
 }
