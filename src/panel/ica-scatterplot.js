@@ -50,7 +50,6 @@ module.exports = class ICAScatterplot {
   changeSample(sampleData) {
     this.sampleLoadings = sampleData.hx_loadings;
     this._drawSample();
-    this.changeStep(4);
   }
 
 

@@ -22,6 +22,7 @@ const p = new Panel(
 			useColor: true,
 		},
     dataLocation: dataLocation,
+    defaultStep: 4,
   }
 );
 
