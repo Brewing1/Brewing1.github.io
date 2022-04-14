@@ -6,7 +6,7 @@ export function createMDP(tagId) {
   const radius = 20
   const arrowSpeed = 1200
   const loopSpeed = 15000
-  // Uses color palette 0.2.7 light from
+  // Uses "light" color palette 0.2.7 light from
   // https://cran.r-project.org/web/packages/khroma/vignettes/tol.html
   const colour = {env: "#44BB99", obs: "#EEDD88", act: "#EE8866", mem: "#77AADD"}
   // Position of legend

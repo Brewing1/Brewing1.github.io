@@ -63,7 +63,12 @@ module.exports = class ICAScatterplot {
 
 
   changeStep(step) {
+    // Move the highlighted circle over the correct datapoint. If the datapoint is out of the
+    // axes, reduce its size and change its colour
+    const clamped = this._sampleClamped(this.sampleLoadings[step])
     this.highlightPoint
+      .attr("fill", clamped ? "#225555" : "#44BB99")
+      .attr("r", clamped ? this.samplePointSize * 4 / 5 : this.samplePointSize)
       .attr("cx", this.x(this.sampleLoadings[step][this.dimX]))
       .attr("cy", this.y(this.sampleLoadings[step][this.dimY]));
   }
@@ -147,7 +152,7 @@ module.exports = class ICAScatterplot {
       .append("path")
       .datum(this.sampleLoadings)
       .attr("fill", "none")
-      .attr("stroke", "steelblue")
+      .attr("stroke", "#44BB99")
       .attr("stroke-width", 1.5)
       .attr("d", line);
 
@@ -158,16 +163,13 @@ module.exports = class ICAScatterplot {
         .attr("class", "sample-point")
         .attr("cx", d => this.x(d[this.dimX]))
         .attr("cy", d => this.y(d[this.dimY]))
-        .attr("stroke", d => this._sampleClamped(d) ? null : "steelblue")
+        .attr("stroke", d => this._sampleClamped(d) ? null : "#44BB99")
         .attr("fill", d => this._sampleClamped(d) ? "grey" : "white")
         .attr("r", d => this._sampleClamped(d) ? this.samplePointSize * 4 / 5 : this.samplePointSize);
 
+    // Position of this highlighted point is set in this.changeStep
     this.highlightPoint = this.sampleGroup
-      .append("circle")
-      .attr("fill", "red")
-      .attr("r", this.samplePointSize)
-      .attr("cx", this.x(this.sampleLoadings[0][this.dimX]))
-      .attr("cy", this.y(this.sampleLoadings[0][this.dimY]));
+      .append("circle");
   }
 
   _sampleClamped(d) {
