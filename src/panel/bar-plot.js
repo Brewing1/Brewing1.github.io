@@ -16,10 +16,12 @@ module.exports = class BarChart {
     this.useColor = _.get(options, "useColor", false);
 
     this.ylims = _.get(options, "ylims", [-6, 6])
+
+    this.draw();
   }
 
 
-  draw() {    
+  draw() {
     this.svg = d3.select(this.element)
       .append('svg')
       .attr("width", this.width)
@@ -27,7 +29,6 @@ module.exports = class BarChart {
 
     this._createScales();
     this._drawAxes();
-    this._drawBars();
   }
 
   changeSaliencyType(saliencyType) {
@@ -54,17 +55,20 @@ module.exports = class BarChart {
   }
 
   changeSample(sampleData) {
-    this.clear();
+    this.clearBars();
 
     this.fullSampleData = sampleData;
     this.data = this.fullSampleData.hx_loadings[0].slice(0, this.numBars)
 
     this._updateColorData();
-    this.draw();
+    this._drawBars();
   }
 
-  clear() {
-    $(this.element).empty();
+  clearBars() {
+    // Find and remove all g elements that contain rect elements (these are the bars)
+    $(this.element).find("g").filter(function() {
+      return $(this).children("rect").length > 0;
+    }).remove();
   }
 
   _updateColorData() {
@@ -89,11 +93,9 @@ module.exports = class BarChart {
   }
 
   _createScales() {
-    m = this.margin
-
     this.x = d3.scaleBand()
       .domain(d3.range(this.numBars))
-      .range([m.left, this.width - m.right])
+      .range([this.margin.left, this.width - this.margin.right])
       .padding(0.1);
 
     const yDomain = (this.ylims === null) ? 
@@ -102,13 +104,10 @@ module.exports = class BarChart {
 
     this.y = d3.scaleLinear()
       .domain(yDomain).nice()
-      .range([this.height - m.bottom, m.top]);
+      .range([this.height - this.margin.bottom, this.margin.top]);
   }
 
-
   _drawAxes() {
-    m = this.margin;
-
     xAxis = g => g
       .attr("transform", `translate(0,${this.height - this.margin.bottom})`)
       .attr("class", "x axis")
@@ -136,16 +135,15 @@ module.exports = class BarChart {
         .call(yAxis);
   }
 
-
   _drawBars() {
-  this.svg.append("g")
-    .attr("fill", "black")
-    .selectAll("rect")
-    .data(this.data)
-    .join("rect")
-      .attr("x", (d, i) => this.x(i))
-      .attr("y", (d) => (d>0) ? this.y(d) : this.y(0))
-      .attr("height", d => Math.abs(this.y(0) - this.y(d)) )
-      .attr("width", this.x.bandwidth());
+    this.svg.append("g")
+      .attr("fill", "black")
+      .selectAll("rect")
+      .data(this.data)
+      .join("rect")
+        .attr("x", (d, i) => this.x(i))
+        .attr("y", (d) => (d>0) ? this.y(d) : this.y(0))
+        .attr("height", d => Math.abs(this.y(0) - this.y(d)) )
+        .attr("width", this.x.bandwidth());
   }
 }
