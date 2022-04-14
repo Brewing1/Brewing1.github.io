@@ -12,7 +12,7 @@ module.exports = class ICAScatterplot {
 
     this.width = $(element).width();
     this.height = this.width;
-    this.margin = _.get(options, "margin", {top: 20, right: 15, bottom: 30, left: 25});
+    this.margin = _.get(options, "margin", {top: 20, right: 15, bottom: 30, left: 30});
 
     this.numBasePoints = _.get(options, "numBasePoints", 1000);
     this.baseData = baseData.slice(0, this.numBasePoints);
