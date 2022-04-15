@@ -46,12 +46,34 @@ module.exports = class BarChart {
     }
     const currentData = d3.zip(this.fullSampleData.hx_loadings[step], colors)
 
-    this.svg.selectAll("rect")
+    // Top and bottom pixel locations for y-axis
+    const [bottomY, topY] = this.y.range();
+
+    this.svg.selectAll(".bar")
       .data(currentData)
       .transition(10)
-        .attr("y", (d) => (d[0]>0) ? this.y(d[0]) : this.y(0))
-        .attr("height", d => Math.abs(this.y(0) - this.y(d[0])))
+        .attr("y", d => d[0] > 0 ? Math.max(this.y(d[0]), topY) : this.y(0))
+        .attr("height", d => {
+          return Math.min(
+            Math.abs(this.y(0) - this.y(d[0])),
+            Math.abs(this.y(0) - topY)
+          );
+        })
         .attr("fill", d => d[1])
+
+    this.svg.selectAll(".bar-text")
+      .data(currentData)
+      .transition(10)
+      .text(d => {
+        return d[0] < this.y.domain()[0] || d[0] > this.y.domain()[1]
+        ? Math.round(d[0] * 10) / 10
+        : ""
+      })
+      .attr("y", d => {
+        return d[0] > 0
+        ? Math.max(this.y(d[0]), topY) + 15
+        : Math.min(this.y(d[0]), bottomY) - 15
+      });
   }
 
   changeSample(sampleData) {
@@ -61,7 +83,7 @@ module.exports = class BarChart {
     this.data = this.fullSampleData.hx_loadings[0].slice(0, this.numBars)
 
     this._updateColorData();
-    this._drawBars();
+    this._drawBarTemplates();
   }
 
   clearBars() {
@@ -104,7 +126,8 @@ module.exports = class BarChart {
 
     this.y = d3.scaleLinear()
       .domain(yDomain).nice()
-      .range([this.height - this.margin.bottom, this.margin.top]);
+      .range([this.height - this.margin.bottom, this.margin.top])
+      .clamp(true);
   }
 
   _drawAxes() {
@@ -135,15 +158,30 @@ module.exports = class BarChart {
         .call(yAxis);
   }
 
-  _drawBars() {
-    this.svg.append("g")
-      .attr("fill", "black")
-      .selectAll("rect")
-      .data(this.data)
-      .join("rect")
-        .attr("x", (d, i) => this.x(i))
-        .attr("y", (d) => (d>0) ? this.y(d) : this.y(0))
-        .attr("height", d => Math.abs(this.y(0) - this.y(d)) )
-        .attr("width", this.x.bandwidth());
+  _drawBarTemplates() {
+    // Create templates for the bars in the barplot. The actual bars are created in the changeStep
+    // method (which we assume will always get called after the changeSample method) by setting
+    // the "y" and "height" attributes of the rects
+    let bars = this.svg.selectAll(".bar")
+        .data(this.data)
+        .enter()
+        .append("g");
+
+    bars.append("rect")
+      .attr("class", "bar")
+      .attr("x", (d, i) => this.x(i))
+      .attr("y", this.y(0)) // default position for nice transitions
+      .attr("width", this.x.bandwidth());
+
+    // We wish to label a bar with its value if it is larger than our specified axes. We setup the
+    // template for this text and then set the text and y attribute are set in changeStep
+    bars.append("text")
+      .attr("class", "bar-text")
+      .attr("x", (d, i) => this.x(i) + this.x.bandwidth() / 2)
+      .attr("y", this.y(0)) // default position for nice transitions
+      .attr("font-family" , "sans-serif")
+      .attr("font-size" , "10px")
+      .attr("fill" , "black")
+      .attr("text-anchor", "middle");
   }
 }
