@@ -102,7 +102,7 @@ module.exports = class ICAScatterplot {
         .attr("y", this.margin.bottom - 4)
         .attr("fill", "black")
         .attr("text-anchor", "end")
-        .text(`dimension ${this.dimX}`))
+        .text(`IC loadings dim ${this.dimX}`))
     
     const yAxis = g => g
       .attr("transform", `translate(${this.margin.left},0)`)
@@ -112,7 +112,7 @@ module.exports = class ICAScatterplot {
         .attr("y", 10)
         .attr("fill", "black")
         .attr("text-anchor", "start")
-        .text(`dimension ${this.dimY}`))
+        .text(`IC loadings dim ${this.dimY}`))
 
     this.svg.append("g")
         .call(xAxis);
