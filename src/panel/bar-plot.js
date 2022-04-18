@@ -139,7 +139,8 @@ module.exports = class BarChart {
         .attr("x", this.width)
         .attr("y", this.margin.bottom - 4)
         .attr("fill", "black")
-        .attr("text-anchor", "end"));
+        .attr("text-anchor", "end")
+        .text("IC dimensions"));
     
     yAxis = g => g
       .attr("transform", `translate(${this.margin.left},0)`)
@@ -149,7 +150,8 @@ module.exports = class BarChart {
         .attr("x", - this.margin.left)
         .attr("y", 10)
         .attr("fill", "black")
-        .attr("text-anchor", "start"));
+        .attr("text-anchor", "start")
+        .text("IC loadings"));
 
     this.svg.append("g")
         .call(xAxis);
