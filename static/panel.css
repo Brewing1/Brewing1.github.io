@@ -1,11 +1,12 @@
 .panel-controls {
 	display: flex;
 	justify-content: space-between;
-	margin-bottom: 20px;
+	margin-bottom: 10px;
 }
 
 .left-controls {
 	flex: 1;
+	margin-left: 10px;
 }
 
 .center-controls {
@@ -15,6 +16,7 @@
 
 .right-controls {
 	flex: 1;
+	margin-right: 10px;
 }
 
 /* Line of subpanels */
@@ -71,4 +73,38 @@
 	margin-top: 5px;
 	margin-bottom: 5px;
 	color: black;
+}
+
+#saliency-legend {
+	display: flex;
+}
+
+#saliency-legend-graphic {
+	margin-left: 6px;
+	flex: 1;
+}
+
+#saliency-color-labels {
+	/* flex: 1; */
+	display: flex;
+	font-size: 50%;
+	font-weight: bold;
+	/* This is not a good way to do this */
+	max-height: 20px;
+	margin-top: -15px;
+}
+
+#saliency-color-label-left {
+	flex: 1;
+	text-align: left;
+}
+
+#saliency-color-label-center {
+	flex: 1;
+	text-align: center;
+}
+
+#saliency-color-label-right {
+	flex: 1;
+	text-align: right;
 }

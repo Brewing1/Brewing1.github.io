@@ -77,6 +77,27 @@
         {{/if}}
         <span id="{{id}}-saliency-step">
         </span>
+        <div id="saliency-legend">
+          <div id="saliency-legend-text">
+            <text>Legend: </text>
+          </div>
+          <div id="saliency-legend-graphic">
+            <div id="saliency-colorbar">
+              <img src="https://raw.githubusercontent.com/d3/d3-scale-chromatic/master/img/RdBu.png" width="100%" height="20px" alt="RdBu">
+            </div>
+            <div id="saliency-color-labels">
+              <div id="saliency-color-label-left">
+                <text>Neg</text>
+              </div>
+              <div id="saliency-color-label-center">
+                <text>0</text>
+              </div>
+              <div id="saliency-color-label-right">
+                <text>Pos</text>
+              </div>
+            </div>
+          </div>
+        </div>
       {{/if}}
     </div>
   </div>
