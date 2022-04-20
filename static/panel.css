@@ -1,3 +1,15 @@
+#panel-layout {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-column-gap: 1%;
+	grid-template-areas: ". a b"
+}
+#panel-left {
+	grid-area: a;
+}
+#panel-right {
+	grid-area: b;
+}
 .panel-controls {
 	display: flex;
 	justify-content: space-between;

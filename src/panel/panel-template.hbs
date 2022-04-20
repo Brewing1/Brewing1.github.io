@@ -1,128 +1,162 @@
-<div id="{{id}}-panel" class="panel {{panelLayout}}">
-  <div id="{{id}}-controls" class="panel-controls">
-    <div id="{{id}}-left-controls" class="left-controls">
-      {{#if sampleSelect}}
-        <div id="{{id}}-sample-control">
-          <label for="{{id}}-sample-select">Sample:</label>
-          <select name="sample" id="{{id}}-sample-select">
-            {{#each sampleNames}}
-              <option value="{{this}}">{{this}}</option>
-            {{/each}}
-          </select>
-        </div>
-      {{/if}}
-      {{#if dimSelect}}
-        <div id="{{id}}-x-ica-dim-control">
-          <label for="{{id}}-x-dim-select">IC on x-axis:</label>
-          <select name="ica-dim-x" id="{{id}}-x-dim-select">
-            {{#each icaDims}}
-              <option value="{{this}}">{{this}}</option>
-            {{/each}}
-          </select>
-        </div>
-        
-        <div id="{{id}}-y-ica-dim-control">
-          <label for="{{id}}-y-dim-select">IC on y-axis:</label>
-          <select name="ica-dim-y" id="{{id}}-y-dim-select">
-            {{#each icaDims}}
-              <option value="{{this}}">{{this}}</option>
-            {{/each}}
-          </select>
-        </div>
-      {{/if}}
-    </div>
+<div id="{{id}}-layout">
+  <div id="{{id}}-left" class="panel {{panelLayout}}">
 
-    <div id="{{id}}-step-controls" class="center-controls">
-      <span class="material-icons">
-        <span id="{{id}}-back_all_btn" class="control-icon">
-          first_page
-        </span>
-        <span id="{{id}}-back_one_btn" class="control-icon">
-          chevron_left
-        </span>
-        <span id="{{id}}-play_pause_btn" class="control-icon">
-          play_circle
-        </span>
-        <span id="{{id}}-forward_one_btn" class="control-icon">
-          chevron_right
-        </span>
-        <span id="{{id}}-forward_all_btn" class="control-icon">
-          last_page
-        </span>
-      </span>
-      <br>
-      <span id="{{id}}-step-counter">
-      </span>
-      <br>
-      <span id="{{id}}-action-direction">
-      </span>
-    </div>
-
-    <div id="{{id}}-saliency-controls" class="right-controls">
-      {{#if saliencySelect}}
-        <label for="{{id}}-saliency-select">Saliency type:</label>
-        {{#if saliencyDropdown}}
-          <select name="saliency" id="{{id}}-saliency-select">
-            {{#each saliencyTypes}}
-              <option value="{{this}}">{{this}}</option>
-            {{/each}}
-          </select>
-          <br>
-        {{else}}
-          <br>
-          {{#each saliencyTypes}}
-            <input type="radio" id="{{../id}}-sal-radio-{{this}}" name="{{../id}}-saliency_type" value="{{this}}">
-            <label for="{{../id}}-sal-radio-{{this}}">{{this}}</label><br>
-          {{/each}}
+    <!-- Panel controls -->
+    <div id="{{id}}-controls" class="panel-controls">
+      <div id="{{id}}-left-controls" class="left-controls">
+        {{#if sampleSelect}}
+          <div id="{{id}}-sample-control">
+            <label for="{{id}}-sample-select">Sample:</label>
+            <select name="sample" id="{{id}}-sample-select">
+              {{#each sampleNames}}
+                <option value="{{this}}">{{this}}</option>
+              {{/each}}
+            </select>
+          </div>
         {{/if}}
-        <span id="{{id}}-saliency-step">
+        {{#if dimSelect}}
+          <div id="{{id}}-x-filter-">
+            <label for="{{id}}-x-dim-select">IC on x-axis:</label>
+            <select name="ica-dim-x" id="{{id}}-x-dim-select">
+              {{#each icaDims}}
+                <option value="{{this}}">{{this}}</option>
+              {{/each}}
+            </select>
+          </div>
+
+          <div id="{{id}}-y-ica-dim-control">
+            <label for="{{id}}-y-dim-select">IC on y-axis:</label>
+            <select name="ica-dim-y" id="{{id}}-y-dim-select">
+              {{#each icaDims}}
+                <option value="{{this}}">{{this}}</option>
+              {{/each}}
+            </select>
+          </div>
+        {{/if}}
+      </div>
+
+      <div id="{{id}}-step-controls" class="center-controls">
+        <span class="material-icons">
+          <span id="{{id}}-back_all_btn" class="control-icon">
+            first_page
+          </span>
+          <span id="{{id}}-back_one_btn" class="control-icon">
+            chevron_left
+          </span>
+          <span id="{{id}}-play_pause_btn" class="control-icon">
+            play_circle
+          </span>
+          <span id="{{id}}-forward_one_btn" class="control-icon">
+            chevron_right
+          </span>
+          <span id="{{id}}-forward_all_btn" class="control-icon">
+            last_page
+          </span>
         </span>
-        <div id="saliency-legend">
-          <div id="saliency-legend-text">
-            <text>Legend: </text>
-          </div>
-          <div id="saliency-legend-graphic">
-            <div id="saliency-colorbar">
-              <img src="https://raw.githubusercontent.com/d3/d3-scale-chromatic/master/img/RdBu.png" width="100%" height="20px" alt="RdBu">
+        <br>
+        <span id="{{id}}-step-counter">
+        </span>
+        <br>
+        <span id="{{id}}-action-direction">
+        </span>
+      </div>
+
+      <div id="{{id}}-saliency-controls" class="right-controls">
+        {{#if saliencySelect}}
+          <label for="{{id}}-saliency-select">Saliency type:</label>
+          {{#if saliencyDropdown}}
+            <select name="saliency" id="{{id}}-saliency-select">
+              {{#each saliencyTypes}}
+                <option value="{{this}}">{{this}}</option>
+              {{/each}}
+            </select>
+            <br>
+          {{else}}
+            <br>
+            {{#each saliencyTypes}}
+              <input type="radio" id="{{../id}}-sal-radio-{{this}}" name="{{../id}}-saliency_type" value="{{this}}">
+              <label for="{{../id}}-sal-radio-{{this}}">{{this}}</label><br>
+            {{/each}}
+          {{/if}}
+          <span id="{{id}}-saliency-step">
+          </span>
+          <div id="saliency-legend">
+            <div id="saliency-legend-text">
+              <text>Legend: </text>
             </div>
-            <div id="saliency-color-labels">
-              <div id="saliency-color-label-left">
-                <text>Neg</text>
+            <div id="saliency-legend-graphic">
+              <div id="saliency-colorbar">
+                <img src="https://raw.githubusercontent.com/d3/d3-scale-chromatic/master/img/RdBu.png" width="100%" height="20px" alt="RdBu">
               </div>
-              <div id="saliency-color-label-center">
-                <text>0</text>
-              </div>
-              <div id="saliency-color-label-right">
-                <text>Pos</text>
+              <div id="saliency-color-labels">
+                <div id="saliency-color-label-left">
+                  <text>Neg saliency</text>
+                </div>
+                <div id="saliency-color-label-center">
+                  <text>0</text>
+                </div>
+                <div id="saliency-color-label-right">
+                  <text>Pos saliency</text>
+                </div>
               </div>
             </div>
           </div>
+        {{/if}}
+      </div>
+    </div>
+
+    <!-- Panel images -->
+    <div class="subpanels-div">
+    {{#each panels}}
+      <div
+        class="subpanel {{panelId}}-panel subpanel-{{@index}}"
+        id="{{../id}}-{{panelId}}-subpanel"
+      >
+        <div class="subpanel-title">
+          {{title}}
         </div>
-      {{/if}}
+        <hr>
+        <div id={{../id}}-{{panelId}}-content>
+          {{#if hasImg}}
+            <div class="subpanel-image">
+              <img id="{{../id}}-{{panelId}}-image">
+            </div>
+          {{/if}}
+        </div>
+      </div>
+    {{/each}}
     </div>
   </div>
 
-  <!-- Panels -->
-  <div class="subpanels-div">
-  {{#each panels}}
-    <div
-      class="subpanel {{panelId}}-panel subpanel-{{@index}}"
-      id="{{../id}}-{{panelId}}-subpanel"
-    >
-      <div class="subpanel-title">
-        {{title}}
-      </div>
-      <hr>
-      <div id={{../id}}-{{panelId}}-content>
-        {{#if hasImg}}
-          <div class="subpanel-image">
-            <img id="{{../id}}-{{panelId}}-image">
-          </div>
-        {{/if}}
-      </div>
-    </div>
-  {{/each}}
-</div>
+  <!-- Panel filters -->
+  <div id="{{id}}-right" class="panel filters">
+    <p><b>Hx value filters:</b></p>
 
+    <div id="{{id}}-filter-ica-dim-control">
+      <label for="{{id}}-filter-dim-select">IC:</label>
+      <select name="ica-dim" id="{{id}}-filter-dim-select">
+        {{#each icaDims}}
+          <option value="{{this}}">{{this}}</option>
+        {{/each}}
+      </select>
+    </div>
+
+    <div id="{{id}}-filter-gt-control">
+      <label for="{{id}}-filter-gt">Greater than:</label>
+      <input type="text" name="gt" id="{{id}}-filter-gt"><br><br>
+    </div>
+    <div id="{{id}}-filter-lt-control">
+      <label for="{{id}}-filter-lt">Less than:</label>
+      <input type="text" name="lt" id="{{id}}-filter-lt"><br><br>
+    </div>
+
+    <span id="{{id}}-filter-sample-count">
+      <b>{{sampleNames.length}} / {{sampleNames.length}}</b> samples adhere to this filter.
+    </span>
+
+    <p><b>Hx grad filters:</b></p>
+
+  </div>
+</div>
 
 

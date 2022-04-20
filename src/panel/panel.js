@@ -59,7 +59,9 @@ module.exports = class Panel {
     this.dataLocation = _.get(options, "dataLocation", "data");
     this.panelData = require(`../../static/${this.dataLocation}/panel_data.json`);
     console.log("data from " + this.dataLocation, this.panelData);
-    this.sampleNames = _.get(options, "sampleNames", Object.keys(this.panelData.samples));
+    this.defaultSampleNames = _.get(options, "sampleNames", Object.keys(this.panelData.samples));
+    // sampleNames may change due to filtering
+    this.sampleNames = this.defaultSampleNames
 
     this.defaultXDim = _.get(options, "defaultXDim", 0);
     this.defaultYDim = _.get(options, "defaultYDim", 1);
@@ -80,8 +82,6 @@ module.exports = class Panel {
 
 
   changeSample(sampleName) {
-    console.assert(this.sampleNames.includes(sampleName));
-
     this.currentSample = sampleName;
     this.sampleData = this.panelData.samples[sampleName];
     this.maxStep = this.sampleData.hx_loadings.length - 1;
@@ -109,6 +109,8 @@ module.exports = class Panel {
     this.changeSample(this.sampleNames[0]);
     // Initialise the starting step for all panels
     this.changeStep(this.defaultStep);
+    // Initialise filtering
+    this.changeFilterDim(this.defaultXDim);
 
     if (this.displaySaliency) {
       this.changeSaliencyType(this.saliencyType);
@@ -152,6 +154,73 @@ module.exports = class Panel {
     const xDim = this.select("x-dim-select").val();
     const yDim = this.select("y-dim-select").val();
     this.scatterPlot.changeDims(xDim, yDim);
+  }
+
+  hxMinMax(dim) {
+    let min = Infinity;
+    let max = -Infinity;
+    for (let i=0; i < this.defaultSampleNames.length; i++) {
+      // Assumes all samples have the same number of steps
+      for (let t=0; t <= this.maxStep; t++) {
+        const hx = this.panelData.samples[this.defaultSampleNames[i]].hx_loadings[t][dim];
+        min = Math.min(min, hx);
+        max = Math.max(max, hx);
+      }
+    }
+    return [min, max];
+  }
+
+  fillSampleSelect() {
+    const selected = this.select("sample-select").val();
+    const el = this.select("sample-select");
+    el.empty();
+    $.each(this.sampleNames, function(i, p) {
+      el.append($('<option></option>').val(p).html(p));
+    });
+    const newSelected = this.select("sample-select").val();
+    // Load the selected sample (if indeed it is a new sample)
+    if (newSelected != selected) {
+      this.changeSample(newSelected)
+    }
+  }
+
+  fillFilterGtLt() {
+    this.select("filter-gt").val(this.filterGt.toFixed(1));
+    this.select("filter-lt").val(this.filterLt.toFixed(1));
+  }
+
+  fillSampleCountText() {
+    this.select("filter-sample-count").html(
+      `<b>${this.sampleNames.length}/${this.defaultSampleNames.length}</b> samples adhere to this filter`
+    );
+  }
+
+  changeFilterDim(dim) {
+    [this.filterGt, this.filterLt] = this.hxMinMax(dim);
+    this.filterDim = dim;
+    this.fillFilterGtLt();
+    this.sampleNames = this.defaultSampleNames;
+    this.fillSampleSelect();
+    this.fillSampleCountText();
+  }
+
+  changeFilterGtLt() {
+    const gt = this.select("filter-gt").val();
+    const lt = this.select("filter-lt").val();
+    const validSamples = [];
+    for (let i=0; i < this.defaultSampleNames.length; i++) {
+      // Assumes all samples have the same number of steps
+      for (let t=0; t <= this.maxStep; t++) {
+        const hx = this.panelData.samples[this.defaultSampleNames[i]].hx_loadings[t][this.filterDim];
+        if (hx >= gt && hx <= lt) {
+          validSamples.push(this.defaultSampleNames[i]);
+          break;
+        }
+      }
+    }
+    this.sampleNames = validSamples;
+    this.fillSampleSelect();
+    this.fillSampleCountText();
   }
 
   select(id) {
@@ -229,6 +298,7 @@ module.exports = class Panel {
       icaDims: _.range(16),
       defaultXDim: this.defaultXDim,
       defaultYDim: this.defaultXDim,
+
     });
 
     $(this.element).html(panelHtml);
@@ -350,6 +420,20 @@ module.exports = class Panel {
       self.changeSaliencyType(this.value);
       this.blur();
     });
+
+    this.select("filter-dim-select").on('change', function() {
+      self.changeFilterDim(this.value);
+      this.blur();
+    });
+    this.select("filter-gt").on('change', function() {
+      self.changeFilterGtLt();
+      this.blur();
+    });
+    this.select("filter-lt").on('change', function() {
+      self.changeFilterGtLt();
+      this.blur();
+    });
+
   }
 
   keydown(e) {
