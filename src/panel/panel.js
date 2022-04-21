@@ -1,6 +1,6 @@
 const d3 = require("d3");
 $ = require('jquery');
-_ = require('lodash');
+get = require('lodash/get');
 
 const panelTemplate = require("./panel-template.hbs");
 
@@ -51,23 +51,23 @@ module.exports = class Panel {
 
     console.log(options);
     // panels to use
-    this.displayObs         = _.get(options, "displayObs",         true);
-    this.displaySaliency    = _.get(options, "displaySaliency",    true);
-    this.displayFilters     = _.get(options, "displayFilters",     false);
-    this.displayScatterPlot = _.get(options, "displayScatterPlot", true);
-    this.displayBarChart    = _.get(options, "displayBarChart",    true);
+    this.displayObs         = get(options, "displayObs",         true);
+    this.displaySaliency    = get(options, "displaySaliency",    true);
+    this.displayFilters     = get(options, "displayFilters",     false);
+    this.displayScatterPlot = get(options, "displayScatterPlot", true);
+    this.displayBarChart    = get(options, "displayBarChart",    true);
 
-    this.dataLocation = _.get(options, "dataLocation", "data");
+    this.dataLocation = get(options, "dataLocation", "data");
     this.panelData = require(`../../static/${this.dataLocation}/panel_data.json`);
     console.log("data from " + this.dataLocation, this.panelData);
-    this.defaultSampleNames = _.get(options, "sampleNames", Object.keys(this.panelData.samples));
+    this.defaultSampleNames = get(options, "sampleNames", Object.keys(this.panelData.samples));
     // sampleNames may change due to filtering
     this.sampleNames = this.defaultSampleNames
 
-    this.defaultXDim = _.get(options, "defaultXDim", 0);
-    this.defaultYDim = _.get(options, "defaultYDim", 1);
+    this.defaultXDim = get(options, "defaultXDim", 0);
+    this.defaultYDim = get(options, "defaultYDim", 1);
 
-    this.defaultStep = _.get(options, "defaultStep", 4);
+    this.defaultStep = get(options, "defaultStep", 4);
 
     // Maps action numbers to thick arrows https://www.htmlsymbols.xyz/arrow-symbols
     this.arrowMap = {
@@ -260,7 +260,7 @@ module.exports = class Panel {
       })
     }
 
-    const panelLayout = _.get(options, "panelLayout", `panel-grid-1-${panelLayoutData.length}`);
+    const panelLayout = get(options, "panelLayout", `panel-grid-1-${panelLayoutData.length}`);
     console.log(`using layout ${panelLayout}`);
 
     var saliencySelect = null;
@@ -271,12 +271,12 @@ module.exports = class Panel {
     if ( this.displaySaliency ) {
       console.assert("saliencyTypes" in options);
       saliencyTypes = options.saliencyTypes
-      if ( _.isArray(saliencyTypes)) {
+      if ( Array.isArray(saliencyTypes)) {
         saliencySelect = true;
         this.saliencyType = saliencyTypes[0];
         this.saliencyDropdown = saliencyTypes.length > 2
       } else {
-        console.assert(_.isString(saliencyTypes))
+        console.assert(typeof saliencyTypes === 'string' || saliencyTypes instanceof String)
         saliencySelect = false;
         this.saliencyType = saliencyTypes;
       }
@@ -296,7 +296,7 @@ module.exports = class Panel {
       saliencyDropdown: this.saliencyDropdown,
 
       dimSelect: true,
-      icaDims: _.range(16),
+      icaDims: [...Array(16).keys()],
       defaultXDim: this.defaultXDim,
       defaultYDim: this.defaultXDim,
 
@@ -311,13 +311,13 @@ module.exports = class Panel {
       this.scatterPlot = new ICAScatterplot(
         this.select("scatterPlot-content").get(0),
         this.panelData.base_hx_loadings,
-         _.get(options, "scatterPlotOptions", {}));
+         get(options, "scatterPlotOptions", {}));
     }
 
     if (this.displayBarChart) {
       this.barChart = new BarChart(
         this.select("barChart-content").get(0),
-        _.get(options, "barChartOptions", {}));
+        get(options, "barChartOptions", {}));
     }
   }
 

@@ -2,6 +2,7 @@
 //  - https://elliotbentley.com/blog/a-better-way-to-structure-d3-code/
 
 const d3 = require("d3");
+get = require('lodash/get');
 
 module.exports = class BarChart {
 
@@ -10,12 +11,12 @@ module.exports = class BarChart {
 
     this.width = $(element).width();
     this.height = this.width;
-    this.margin = _.get(options, "margin", {top: 20, right: 15, bottom: 30, left: 25});
+    this.margin = get(options, "margin", {top: 20, right: 15, bottom: 30, left: 25});
 
-    this.numBars = _.get(options, "numBars", 16);
-    this.useColor = _.get(options, "useColor", false);
+    this.numBars = get(options, "numBars", 16);
+    this.useColor = get(options, "useColor", false);
 
-    this.ylims = _.get(options, "ylims", [-6, 6])
+    this.ylims = get(options, "ylims", [-6, 6])
 
     this.draw();
   }

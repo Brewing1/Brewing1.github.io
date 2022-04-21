@@ -3,7 +3,7 @@
 
 const { minIndex } = require("d3");
 const d3 = require("d3");
-_ = require('lodash');
+get = require('lodash/get');
 
 module.exports = class ICAScatterplot {
 
@@ -12,17 +12,18 @@ module.exports = class ICAScatterplot {
 
     this.width = $(element).width();
     this.height = this.width;
-    this.margin = _.get(options, "margin", {top: 20, right: 15, bottom: 30, left: 30});
 
-    this.numBasePoints = _.get(options, "numBasePoints", 1000);
+    this.margin = get(options, "margin", {top: 20, right: 15, bottom: 30, left: 30});
+
+    this.numBasePoints = get(options, "numBasePoints", 1000);
     this.baseData = baseData.slice(0, this.numBasePoints);
 
-    this.basePointSize = _.get(options, "basePointSize", 1);
-    this.basePointOpacity = _.get(options, "basePointOpacity", .2);
-    this.samplePointSize = _.get(options, "samplePointSize", 3);
+    this.basePointSize = get(options, "basePointSize", 1);
+    this.basePointOpacity = get(options, "basePointOpacity", .2);
+    this.samplePointSize = get(options, "samplePointSize", 3);
 
-    this.dimX = _.get(options, "dimX", 0);
-    this.dimY = _.get(options, "dimY", 1);
+    this.dimX = get(options, "dimX", 0);
+    this.dimY = get(options, "dimY", 1);
 
     this.sampleData = [];
 
@@ -35,6 +36,8 @@ module.exports = class ICAScatterplot {
       .append('svg')
       .attr("width", this.width)
       .attr("height", this.height);
+      // .attr("viewbox", `0 0 ${this.width} ${this.width}`)
+      // .attr("preserveAspectRatio", "xMidYMid meet");
 
     this._createScales();
     this._drawAxes();
