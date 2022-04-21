@@ -15,6 +15,7 @@ const p = new Panel(
   $("#panel").get(0),
   "panel",
   {
+    displayFilters: false,
     displaySaliency: true,
     saliencyTypes: ["value", "action", "hx_direction_0", "hx_direction_1", "hx_direction_2", "hx_direction_3", "hx_direction_4", "hx_direction_5", "hx_direction_6", "hx_direction_7", "hx_direction_8", "hx_direction_9", "hx_direction_10", "hx_direction_11", "hx_direction_12", "hx_direction_13", "hx_direction_14", "hx_direction_15"],
     panelLayout: "panel-grid-2-2",

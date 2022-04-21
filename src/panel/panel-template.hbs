@@ -107,55 +107,56 @@
 
     <!-- Panel images -->
     <div class="subpanels-div">
-    {{#each panels}}
-      <div
-        class="subpanel {{panelId}}-panel subpanel-{{@index}}"
-        id="{{../id}}-{{panelId}}-subpanel"
-      >
-        <div class="subpanel-title">
-          {{title}}
+      {{#each panels}}
+        <div
+          class="subpanel {{panelId}}-panel subpanel-{{@index}}"
+          id="{{../id}}-{{panelId}}-subpanel"
+        >
+          <div class="subpanel-title">
+            {{title}}
+          </div>
+          <hr>
+          <div id={{../id}}-{{panelId}}-content>
+            {{#if hasImg}}
+              <div class="subpanel-image">
+                <img id="{{../id}}-{{panelId}}-image">
+              </div>
+            {{/if}}
+          </div>
         </div>
-        <hr>
-        <div id={{../id}}-{{panelId}}-content>
-          {{#if hasImg}}
-            <div class="subpanel-image">
-              <img id="{{../id}}-{{panelId}}-image">
-            </div>
-          {{/if}}
-        </div>
-      </div>
-    {{/each}}
+      {{/each}}
     </div>
   </div>
 
   <!-- Panel filters -->
   <div id="{{id}}-right" class="panel filters">
-    <p><b>Hx value filters:</b></p>
+    {{#if displayFilters}}
+      <p><b>Hx value filters:</b></p>
 
-    <div id="{{id}}-filter-ica-dim-control">
-      <label for="{{id}}-filter-dim-select">IC:</label>
-      <select name="ica-dim" id="{{id}}-filter-dim-select">
-        {{#each icaDims}}
-          <option value="{{this}}">{{this}}</option>
-        {{/each}}
-      </select>
-    </div>
+      <div id="{{id}}-filter-ica-dim-control">
+        <label for="{{id}}-filter-dim-select">IC:</label>
+        <select name="ica-dim" id="{{id}}-filter-dim-select">
+          {{#each icaDims}}
+            <option value="{{this}}">{{this}}</option>
+          {{/each}}
+        </select>
+      </div>
 
-    <div id="{{id}}-filter-gt-control">
-      <label for="{{id}}-filter-gt">Greater than:</label>
-      <input type="text" name="gt" id="{{id}}-filter-gt"><br><br>
-    </div>
-    <div id="{{id}}-filter-lt-control">
-      <label for="{{id}}-filter-lt">Less than:</label>
-      <input type="text" name="lt" id="{{id}}-filter-lt"><br><br>
-    </div>
+      <div id="{{id}}-filter-gt-control">
+        <label for="{{id}}-filter-gt">Greater than:</label>
+        <input type="text" name="gt" id="{{id}}-filter-gt"><br><br>
+      </div>
+      <div id="{{id}}-filter-lt-control">
+        <label for="{{id}}-filter-lt">Less than:</label>
+        <input type="text" name="lt" id="{{id}}-filter-lt"><br><br>
+      </div>
 
-    <span id="{{id}}-filter-sample-count">
-      <b>{{sampleNames.length}} / {{sampleNames.length}}</b> samples adhere to this filter.
-    </span>
+      <span id="{{id}}-filter-sample-count">
+        <b>{{sampleNames.length}} / {{sampleNames.length}}</b> samples adhere to this filter.
+      </span>
 
-    <p><b>Hx grad filters:</b></p>
-
+      <p><b>Hx grad filters:</b></p>
+    {{/if}}
   </div>
 </div>
 

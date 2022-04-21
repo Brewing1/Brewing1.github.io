@@ -52,7 +52,8 @@ module.exports = class Panel {
     console.log(options);
     // panels to use
     this.displayObs         = _.get(options, "displayObs",         true);
-    this.displaySaliency     = _.get(options, "displaySaliency",     true);
+    this.displaySaliency    = _.get(options, "displaySaliency",    true);
+    this.displayFilters     = _.get(options, "displayFilters",     false);
     this.displayScatterPlot = _.get(options, "displayScatterPlot", true);
     this.displayBarChart    = _.get(options, "displayBarChart",    true);
 
@@ -299,6 +300,7 @@ module.exports = class Panel {
       defaultXDim: this.defaultXDim,
       defaultYDim: this.defaultXDim,
 
+      displayFilters: this.displayFilters,
     });
 
     $(this.element).html(panelHtml);
