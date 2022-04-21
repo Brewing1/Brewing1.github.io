@@ -101,6 +101,8 @@ module.exports = class Panel {
     if (this.displayScatterPlot) {
       this.scatterPlot.changeSample(this.sampleData);
     }
+    // When changing sample, start at the default timestep
+    this.changeStep(this.defaultStep);
   }
 
   _initialize(options) {
@@ -108,8 +110,7 @@ module.exports = class Panel {
     this._initializeGraphs(options);
 
     this.changeSample(this.sampleNames[0]);
-    // Initialise the starting step for all panels
-    this.changeStep(this.defaultStep);
+
     // Initialise filtering
     this.changeFilterDim(this.defaultXDim);
 
@@ -155,6 +156,7 @@ module.exports = class Panel {
     const xDim = this.select("x-dim-select").val();
     const yDim = this.select("y-dim-select").val();
     this.scatterPlot.changeDims(xDim, yDim);
+    this.scatterPlot.changeStep(this.step);
   }
 
   hxMinMax(dim) {
@@ -181,7 +183,8 @@ module.exports = class Panel {
     const newSelected = this.select("sample-select").val();
     // Load the selected sample (if indeed it is a new sample)
     if (newSelected != selected) {
-      this.changeSample(newSelected)
+      this.changeSample(newSelected);
+      this.changeStep(this.defaultStep);
     }
   }
 
@@ -449,7 +452,6 @@ module.exports = class Panel {
           .next()
           .prop("selected", true);
         this.changeSample(this.select("sample-select").val());
-        this.changeStep(this.defaultStep);
         break;
       case 39:
         this._forwardOneStep();
@@ -460,7 +462,6 @@ module.exports = class Panel {
           .prev()
           .prop("selected", true);
         this.changeSample(this.select("sample-select").val());
-        this.changeStep(this.defaultStep);
         break;
     }
   }
