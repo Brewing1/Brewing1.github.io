@@ -12,26 +12,26 @@ module.exports = class Panel {
   constructor(element, id, options={}) {
     /**
      * element: the html element
-     * 
+     *
      * ----
-     * 
+     *
      * Options is is a dictionary that parameterizes the Panel, with the
      * following arguments (more to be implimented)
-     * 
+     *
      * // Panels
-     * 
+     *
      * displayObs: boolean
      * displaySaliency: boolean, also determines if color is added to the
      *  bar chart
      * displayScatterPlot: boolean
      * displayBarChart: boolean
-     * 
-     * 
+     *
+     *
      * sampleNames: an array of strings, corresponding to the names of the
      *  samples to be used in panel-data.js
-     * 
-     * 
-     * 
+     *
+     *
+     *
      * useSaliency: boolean, on if to plot saliencyData. This determines the
      *  precence of the saliency-coded observation image, and saliency colors
      *  on the bar chart
@@ -39,11 +39,11 @@ module.exports = class Panel {
      * defaultSaliency: string, must be provided if useSaliency is true but
      *  not saliencySelect. Can also be provided as the initial setting for
      *  the saliencySelector.
-     * 
-     * 
+     *
+     *
      * scatterPlotOptions: dictionary to parameterize the scatterplot
-     * 
-     * 
+     *
+     *
      */
 
     this.element = element;
@@ -69,6 +69,9 @@ module.exports = class Panel {
 
     this.defaultStep = get(options, "defaultStep", 4);
 
+    this.icFilters = {};
+    this.filterDim = this.defaultXDim;
+
     // Maps action numbers to thick arrows https://www.htmlsymbols.xyz/arrow-symbols
     this.arrowMap = {
       0: "\u2B0B", 1: "\u2B05", 2: "\u2B09",
@@ -81,30 +84,6 @@ module.exports = class Panel {
     this._initialize(options);
   }
 
-
-  changeSample(sampleName) {
-    this.currentSample = sampleName;
-    this.sampleData = this.panelData.samples[sampleName];
-    this.maxStep = this.sampleData.hx_loadings.length - 1;
-
-    if (this.displayObs) {
-      this.select("obs-image")
-        .attr("src", `../${this.dataLocation}/${this.currentSample}/obs.png`);
-    }
-    if (this.displaySaliency) {
-      this.select("sal-image")
-        .attr("src", `../${this.dataLocation}/${this.currentSample}/sal_${this.saliencyType}.png`);
-    }
-    if (this.displayBarChart) {
-      this.barChart.changeSample(this.sampleData);
-    }
-    if (this.displayScatterPlot) {
-      this.scatterPlot.changeSample(this.sampleData);
-    }
-    // When changing sample, start at the default timestep
-    this.changeStep(this.defaultStep);
-  }
-
   _initialize(options) {
     this._initializeHtml(options);
     this._initializeGraphs(options);
@@ -112,7 +91,7 @@ module.exports = class Panel {
     this.changeSample(this.sampleNames[0]);
 
     // Initialise filtering
-    this.changeFilterDim(this.defaultXDim);
+    this.changeICFilterDim(this.defaultXDim);
 
     if (this.displaySaliency) {
       this.changeSaliencyType(this.saliencyType);
@@ -120,119 +99,23 @@ module.exports = class Panel {
     this._intializeControls();
   }
 
-  changeSaliencyType(saliencyType) {
-    console.assert(saliencyType !== undefined);
+  _initializeGraphs(options) {
+    if (this.displayScatterPlot) {
+      this.scatterPlot = new ICAScatterplot(
+        this.select("scatterPlot-content").get(0),
+        this.panelData.base_hx_loadings,
+         get(options, "scatterPlotOptions", {}));
+    }
 
-    this.saliencyType = saliencyType;
     if (this.displayBarChart) {
-      this.barChart.changeSaliencyType(this.saliencyType);
-      this.barChart.changeStep(this.step); // recolour
+      this.barChart = new BarChart(
+        this.select("barChart-content").get(0),
+        get(options, "barChartOptions", {}));
     }
-    this.select("sal-image")
-      .attr("src", `../${this.dataLocation}/${this.currentSample}/sal_${this.saliencyType}.png`);
-  }
-
-  changeStep(newStep) {
-    this.step = newStep;
-    console.log(`changing step to ${this.step}`)
-
-    // Shift the images left/right according to this.step
-    $(`.subpanel-image img`).css("left", `${this.step*-100}%`)
-
-    this.select("step-counter")
-      .text("Step " + this.step + " of " + this.maxStep);
-
-    this.select("action-direction")
-      .text("Agent action: " + this.arrowMap[this.sampleData.actions[this.step]]);
-
-    this.select("saliency-step")
-      .text("Saliency step: " + this.sampleData.saliency_step);
-
-    this.barChart.changeStep(this.step);
-    this.scatterPlot.changeStep(this.step);
-  }
- 
-  changeDims() {
-    const xDim = this.select("x-dim-select").val();
-    const yDim = this.select("y-dim-select").val();
-    this.scatterPlot.changeDims(xDim, yDim);
-    this.scatterPlot.changeStep(this.step);
-  }
-
-  hxMinMax(dim) {
-    let min = Infinity;
-    let max = -Infinity;
-    for (let i=0; i < this.defaultSampleNames.length; i++) {
-      // Assumes all samples have the same number of steps
-      for (let t=0; t <= this.maxStep; t++) {
-        const hx = this.panelData.samples[this.defaultSampleNames[i]].hx_loadings[t][dim];
-        min = Math.min(min, hx);
-        max = Math.max(max, hx);
-      }
-    }
-    return [min, max];
-  }
-
-  fillSampleSelect() {
-    const selected = this.select("sample-select").val();
-    const el = this.select("sample-select");
-    el.empty();
-    $.each(this.sampleNames, function(i, p) {
-      el.append($('<option></option>').val(p).html(p));
-    });
-    const newSelected = this.select("sample-select").val();
-    // Load the selected sample (if indeed it is a new sample)
-    if (newSelected != selected) {
-      this.changeSample(newSelected);
-      this.changeStep(this.defaultStep);
-    }
-  }
-
-  fillFilterGtLt() {
-    this.select("filter-gt").val(this.filterGt.toFixed(1));
-    this.select("filter-lt").val(this.filterLt.toFixed(1));
-  }
-
-  fillSampleCountText() {
-    this.select("filter-sample-count").html(
-      `<b>${this.sampleNames.length}/${this.defaultSampleNames.length}</b> samples adhere to this filter`
-    );
-  }
-
-  changeFilterDim(dim) {
-    [this.filterGt, this.filterLt] = this.hxMinMax(dim);
-    this.filterDim = dim;
-    this.fillFilterGtLt();
-    this.sampleNames = this.defaultSampleNames;
-    this.fillSampleSelect();
-    this.fillSampleCountText();
-  }
-
-  changeFilterGtLt() {
-    const gt = this.select("filter-gt").val();
-    const lt = this.select("filter-lt").val();
-    const validSamples = [];
-    for (let i=0; i < this.defaultSampleNames.length; i++) {
-      // Assumes all samples have the same number of steps
-      for (let t=0; t <= this.maxStep; t++) {
-        const hx = this.panelData.samples[this.defaultSampleNames[i]].hx_loadings[t][this.filterDim];
-        if (hx >= gt && hx <= lt) {
-          validSamples.push(this.defaultSampleNames[i]);
-          break;
-        }
-      }
-    }
-    this.sampleNames = validSamples;
-    this.fillSampleSelect();
-    this.fillSampleCountText();
-  }
-
-  select(id) {
-    return $(`#${this.id}-${id}`)
   }
 
   _initializeHtml(options) {
-    
+
     var panelLayoutData = []
     if (this.displayObs) {
       panelLayoutData.push({
@@ -247,14 +130,14 @@ module.exports = class Panel {
         panelId: "sal",
         hasImg: true
       })
-    }     
+    }
     if (this.displayScatterPlot) {
       panelLayoutData.push({
         title: "ICA Scatterplot:",
         panelId: "scatterPlot",
         hasImg: false
       })
-    }     
+    }
     if (this.displayBarChart) {
       panelLayoutData.push({
         title: "ICA Bar Chart:",
@@ -287,7 +170,7 @@ module.exports = class Panel {
 
     panelHtml = panelTemplate({
       id: this.id,
-      
+
       sampleSelect: (this.sampleNames.length > 1),
       sampleNames: this.sampleNames,
 
@@ -309,60 +192,6 @@ module.exports = class Panel {
     $(this.element).html(panelHtml);
   }
 
-  _initializeGraphs(options) {
-    if (this.displayScatterPlot) {
-      this.scatterPlot = new ICAScatterplot(
-        this.select("scatterPlot-content").get(0),
-        this.panelData.base_hx_loadings,
-         get(options, "scatterPlotOptions", {}));
-    }
-
-    if (this.displayBarChart) {
-      this.barChart = new BarChart(
-        this.select("barChart-content").get(0),
-        get(options, "barChartOptions", {}));
-    }
-  }
-
-  _backOneStep() {
-    this.changeStep(Math.max(0, this.step - 1));
-  }
-
-  _forwardOneStep() {
-    this.changeStep(Math.min(this.maxStep, this.step + 1));
-  }
-
-  _playStep(restart = false) {
-    const nextStep = (this.step + 1) % (this.maxStep + 1);
-    this.changeStep(nextStep);
-    // if at end of sample, pause for a second
-    if (this.step === this.maxStep) {
-      this._pause(changeSymbol=false);
-      setTimeout(this._play.bind(this), 1000);
-    }
-  }
-
-  _play() {
-    if (!this.playing) {
-      console.log("playing!");
-      this.select("play_pause_btn").text("pause_circle");
-      clearInterval(this.playingIntervalId);
-      this.playingIntervalId = setInterval(this._playStep.bind(this), 250);
-      this.playing = true;
-    }
-  }
-
-  _pause(changeSymbol=true) {
-    if (this.playing) {
-      console.log("paused!");
-      if (changeSymbol) {
-        this.select("play_pause_btn").text("play_circle");
-      }
-      clearInterval(this.playingIntervalId);
-      this.playing = false;
-    }
-  }
-
   _intializeControls(options) {
     const self = this;
 
@@ -381,7 +210,6 @@ module.exports = class Panel {
       this.blur();
     });
 
-    //todo 
     this.select("forward_all_btn").click(function() {
       self.changeStep(self.maxStep);
       this.blur();
@@ -427,18 +255,261 @@ module.exports = class Panel {
     });
 
     this.select("filter-dim-select").on('change', function() {
-      self.changeFilterDim(this.value);
+      self.changeICFilterDim(this.value);
       this.blur();
     });
     this.select("filter-gt").on('change', function() {
-      self.changeFilterGtLt();
+      self.changeICFilterGtLt();
       this.blur();
     });
     this.select("filter-lt").on('change', function() {
-      self.changeFilterGtLt();
+      self.changeICFilterGtLt();
       this.blur();
     });
+    this.select("filter-dim-reset-button").on('click', function() {
+      self.resetICDimFilter();
+      this.blur();
+    });
+    this.select("filter-reset-button").on('click', function() {
+      self.resetAllFilters();
+      this.blur();
+    });
+  }
 
+  writeSampleSelect() {
+    const selected = this.select("sample-select").val();
+    const el = this.select("sample-select");
+    el.empty();
+    $.each(this.sampleNames, function(i, p) {
+      el.append($('<option></option>').val(p).html(p));
+    });
+    const newSelected = this.select("sample-select").val();
+    // Load the selected sample (if indeed it is a new sample)
+    if (newSelected != selected) {
+      this.changeSample(newSelected);
+      this.changeStep(this.defaultStep);
+    }
+  }
+
+  writeFilterGtLt() {
+    this.select("filter-gt").val(this.filterGt.toFixed(2));
+    this.select("filter-lt").val(this.filterLt.toFixed(2));
+  }
+
+  writeSampleCount() {
+    this.select("filter-sample-count").html(
+      `<b>${this.sampleNames.length}/${this.defaultSampleNames.length}</b> \
+      samples adhere to all filters`
+    );
+  }
+
+  writeFilterICDimButton() {
+    this.select("filter-dim-reset-button").text(`Reset IC:${this.filterDim} filter`);
+  }
+
+  writeICFilterDimFontLarge() {
+    // Increase the fontsize and boldness of the current filtered dimension
+    this.select("filter-dim-select")
+        .children("option")
+        .eq(this.filterDim)
+        .css({"font-size": "150%", "font-weight": "bold"});
+  }
+
+  writeICFilterDimFontNormal() {
+    // Increase the fontsize and boldness of the current filtered dimension
+    this.select("filter-dim-select")
+        .children("option")
+        .css({"font-size": "100%", "font-weight": "normal"});
+  }
+
+  changeSample(sampleName) {
+    this.currentSample = sampleName;
+    this.sampleData = this.panelData.samples[sampleName];
+    this.maxStep = this.sampleData.hx_loadings.length - 1;
+
+    if (this.displayObs) {
+      this.select("obs-image")
+        .attr("src", `../${this.dataLocation}/${this.currentSample}/obs.png`);
+    }
+    if (this.displaySaliency) {
+      this.select("sal-image")
+        .attr("src", `../${this.dataLocation}/${this.currentSample}/sal_${this.saliencyType}.png`);
+    }
+    if (this.displayBarChart) {
+      this.barChart.changeSample(this.sampleData);
+    }
+    if (this.displayScatterPlot) {
+      this.scatterPlot.changeSample(this.sampleData);
+    }
+    // When changing sample, start at the default timestep
+    this.changeStep(this.defaultStep);
+  }
+
+  changeSaliencyType(saliencyType) {
+    console.assert(saliencyType !== undefined);
+
+    this.saliencyType = saliencyType;
+    if (this.displayBarChart) {
+      this.barChart.changeSaliencyType(this.saliencyType);
+      this.barChart.changeStep(this.step); // recolour
+    }
+    this.select("sal-image")
+      .attr("src", `../${this.dataLocation}/${this.currentSample}/sal_${this.saliencyType}.png`);
+  }
+
+  changeStep(newStep) {
+    this.step = newStep;
+    console.log(`changing step to ${this.step}`)
+
+    // Shift the images left/right according to this.step
+    $(`.subpanel-image img`).css("left", `${this.step*-100}%`)
+
+    this.select("step-counter")
+      .text("Step " + this.step + " of " + this.maxStep);
+
+    this.select("action-direction")
+      .text("Agent action: " + this.arrowMap[this.sampleData.actions[this.step]]);
+
+    this.select("saliency-step")
+      .text("Saliency step: " + this.sampleData.saliency_step);
+
+    this.barChart.changeStep(this.step);
+    this.scatterPlot.changeStep(this.step);
+  }
+
+  changeDims() {
+    const xDim = this.select("x-dim-select").val();
+    const yDim = this.select("y-dim-select").val();
+    this.scatterPlot.changeDims(xDim, yDim);
+    this.scatterPlot.changeStep(this.step);
+  }
+
+  hxMinMax(dim) {
+    let min = Infinity;
+    let max = -Infinity;
+    for (let i=0; i < this.sampleNames.length; i++) {
+      // Assumes all samples have the same number of steps
+      for (let t=0; t <= this.maxStep; t++) {
+        const hx = this.panelData.samples[this.sampleNames[i]].hx_loadings[t][dim];
+        min = Math.min(min, hx);
+        max = Math.max(max, hx);
+      }
+    }
+    return [min, max];
+  }
+
+  changeICFilterDim(dim) {
+    if (this.icFilters.hasOwnProperty(dim)) {
+      this.filterGt = this.icFilters[dim]["gt"];
+      this.filterLt = this.icFilters[dim]["lt"];
+    } else {
+      [this.filterGt, this.filterLt] = this.hxMinMax(dim);
+    }
+    this.filterDim = dim;
+    this.writeFilterGtLt();
+    this.writeFilterICDimButton();
+  }
+
+  resetAllFilters() {
+    this.icFilters = {};
+    this.sampleNames = this.defaultSampleNames;
+    // This will trigger changeICFilterDim.
+    this.select("filter-dim-select").val(this.defaultXDim).trigger('change');
+    this.writeSampleSelect();
+    this.writeSampleCount();
+    this.writeICFilterDimFontNormal();
+  }
+
+  resetICDimFilter() {
+    delete this.icFilters[this.filterDim];
+    this.sampleNames = this.defaultSampleNames;
+    // This will trigger changeICFilterDim.
+    this.select("filter-dim-select").val(this.filterDim).trigger('change');
+    this.writeSampleSelect();
+    this.writeSampleCount();
+    this.writeICFilterDimFontNormal();
+  }
+
+  applyICFilter() {
+    // Apply hx filter for each IC in this.icFilters (these contain the manually entered filters)
+    // A sample passes if filters for each dim apply AT THE SAME TIMESTEP. I.e. a sample will not
+    // pass the filter if IC6 fit the filter range for timesteps 3 and 4 but IC7 only fit the
+    // filter range for timestep 5
+    const numFilters = Object.keys(this.icFilters).length;
+    const validSamples = [];
+    for (let s=0; s < this.defaultSampleNames.length; s++) {
+      // Assumes all samples have the same number of steps
+      for (let t=0; t <= this.maxStep; t++) {
+        let dimsValid = 0;
+        for (const [dim, range] of Object.entries(this.icFilters)) {
+          const hx = this.panelData.samples[this.defaultSampleNames[s]].hx_loadings[t][dim];
+          if (hx >= range["gt"] && hx <= range["lt"]) {
+            dimsValid++
+          }
+        }
+        if (dimsValid == numFilters) {
+          validSamples.push(this.defaultSampleNames[s]);
+          break;
+        }
+      }
+    }
+    return validSamples
+  }
+
+  changeICFilterGtLt() {
+    this.filterGt = parseFloat(this.select("filter-gt").val());
+    this.filterLt = parseFloat(this.select("filter-lt").val());
+    this.icFilters[this.filterDim] = {"gt": this.filterGt, "lt": this.filterLt};
+
+    this.sampleNames = this.applyICFilter();
+    this.writeSampleCount();
+    if (this.sampleNames.length > 0) {
+      this.writeSampleSelect();
+      this.writeICFilterDimFontLarge();
+    }
+  }
+
+  _backOneStep() {
+    this.changeStep(Math.max(0, this.step - 1));
+  }
+
+  _forwardOneStep() {
+    this.changeStep(Math.min(this.maxStep, this.step + 1));
+  }
+
+  _playStep(restart = false) {
+    const nextStep = (this.step + 1) % (this.maxStep + 1);
+    this.changeStep(nextStep);
+    // if at end of sample, pause for a second
+    if (this.step === this.maxStep) {
+      this._pause(changeSymbol=false);
+      setTimeout(this._play.bind(this), 1000);
+    }
+  }
+
+  _play() {
+    if (!this.playing) {
+      console.log("playing!");
+      this.select("play_pause_btn").text("pause_circle");
+      clearInterval(this.playingIntervalId);
+      this.playingIntervalId = setInterval(this._playStep.bind(this), 250);
+      this.playing = true;
+    }
+  }
+
+  _pause(changeSymbol=true) {
+    if (this.playing) {
+      console.log("paused!");
+      if (changeSymbol) {
+        this.select("play_pause_btn").text("play_circle");
+      }
+      clearInterval(this.playingIntervalId);
+      this.playing = false;
+    }
+  }
+
+  select(id) {
+    return $(`#${this.id}-${id}`)
   }
 
   keydown(e) {

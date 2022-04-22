@@ -131,31 +131,32 @@
   <!-- Panel filters -->
   <div id="{{id}}-right" class="panel filters">
     {{#if displayFilters}}
-      <p><b>Hx value filters:</b></p>
-
-      <div id="{{id}}-filter-ica-dim-control">
+      <b>Hx value filters:</b>
+      <div id="{{id}}-filter-ica-control">
+        <input type="text" name="gt" id="{{id}}-filter-gt">
+        <label for="{{id}}-filter-gt">&#8804;</label>
         <label for="{{id}}-filter-dim-select">IC:</label>
         <select name="ica-dim" id="{{id}}-filter-dim-select">
           {{#each icaDims}}
             <option value="{{this}}">{{this}}</option>
           {{/each}}
         </select>
+        <label for="{{id}}-filter-lt">&#8804;</label>
+        <input type="text" name="lt" id="{{id}}-filter-lt">
       </div>
 
-      <div id="{{id}}-filter-gt-control">
-        <label for="{{id}}-filter-gt">Greater than:</label>
-        <input type="text" name="gt" id="{{id}}-filter-gt"><br><br>
-      </div>
-      <div id="{{id}}-filter-lt-control">
-        <label for="{{id}}-filter-lt">Less than:</label>
-        <input type="text" name="lt" id="{{id}}-filter-lt"><br><br>
+      <div id="{{id}}-filter-dim-reset">
+        <button id="{{id}}-filter-dim-reset-button" type="button"></button>
       </div>
 
-      <span id="{{id}}-filter-sample-count">
-        <b>{{sampleNames.length}} / {{sampleNames.length}}</b> samples adhere to this filter.
-      </span>
+      <div id="{{id}}-filter-reset">
+        <button id="{{id}}-filter-reset-button" type="button">Reset All Filters</button>
+      </div>
 
-      <p><b>Hx grad filters:</b></p>
+      <div id="{{id}}-filter-sample-count">
+        <b>{{sampleNames.length}}/{{sampleNames.length}}</b> samples adhere to all filters
+      </div>
+
     {{/if}}
   </div>
 </div>
