@@ -312,7 +312,7 @@ module.exports = class Panel {
   }
 
   writeFilterDimButton(filterType, dim) {
-    this.select(`filter-${filterType}-dim-reset-button`).text(`Reset IC:${dim} filter`);
+    this.select(`filter-${filterType}-dim-reset-button`).text(`Reset ${filterType} IC:${dim} filter`);
   }
 
 
