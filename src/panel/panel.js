@@ -360,6 +360,8 @@ module.exports = class Panel {
     }
     this.select("sal-image")
       .attr("src", `../${this.dataLocation}/${this.currentSample}/sal_${this.saliencyType}.png`);
+
+    this.resetGradFilters();
   }
 
   changeStep(newStep) {
@@ -472,6 +474,16 @@ module.exports = class Panel {
       this.changeSampleSelect();
       this.writeFilterDimFont(filterType, this.filterDim[filterType], true);
     }
+  }
+
+  resetGradFilters() {
+    this.filters["grad"] = {};
+    this.sampleNames = this.applyFilter();
+    // This will trigger changeFilterDim.
+    this.select("filter-grad-dim-select").val(this.defaultXDim).trigger('change');
+    this.changeSampleSelect();
+    this.writeSampleCount();
+    Object.keys(this.filters["grad"]).forEach(dim => this.writeFilterDimFont("grad", dim, false));
   }
 
   resetAllFilters() {
