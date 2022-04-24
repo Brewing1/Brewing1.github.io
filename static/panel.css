@@ -4,12 +4,15 @@
     grid-column-gap: 1%;
 	grid-template-areas: ". a b"
 }
+
 #panel-left {
 	grid-area: a;
 }
+
 #panel-right {
 	grid-area: b;
 }
+
 .panel-controls {
 	display: flex;
 	justify-content: space-between;
@@ -61,22 +64,6 @@
 	width: 1000%;
 }
 
-/*.subpanel-0 {
-	grid-area: subpanel-0;
-}
-
-.subpanel-1 {
-	grid-area: subpanel-1;
-}
-
-.subpanel-2 {
-	grid-area: subpanel-2;
-}
-
-.subpanel-3 {
-	grid-area: subpanel-3;
-}*/
-
 .control-icon svg {
 	width: 25px;
 }
@@ -119,4 +106,9 @@
 #saliency-color-label-right {
 	flex: 1;
 	text-align: right;
+}
+
+/* Filters */
+.filters input{
+	width: 6ch;
 }

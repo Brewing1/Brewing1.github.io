@@ -49,7 +49,6 @@ module.exports = class Panel {
     this.element = element;
     this.id = id;
 
-    console.log(options);
     // panels to use
     this.displayObs         = get(options, "displayObs",         true);
     this.displaySaliency    = get(options, "displaySaliency",    true);
@@ -59,7 +58,6 @@ module.exports = class Panel {
 
     this.dataLocation = get(options, "dataLocation", "data");
     this.panelData = require(`../../static/${this.dataLocation}/panel_data.json`);
-    console.log("data from " + this.dataLocation, this.panelData);
     this.defaultSampleNames = get(options, "sampleNames", Object.keys(this.panelData.samples));
     // sampleNames may change due to filtering
     this.sampleNames = this.defaultSampleNames
@@ -69,8 +67,10 @@ module.exports = class Panel {
 
     this.defaultStep = get(options, "defaultStep", 4);
 
-    this.icFilters = {};
-    this.filterDim = this.defaultXDim;
+    this.filters = {"raw": {}, "grad": {}};
+    this.filterDim = {"raw": this.defaultXDim, "grad": this.defaultXDim};
+    this.filterGt = {"raw": null, "grad": null};
+    this.filterLt = {"raw": null, "grad": null};
 
     // Maps action numbers to thick arrows https://www.htmlsymbols.xyz/arrow-symbols
     this.arrowMap = {
@@ -91,7 +91,8 @@ module.exports = class Panel {
     this.changeSample(this.sampleNames[0]);
 
     // Initialise filtering
-    this.changeICFilterDim(this.defaultXDim);
+    this.changeFilterDim("raw", this.defaultXDim);
+    this.changeFilterDim("grad", this.defaultXDim);
 
     if (this.displaySaliency) {
       this.changeSaliencyType(this.saliencyType);
@@ -147,7 +148,6 @@ module.exports = class Panel {
     }
 
     const panelLayout = get(options, "panelLayout", `panel-grid-1-${panelLayoutData.length}`);
-    console.log(`using layout ${panelLayout}`);
 
     var saliencySelect = null;
     var saliencyTypes = null;
@@ -254,20 +254,36 @@ module.exports = class Panel {
       this.blur();
     });
 
-    this.select("filter-dim-select").on('change', function() {
-      self.changeICFilterDim(this.value);
+    this.select("filter-raw-dim-select").on('change', function() {
+      self.changeFilterDim("raw", this.value);
       this.blur();
     });
-    this.select("filter-gt").on('change', function() {
-      self.changeICFilterGtLt();
+    this.select("filter-raw-gt").on('change', function() {
+      self.changeFilterGtLt("raw");
       this.blur();
     });
-    this.select("filter-lt").on('change', function() {
-      self.changeICFilterGtLt();
+    this.select("filter-raw-lt").on('change', function() {
+      self.changeFilterGtLt("raw");
       this.blur();
     });
-    this.select("filter-dim-reset-button").on('click', function() {
-      self.resetICDimFilter();
+    this.select("filter-raw-dim-reset-button").on('click', function() {
+      self.resetDimFilter("raw");
+      this.blur();
+    });
+    this.select("filter-grad-dim-select").on('change', function() {
+      self.changeFilterDim("grad", this.value);
+      this.blur();
+    });
+    this.select("filter-grad-gt").on('change', function() {
+      self.changeFilterGtLt("grad");
+      this.blur();
+    });
+    this.select("filter-grad-lt").on('change', function() {
+      self.changeFilterGtLt("grad");
+      this.blur();
+    });
+    this.select("filter-grad-dim-reset-button").on('click', function() {
+      self.resetDimFilter("grad");
       this.blur();
     });
     this.select("filter-reset-button").on('click', function() {
@@ -276,24 +292,16 @@ module.exports = class Panel {
     });
   }
 
-  writeSampleSelect() {
-    const selected = this.select("sample-select").val();
-    const el = this.select("sample-select");
+  writeSampleSelect(el){
     el.empty();
     $.each(this.sampleNames, function(i, p) {
       el.append($('<option></option>').val(p).html(p));
     });
-    const newSelected = this.select("sample-select").val();
-    // Load the selected sample (if indeed it is a new sample)
-    if (newSelected != selected) {
-      this.changeSample(newSelected);
-      this.changeStep(this.defaultStep);
-    }
   }
 
-  writeFilterGtLt() {
-    this.select("filter-gt").val(this.filterGt.toFixed(2));
-    this.select("filter-lt").val(this.filterLt.toFixed(2));
+  writeFilterGtLt(filterType, gt, lt) {
+    this.select(`filter-${filterType}-gt`).val(gt.toFixed(2));
+    this.select(`filter-${filterType}-lt`).val(lt.toFixed(2));
   }
 
   writeSampleCount() {
@@ -303,23 +311,20 @@ module.exports = class Panel {
     );
   }
 
-  writeFilterICDimButton() {
-    this.select("filter-dim-reset-button").text(`Reset IC:${this.filterDim} filter`);
+  writeFilterDimButton(filterType, dim) {
+    this.select(`filter-${filterType}-dim-reset-button`).text(`Reset IC:${dim} filter`);
   }
 
-  writeICFilterDimFontLarge() {
-    // Increase the fontsize and boldness of the current filtered dimension
-    this.select("filter-dim-select")
-        .children("option")
-        .eq(this.filterDim)
-        .css({"font-size": "150%", "font-weight": "bold"});
-  }
 
-  writeICFilterDimFontNormal() {
-    // Increase the fontsize and boldness of the current filtered dimension
-    this.select("filter-dim-select")
+  writeFilterDimFont(filterType, dim, large) {
+    // Increase or decrease the fontsize and boldness of the current filtered dimension
+    const style = large
+                ? {"font-size": "150%", "font-weight": "bold"}
+                : {"font-size": "100%", "font-weight": "normal"}
+    this.select(`filter-${filterType}-dim-select`)
         .children("option")
-        .css({"font-size": "100%", "font-weight": "normal"});
+        .eq(dim)
+        .css(style);
   }
 
   changeSample(sampleName) {
@@ -359,7 +364,6 @@ module.exports = class Panel {
 
   changeStep(newStep) {
     this.step = newStep;
-    console.log(`changing step to ${this.step}`)
 
     // Shift the images left/right according to this.step
     $(`.subpanel-image img`).css("left", `${this.step*-100}%`)
@@ -377,6 +381,18 @@ module.exports = class Panel {
     this.scatterPlot.changeStep(this.step);
   }
 
+  changeSampleSelect() {
+    const selected = this.select("sample-select").val();
+    const el = this.select("sample-select");
+    this.writeSampleSelect(el);
+    const newSelected = this.select("sample-select").val();
+    // Load the selected sample (if indeed it is a new sample)
+    if (newSelected != selected) {
+      this.changeSample(newSelected);
+      this.changeStep(this.defaultStep);
+    }
+  }
+
   changeDims() {
     const xDim = this.select("x-dim-select").val();
     const yDim = this.select("y-dim-select").val();
@@ -384,13 +400,15 @@ module.exports = class Panel {
     this.scatterPlot.changeStep(this.step);
   }
 
-  hxMinMax(dim) {
+  hxMinMax(filterType, dim) {
+    // Get the minimum or maximum of the hx for this IC. Can handle raw loadings or gradients.
+    const loadings = filterType == "raw" ? "hx_loadings" : `grad_hx_${this.saliencyType}_loadings`
     let min = Infinity;
     let max = -Infinity;
-    for (let i=0; i < this.sampleNames.length; i++) {
+    for (let s=0; s < this.sampleNames.length; s++) {
       // Assumes all samples have the same number of steps
       for (let t=0; t <= this.maxStep; t++) {
-        const hx = this.panelData.samples[this.sampleNames[i]].hx_loadings[t][dim];
+        const hx = this.panelData.samples[this.sampleNames[s]][loadings][t][dim];
         min = Math.min(min, hx);
         max = Math.max(max, hx);
       }
@@ -398,57 +416,42 @@ module.exports = class Panel {
     return [min, max];
   }
 
-  changeICFilterDim(dim) {
-    if (this.icFilters.hasOwnProperty(dim)) {
-      this.filterGt = this.icFilters[dim]["gt"];
-      this.filterLt = this.icFilters[dim]["lt"];
+  changeFilterDim(filterType, dim) {
+    if (this.filters[filterType].hasOwnProperty(dim)) {
+      this.filterGt[filterType] = this.filters[filterType][dim]["gt"];
+      this.filterLt[filterType] = this.filters[filterType][dim]["lt"];
     } else {
-      [this.filterGt, this.filterLt] = this.hxMinMax(dim);
+      [this.filterGt[filterType], this.filterLt[filterType]] = this.hxMinMax(filterType, dim);
     }
-    this.filterDim = dim;
-    this.writeFilterGtLt();
-    this.writeFilterICDimButton();
+    this.filterDim[filterType] = dim;
+    this.writeFilterGtLt(filterType, this.filterGt[filterType], this.filterLt[filterType]);
+    this.writeFilterDimButton(filterType, this.filterDim[filterType]);
   }
 
-  resetAllFilters() {
-    this.icFilters = {};
-    this.sampleNames = this.defaultSampleNames;
-    // This will trigger changeICFilterDim.
-    this.select("filter-dim-select").val(this.defaultXDim).trigger('change');
-    this.writeSampleSelect();
-    this.writeSampleCount();
-    this.writeICFilterDimFontNormal();
-  }
-
-  resetICDimFilter() {
-    delete this.icFilters[this.filterDim];
-    this.sampleNames = this.defaultSampleNames;
-    // This will trigger changeICFilterDim.
-    this.select("filter-dim-select").val(this.filterDim).trigger('change');
-    this.writeSampleSelect();
-    this.writeSampleCount();
-    this.writeICFilterDimFontNormal();
-  }
-
-  applyICFilter() {
-    // Apply hx filter for each IC in this.icFilters (these contain the manually entered filters)
+  applyFilter() {
+    // Apply hx filter for each IC in this.filters[filterType] (these contain the manually
+    // entered filters).
     // A sample passes if filters for each dim apply AT THE SAME TIMESTEP. I.e. a sample will not
     // pass the filter if IC6 fit the filter range for timesteps 3 and 4 but IC7 only fit the
     // filter range for timestep 5
-    const numFilters = Object.keys(this.icFilters).length;
+    const numFilters = Object.keys(this.filters["raw"]).length
+                     + Object.keys(this.filters["grad"]).length;
     const validSamples = [];
-    for (let s=0; s < this.defaultSampleNames.length; s++) {
+    for (const sample of this.defaultSampleNames) {
       // Assumes all samples have the same number of steps
       for (let t=0; t <= this.maxStep; t++) {
         let dimsValid = 0;
-        for (const [dim, range] of Object.entries(this.icFilters)) {
-          const hx = this.panelData.samples[this.defaultSampleNames[s]].hx_loadings[t][dim];
-          if (hx >= range["gt"] && hx <= range["lt"]) {
-            dimsValid++
+        for (const filterType of ["raw", "grad"]) {
+          const loadings = filterType == "raw" ? "hx_loadings" : `grad_hx_${this.saliencyType}_loadings`
+          for (const [dim, range] of Object.entries(this.filters[filterType])) {
+            const hx = this.panelData.samples[sample][loadings][t][dim];
+            if (hx >= range["gt"] && hx <= range["lt"]) {
+              dimsValid++
+            }
           }
         }
         if (dimsValid == numFilters) {
-          validSamples.push(this.defaultSampleNames[s]);
+          validSamples.push(sample);
           break;
         }
       }
@@ -456,16 +459,43 @@ module.exports = class Panel {
     return validSamples
   }
 
-  changeICFilterGtLt() {
-    this.filterGt = parseFloat(this.select("filter-gt").val());
-    this.filterLt = parseFloat(this.select("filter-lt").val());
-    this.icFilters[this.filterDim] = {"gt": this.filterGt, "lt": this.filterLt};
+  changeFilterGtLt(filterType) {
+    this.filterGt[filterType] = parseFloat(this.select(`filter-${filterType}-gt`).val());
+    this.filterLt[filterType] = parseFloat(this.select(`filter-${filterType}-lt`).val());
+    this.filters[filterType][this.filterDim[filterType]] = {
+      "gt": this.filterGt[filterType], "lt": this.filterLt[filterType]
+    };
 
-    this.sampleNames = this.applyICFilter();
+    this.sampleNames = this.applyFilter();
     this.writeSampleCount();
     if (this.sampleNames.length > 0) {
-      this.writeSampleSelect();
-      this.writeICFilterDimFontLarge();
+      this.changeSampleSelect();
+      this.writeFilterDimFont(filterType, this.filterDim[filterType], true);
+    }
+  }
+
+  resetAllFilters() {
+    this.filters = {"raw": {}, "grad": {}};
+    this.sampleNames = this.defaultSampleNames;
+    // This will trigger changeFilterDim.
+    this.select("filter-raw-dim-select").val(this.defaultXDim).trigger('change');
+    this.select("filter-grad-dim-select").val(this.defaultXDim).trigger('change');
+    this.changeSampleSelect();
+    this.writeSampleCount();
+    Object.keys(this.filters["raw"]).forEach(dim => this.writeFilterDimFont("raw", dim, false));
+    Object.keys(this.filters["grad"]).forEach(dim => this.writeFilterDimFont("grad", dim, false));
+  }
+
+  resetDimFilter(filterType) {
+    if (this.filters[filterType].hasOwnProperty(this.filterDim[filterType])) {
+      delete this.filters[filterType][this.filterDim[filterType]];
+      this.sampleNames = this.applyFilter();
+      // This will trigger changeFilterDim.
+      this.select(`filter-${filterType}-dim-select`).val(this.filterDim[filterType]).trigger('change');
+      this.changeFilterGtLt(filterType);
+      this.changeSampleSelect();
+      this.writeSampleCount();
+      this.writeFilterDimFont(filterType, this.filterDim[filterType], false);
     }
   }
 
@@ -489,7 +519,6 @@ module.exports = class Panel {
 
   _play() {
     if (!this.playing) {
-      console.log("playing!");
       this.select("play_pause_btn").text("pause_circle");
       clearInterval(this.playingIntervalId);
       this.playingIntervalId = setInterval(this._playStep.bind(this), 250);
@@ -499,7 +528,6 @@ module.exports = class Panel {
 
   _pause(changeSymbol=true) {
     if (this.playing) {
-      console.log("paused!");
       if (changeSymbol) {
         this.select("play_pause_btn").text("play_circle");
       }

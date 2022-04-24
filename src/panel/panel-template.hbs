@@ -17,16 +17,16 @@
         {{#if dimSelect}}
           <div id="{{id}}-x-filter-">
             <label for="{{id}}-x-dim-select">IC on x-axis:</label>
-            <select name="ica-dim-x" id="{{id}}-x-dim-select">
+            <select name="ic-dim-x" id="{{id}}-x-dim-select">
               {{#each icaDims}}
                 <option value="{{this}}">{{this}}</option>
               {{/each}}
             </select>
           </div>
 
-          <div id="{{id}}-y-ica-dim-control">
+          <div id="{{id}}-y-ic-dim-control">
             <label for="{{id}}-y-dim-select">IC on y-axis:</label>
-            <select name="ica-dim-y" id="{{id}}-y-dim-select">
+            <select name="ic-dim-y" id="{{id}}-y-dim-select">
               {{#each icaDims}}
                 <option value="{{this}}">{{this}}</option>
               {{/each}}
@@ -131,23 +131,47 @@
   <!-- Panel filters -->
   <div id="{{id}}-right" class="panel filters">
     {{#if displayFilters}}
-      <b>Hx value filters:</b>
-      <div id="{{id}}-filter-ica-control">
-        <input type="text" name="gt" id="{{id}}-filter-gt">
-        <label for="{{id}}-filter-gt">&#8804;</label>
-        <label for="{{id}}-filter-dim-select">IC:</label>
-        <select name="ica-dim" id="{{id}}-filter-dim-select">
-          {{#each icaDims}}
-            <option value="{{this}}">{{this}}</option>
-          {{/each}}
-        </select>
-        <label for="{{id}}-filter-lt">&#8804;</label>
-        <input type="text" name="lt" id="{{id}}-filter-lt">
+      <div id="{{id}}-filter-raw">
+        <b>Raw Hx filters:</b>
+        <div id="{{id}}-filter-raw-control">
+          <input type="text" name="gt" id="{{id}}-filter-raw-gt">
+          <label for="{{id}}-filter-raw-gt">&#8804;</label>
+          <label for="{{id}}-filter-raw-dim-select">IC:</label>
+          <select name="ic-dim" id="{{id}}-filter-raw-dim-select">
+            {{#each icaDims}}
+              <option value="{{this}}">{{this}}</option>
+            {{/each}}
+          </select>
+          <label for="{{id}}-filter-raw-lt">&#8804;</label>
+          <input type="text" name="lt" id="{{id}}-filter-raw-lt">
+        </div>
+
+        <div id="{{id}}-filter-raw-dim-reset">
+          <button id="{{id}}-filter-raw-dim-reset-button" type="button"></button>
+        </div>
       </div>
 
-      <div id="{{id}}-filter-dim-reset">
-        <button id="{{id}}-filter-dim-reset-button" type="button"></button>
+      <div id="{{id}}-filter-grad">
+        <b>Grad filters:</b>
+        <div id="{{id}}-filter-grad-control">
+          <input type="text" name="gt" id="{{id}}-filter-grad-gt">
+          <label for="{{id}}-filter-grad-gt">&#8804;</label>
+          <label for="{{id}}-filter-grad-dim-select">w.r.t IC:</label>
+          <select name="ic-grad-dim" id="{{id}}-filter-grad-dim-select">
+            {{#each icaDims}}
+              <option value="{{this}}">{{this}}</option>
+            {{/each}}
+          </select>
+          <label for="{{id}}-filter-grad-lt">&#8804;</label>
+          <input type="text" name="lt" id="{{id}}-filter-grad-lt">
+        </div>
+
+        <div id="{{id}}-filter-grad-dim-reset">
+          <button id="{{id}}-filter-grad-dim-reset-button" type="button"></button>
+        </div>
       </div>
+
+      <br>
 
       <div id="{{id}}-filter-reset">
         <button id="{{id}}-filter-reset-button" type="button">Reset All Filters</button>
