@@ -19,7 +19,7 @@ export function createMDP(tagId) {
       .attr("width", width)
       .attr("height", height)
 
-  // The coordinates for the circles in each row
+  // The coordinates for the nodes in each row
   const data = [
     {row: "top", coords: d3.range(numTimesteps).map(x => [250 + x*spaceBetween, 40])},
     {row: "middle", coords: d3.range(numTimesteps+1).map(x => [300 + x*(spaceBetween/2), 120])},
@@ -46,6 +46,7 @@ export function createMDP(tagId) {
       return 4 * colIdx * arrowSpeed + 2 * arrowSpeed
     }
   }
+
   const getArrowDelay = function(idx) {
     // Add delay so arrows don't all start at once.
     // Must manually handle env->env and hx->hx transitions to fire the same time as act->env and obs->hx, respectively.
@@ -62,7 +63,7 @@ export function createMDP(tagId) {
       return "h"
     }
   }
-  const getTimeStep = function(rowIdx, colIdx) {
+  const getTimeStepText = function(rowIdx, colIdx) {
     // The subscript of each node indicating the timestep
     if (rowIdx == 0 || rowIdx == 2) {
       return colIdx == 0 ? "t" : "t+" + colIdx
@@ -73,95 +74,70 @@ export function createMDP(tagId) {
   }
   // The text is writting in html with <sub> tags for the timestep subscript. Using multiple "text" tags and styling them differently
   // turned out to be much messier
-  const getText = (rowIdx, colIdx) => getNodeType(rowIdx, colIdx) + "<sub>" + getTimeStep(rowIdx, colIdx) + "</sub>"
-  const getTextPosition = function(rowIdx, colIdx, d) {
-    if (colIdx == 0 || (rowIdx == 1 && colIdx == 1)) {
-      return d[0] - radius * (2/5)
-    } else {
-      return d[0] - radius * (3/4)
-    }
-  }
+  const getNodeLabel = function(rowIdx, colIdx) {
+    // return getNodeType(rowIdx, colIdx) + "<sub>" + getTimeStepText(rowIdx, colIdx) + "</sub>";
+    const subscript = `<tspan dy='5' font-size='.7em'>${getTimeStepText(rowIdx, colIdx)}</tspan>`;
+    return getNodeType(rowIdx, colIdx) + subscript;
+  };
 
-  const circles = svg
-    .selectAll("circle")
+  const nodes = svg
+    .selectAll("node-row")
     .data(data)
     .enter()
     .append("g")
       // h/t Zim https://stackoverflow.com/questions/38233003/d3-js-v4-how-to-access-parent-groups-datum-index
-      .attr("circle-row", (_, i) => i) // the row number available from DOM
-    .selectAll("circle")
-    .data(function(d){
-      return d.coords;
-    })
+      .attr("node-row", (_, i) => i) // the row number available from DOM
+    .selectAll("g")
+    .data(d => d.coords)
     .enter()
+    .append("g")
+      .attr("node-col", (_, j) => j) // the col number available from DOM
+      .style("opacity", 0);
+
+  // Create circles
+  nodes
     .append("circle")
       .attr("cx", d => d[0])
       .attr("cy", d => d[1])
       .attr("r", d => radius)
-      .attr("circle-col", function (_, j){return j}) // the col number available from DOM
-      // Need the index of the parent
-      .attr("fill", function (_,i){return getFill(this.parentNode.getAttribute("circle-row"), i)})
-      .style("opacity", 0)
-      .transition()
-      .delay(function(_,i){return getCircDelay(this.parentNode.getAttribute("circle-row"), i)})
-      .on("start", function repeat() {
-        d3.active(this)
-            .duration(arrowSpeed)
-            .style("opacity", 1)
-          .transition()
-            .delay(function(){return loopSpeed - getCircDelay(this.parentNode.getAttribute("circle-row"), this.getAttribute("circle-col"))})
-            .style("opacity", 0)
-          .transition()
-            .delay(function(){return 500 + getCircDelay(this.parentNode.getAttribute("circle-row"), this.getAttribute("circle-col"))})
-            .on("start", repeat);
+      // Get the fill colour based on row and column number
+      .attr("fill", function(_,i) {
+        return getFill(this.parentNode.parentNode.getAttribute("node-row"), i);
       });
-    
-  // // Manually places text based on x and y coords.
-  // // TODO: Place according to the circle
-  let text = svg.append("g")
-    .selectAll("foreignObject")
-    .data(data)
-    .enter()
-    .append("g")
-      // h/t Zim https://stackoverflow.com/questions/38233003/d3-js-v4-how-to-access-parent-groups-datum-index
-      .attr("circle-row", function(_, i) {return i}) // make parent index (row number) available from DOM
-    .selectAll("foreignObject")
-    .data(function(d){
-      return d.coords;
-    })
-    .enter()
-    .append("foreignObject")
-      .attr("circle-col", function(_, j){return j}) // the col number available from DOM
-      .attr("width", width)
-      .attr("height", height)
-      .attr("x", function(d,i){return getTextPosition(this.parentNode.getAttribute("circle-row"), i, d)})
-      .attr("y", d => d[1] - radius * (3/4))
+
+  // Manually places text in nodes based on x and y coords.
+  nodes
+    .append("text")
+      .html(function(_,i) {
+        return getNodeLabel(this.parentNode.parentNode.getAttribute("node-row"), i);
+      })
+      .attr("text-anchor", "middle")
+      .attr("alignment-baseline", "middle")
       .attr("font-size", d => radius * (3/4)) //font size
       .attr("font-weight", "bold")
       .attr("id", "nodeText")
-      .style("opacity", 1)
-    // Insert html as opposed to text as we wish to write e.g. S_t with a subscript
-    .append("xhtml:body")
-      .html(function (_,i){return getText(this.parentNode.parentNode.getAttribute("circle-row"), i)})
-      .attr("id", "nodeText")
-      .style("opacity", 0)
+      .attr("x", d => d[0])
+      // Manually add 2 pixels to drop slightly below the "alignment-baseline"
+      .attr("y", d => d[1] + 2)
+
+  // Make nodes appear and disappear on cue
+    nodes
       .transition()
-      .delay(function(_,i){return getCircDelay(this.parentNode.parentNode.getAttribute("circle-row"), i)})
+      .delay(function(_,i) {return getCircDelay(this.parentNode.getAttribute("node-row"), i);})
       .on("start", function repeat() {
         d3.active(this)
             .duration(arrowSpeed)
             .style("opacity", 1)
           .transition()
-            .delay(function(){return loopSpeed - getCircDelay(this.parentNode.parentNode.getAttribute("circle-row"), this.parentNode.getAttribute("circle-col"))})
-            // .duration(1000)
+            .delay(function() {return loopSpeed - getCircDelay(this.parentNode.getAttribute("node-row"), this.getAttribute("node-col"))})
             .style("opacity", 0)
           .transition()
-            .delay(function(){return 500 + getCircDelay(this.parentNode.parentNode.getAttribute("circle-row"), this.parentNode.getAttribute("circle-col"))})
+            .delay(function() {return 500 + getCircDelay(this.parentNode.getAttribute("node-row"), this.getAttribute("node-col"))})
             .on("start", repeat);
       });
 
-  // Takes the vectors representing the centre of two circles, and moves them closer together by length=rad.
-  // Need this so that our arrowheads don't appear in the middle of the circles
+  // Takes the vectors representing the centre of two Rows, and moves them closer together by length=rad.
+  // Need this so that our arrowheads don't appear in the middle of the Rows
   let shortenedPath = function([a, b]) {
     const dist = Math.sqrt((b[0] - a[0]) ** 2 + (b[1] - a[1]) ** 2);
     const distRatio = (dist - radius) / dist
@@ -173,7 +149,7 @@ export function createMDP(tagId) {
     const bNew = [b[0] - dx, b[1] - dy]
     return [aNew, bNew]
   };
-  // An array of coordinate pairs indicating the centre of circles to be joined with an arrow
+  // An array of coordinate pairs indicating the centre of Rows to be joined with an arrow
   let circlePairs = function() {
     const topRow = [...data[0].coords]
     const middleRow = [...data[1].coords]
@@ -230,25 +206,25 @@ export function createMDP(tagId) {
     .selectAll("line")
     .data(circlePairs)
     .join("line")
-      .attr("arrow-idx", function(_, i) { return i; })
-      .attr("x1", d=>d[0][0])
-      .attr("y1", d=>d[0][1])
-      .attr("x2", d=>d[0][0])
-      .attr("y2", d=>d[0][1])
+      .attr("arrow-idx", (_, i) => i)
+      .attr("x1", d => d[0][0])
+      .attr("y1", d => d[0][1])
+      .attr("x2", d => d[0][0])
+      .attr("y2", d => d[0][1])
       .transition()
       .delay((_,i) => getArrowDelay(i))
       .on("start", function repeat() {
         d3.active(this)
             .duration(arrowSpeed)
-            .attr("x2", d=>d[1][0])
-            .attr("y2", d=>d[1][1])
+            .attr("x2", d => d[1][0])
+            .attr("y2", d => d[1][1])
             .attr("stroke-width", 1)
             .attr("marker-end", "url(#arrow)")
             .attr("stroke", "black")
           .transition()
             .delay(function(){return loopSpeed - getArrowDelay(this.getAttribute("arrow-idx"))})
-            .attr("x2", d=>d[0][0])
-            .attr("y2", d=>d[0][1])
+            .attr("x2", d => d[0][0])
+            .attr("y2", d => d[0][1])
             .attr("marker-end", "none")
             .attr("stroke-width", 0)
           .transition()
