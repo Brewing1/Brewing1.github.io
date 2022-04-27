@@ -26,7 +26,6 @@
   </d-title>
 
 
-	
   <d-article>
       <i> TODO: Headline Figure: CoinRun: What we see; What the agent sees; Our generative model that simulates the agent inside the environment; Saliency map of what causes agent to take action at timestep t. </i>
     <d-contents>
@@ -69,14 +68,13 @@
 
     <div>
       <p>
-        By contrast to standard neural networks, deep RL agents are situated <i>in an environment</i>. We can't use the same trick for RL agents because causality flows forward through both the agent's neural networks <i>and</i> its environment. For example: If an agent presses a lightswitch, causing a light to turn on, the agent's action caused its visual neurons to activate even though there are no 'action-neuron-to-visual-neuron' connections. The causality flowed through the environment, not through the agent's internal memory. When causality flows through the environment, we call this `external memory'. 
+        By contrast to standard neural networks, deep RL agents are situated <i>in an environment</i>. We can't use the same trick for RL agents because causality flows forward through both the agent's neural networks <i>and</i> its environment. For example: If an agent presses a lightswitch, causing a light to turn on, the agent's action caused its visual neurons to activate even though there are no 'action-neuron-to-visual-neuron' connections. The causality flowed through the environment, not through the agent's internal memory. When causality flows through the environment, we call this `external memory'.
       </p>
 
 
     </div>
     <figure>
-      <div id="mdp-animation">
-      </div>
+      <div id="mdp-animation"></div>
       <figcaption style="text-align: center;">
       <ul>
       <li> TODO: Footnote: ref to external memory and autostigmergy. </li>
@@ -106,7 +104,7 @@
 
     <div>
       <p>
-        Previous work has skirted around these issues, typically by: 
+        Previous work has skirted around these issues, typically by:
         <ul>
           <li>Avoiding studying neural causal mechanisms entirely and focusing on external causes (cite Deletang);</li>
          <li> Focusing on studying the neural causal mechanisms of single actions at single timesteps (cite Rupprecht)</li>
@@ -114,7 +112,6 @@
         </ul>
       Previous work therefore fails to explain the causal neural mechanisms of agent behaviour.
       </p>
-      
       <p>
         In this article we address these issues. We first train a differentiable simulator of the environment in a recurrent neural network (cite Chiappa). This permits us to backpropagate gradients backwards through time, through both the environment and the agent (if the agent is recurrent). In turn, this permits the use of gradient-based causal attribution maps to generate explanations of the neural mechanisms of RL agents' behaviour. We believe that making gradient-based interpretability methods applicable to RL agents will be as important for understanding the neural activity of agents as they have been for understanding convolutional image classifiers. Our investigation motivates a shift of focus from a purely static feature-based interpretation of RL agent's networks toward a dynamics-based interpretation. To demonstrate the validity of the interpretations of the agent's neural activity that our method produced, we also manually modify the agents' neural dynamics and predict the changes in behaviour that were caused by our modifications.
       </p>

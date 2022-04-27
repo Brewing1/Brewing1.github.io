@@ -8,7 +8,12 @@ const Panel = require('../panel/panel.js');
 const MDP = require('../mdp.js');
 
 
-const mdpAnimation = MDP.createMDP("#mdp-animation");
+const mdpAnimation = new MDP(
+	"#mdp-animation",
+	{
+		numTimesteps: 3,
+	}
+);
 
 /**
  * TODO: Figure that depicts ica plot with option for which
@@ -28,7 +33,7 @@ const basicPanel = new Panel(
 
 /**
  * Same 3 panel figure as above (has obs, ica, and barchart,
- * no saliency of obs or on barchart) but for samples that 
+ * no saliency of obs or on barchart) but for samples that
  * maximise each of the ICs (or NMFs if it happens to be what
  * you use for the bar chart)
  **/
@@ -51,7 +56,7 @@ const maximalActivationPanel = new Panel(
  * E.g. we might have got the buzzsaw direction right but the box
  * direction wrong because it also assigns saliency to thin ledges
  * as well as boxes.
- * 
+ *
  **/
 const saliencyPanel = new Panel(
 	$("#saliency-panel").get(0),
