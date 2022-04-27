@@ -5,15 +5,26 @@
 
 $ = require('jquery');
 const Panel = require('../panel/panel.js');
-const MDP = require('../mdp.js');
+const {MDP, MDPGrad} = require('../mdp.js');
 
 
 const mdpAnimation = new MDP(
 	"#mdp-animation",
 	{
 		numTimesteps: 3,
+		arrowColour: "black"
 	}
 );
+mdpAnimation.draw()
+
+const mdpAnimationGrad = new MDPGrad(
+	"#mdp-animation-grad",
+	{
+		numTimesteps: 2,
+		arrowColour: "red"
+	}
+);
+mdpAnimationGrad.draw()
 
 /**
  * TODO: Figure that depicts ica plot with option for which

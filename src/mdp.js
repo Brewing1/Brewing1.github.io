@@ -2,14 +2,14 @@ const d3 = require("d3");
 get = require('lodash/get');
 
 
-module.exports = class MDP {
+class MDP {
 
   constructor(id, options={}) {
 
     this.id = id
 
     // https://cran.r-project.org/web/packages/khroma/vignettes/tol.html
-    const defaultColours = {env: "#44BB99", obs: "#EEDD88", act: "#EE8866", mem: "#77AADD"};
+    const defaultNodeColours = {env: "#44BB99", obs: "#EEDD88", act: "#EE8866", mem: "#77AADD"};
     // Default position of legend
     const defaultLegBox = {x: 20, y: 60, dy: 30};
     // Default legend order
@@ -25,7 +25,8 @@ module.exports = class MDP {
     this.radius            = get(options, "radius",        20);
     this.arrowSpeed        = get(options, "arrowSpeed",    1200);
     this.loopSpeed         = get(options, "loopSpeed",     15000);
-    this.colours           = get(options, "colours",       defaultColours);
+    this.nodeColours       = get(options, "nodeColours",   defaultNodeColours);
+    this.arrowColour       = get(options, "arrowColour",  "black");
     this.markerSize        = get(options, "markerSize",    25);
     this.legBox            = get(options, "legBox",        defaultLegBox);
     this.legOrder          = get(options, "legOrder",      defaultLegOrder);
@@ -59,10 +60,7 @@ module.exports = class MDP {
         )
       }
     ];
-
-    this.draw();
-
-  }
+  };
 
   draw() {
     // "this" will change when we are drawing elements
@@ -107,7 +105,6 @@ module.exports = class MDP {
         .html(function(_,j) {
           return _this.getNodeLabel(this.parentNode.parentNode.getAttribute("node-row"), j);
         })
-        .attr("id", "nodeText")
         .attr("text-anchor", "middle")
         .attr("alignment-baseline", "middle")
         .attr("x", d => d[0])
@@ -138,8 +135,10 @@ module.exports = class MDP {
       });
 
     // Place arrowhead in a defs element for later use
-    svg.append("svg:defs").append("svg:marker")
-      .attr("id", "arrow")
+    svg
+      .append("svg:defs").append("svg:marker")
+      // Get unique id based on _this.id with the # removed
+      .attr("id", `${_this.id.slice(1)}-arrow`)
       .attr('viewBox', [0, 0, _this.markerSize, _this.markerSize])
       .attr("refX", _this.markerSize)
       .attr("refY", _this.markerSize / 2)
@@ -148,14 +147,15 @@ module.exports = class MDP {
       .attr("orient", "auto")
       .append("path")
         .attr('d', d3.line()(_this.arrowPoints))
-        .style("fill", "black");
+        .attr("fill", _this.arrowColour);
 
     // Draw line and render arrows
     svg
       .append("g")
       .selectAll("line")
       .data(_this.circlePairs())
-      .join("line")
+      .enter()
+      .append("line")
         .attr("arrow-idx", (_, i) => i)
         .attr("x1", d => d[0][0])
         .attr("y1", d => d[0][1])
@@ -169,8 +169,8 @@ module.exports = class MDP {
               .attr("x2", d => d[1][0])
               .attr("y2", d => d[1][1])
               .attr("stroke-width", 1)
-              .attr("marker-end", "url(#arrow)")
-              .attr("stroke", "black")
+              .attr("marker-end", `url(${_this.id}-arrow)`)
+              .attr("stroke", _this.arrowColour)
             .transition()
               .delay(function(){return _this.loopSpeed - _this.getArrowDelay(this.getAttribute("arrow-idx"));})
               .attr("x2", d => d[0][0])
@@ -193,7 +193,7 @@ module.exports = class MDP {
       .attr("cx", _this.legBox.x)
       .attr("cy", (_,i) => _this.legBox.y + _this.legBox.dy * i)
       .attr("r", 6)
-      .style("fill", d => _this.colours[d]);
+      .style("fill", d => _this.nodeColours[d]);
 
     legEl
       .append("text")
@@ -204,20 +204,20 @@ module.exports = class MDP {
   }
 
 
-  getFill = function(i, j) {
+  getFill(i, j) {
     const rowIdx = parseInt(i);
     const colIdx = parseInt(j);
     // Get the colour of each node
     if (rowIdx == 0) {
-      return this.colours.env;
+      return this.nodeColours.env;
     } else if (rowIdx == 1) {
-      return colIdx % 2 == 0 ? this.colours.act : this.colours.obs;
+      return colIdx % 2 == 0 ? this.nodeColours.act : this.nodeColours.obs;
     } else {
-      return this.colours.mem;
+      return this.nodeColours.mem;
     }
   };
 
-  getNodeType = function(rowIdx, colIdx) {
+  getNodeType(rowIdx, colIdx) {
     // The name of each node (S, O, A, M)
     if (rowIdx == 0) {
       return "w";
@@ -228,7 +228,7 @@ module.exports = class MDP {
     }
   };
 
-  getTimeStepText = function(rowIdx, colIdx) {
+  getTimeStepText(rowIdx, colIdx) {
     // The subscript of each node indicating the timestep
     if (rowIdx == 0 || rowIdx == 2) {
       return colIdx == 0 ? "t" : "t+" + colIdx;
@@ -238,14 +238,14 @@ module.exports = class MDP {
     }
   };
 
-  getNodeLabel = function(i, j) {
+  getNodeLabel(i, j) {
     const rowIdx = parseInt(i);
     const colIdx = parseInt(j);
     const subscript = `<tspan dy='5' font-size='.7em'>${this.getTimeStepText(rowIdx, colIdx)}</tspan>`;
     return this.getNodeType(rowIdx, colIdx) + subscript;
   };
 
-  getCircDelay = function(i, j) {
+  getCircDelay(i, j) {
     const rowIdx = parseInt(i);
     const colIdx = parseInt(j);
     // Get the time delay for each node to appear
@@ -258,7 +258,7 @@ module.exports = class MDP {
     }
   };
 
-  getArrowDelay = function(i) {
+  getArrowDelay(i) {
     // At every 2nd delay (of time arrowSpeed), two arrows should fire at the same time.
     // Must handle env-1->env and hx-1->hx transitions to fire the same time as
     // act->env and obs->hx, respectively.
@@ -266,34 +266,34 @@ module.exports = class MDP {
     return this.arrowSpeed + (idx - Math.floor((idx + 1) / 3)) * this.arrowSpeed;
   };
 
-  circlePairs = function() {
+  circlePairs() {
     // An array of coordinate pairs indicating the centre of circles to be joined with an arrow
     // Add an empty env node on the top so we can draw arrows from an assumed previous timestep
     const topRow = [
       [this.nodePos.x - this.radius*2, this.nodePos.y - 2*this.nodePos.dy],
       ...this.data[0].coords
     ];
-    const middleRow = [...this.data[1].coords];
-    const bottomRow = [...this.data[2].coords];
+    const middleRow = this.data[1].coords;
+    const bottomRow = this.data[2].coords;
     let arr = [];
     for (let i = 0; i < this.numTimesteps-1; i++) {
       // Connect mem with action
-      arr.push(this.shortenedPath([bottomRow[0], middleRow[0]]));
+      arr.push(this.shortenedPath(bottomRow[0], middleRow[0]));
       // Connect action with env
-      arr.push(this.shortenedPath([middleRow.shift(), topRow[1]]));
+      arr.push(this.shortenedPath(middleRow.shift(), topRow[1]));
       // Connect env-1 with env
-      arr.push(this.shortenedPath([topRow.shift(), topRow[0]]));
+      arr.push(this.shortenedPath(topRow.shift(), topRow[0]));
       // Connect env with obs
-      arr.push(this.shortenedPath([topRow[0], middleRow[0]]));
+      arr.push(this.shortenedPath(topRow[0], middleRow[0]));
       // Connect obs with mem
-      arr.push(this.shortenedPath([middleRow.shift(), bottomRow[1]]));
+      arr.push(this.shortenedPath(middleRow.shift(), bottomRow[1]));
       // Connect mem-1 with mem
-      arr.push(this.shortenedPath([bottomRow.shift(), bottomRow[0]]));
+      arr.push(this.shortenedPath(bottomRow.shift(), bottomRow[0]));
     }
     return arr;
   };
 
-  shortenedPath = function([a, b]) {
+  shortenedPath(a, b) {
     // Takes the vectors representing the centre of two circles, and moves them closer together by
     // length=rad. Need this so that our arrowheads don't appear in the middle of the circles
     const dist = Math.sqrt((b[0] - a[0]) ** 2 + (b[1] - a[1]) ** 2);
@@ -307,3 +307,68 @@ module.exports = class MDP {
     return [aNew, bNew];
   };
 };
+
+class MDPGrad extends MDP {
+
+  constructor(id, options={}) {
+    super(id, options);
+    // Reverse the coords in each row. Note that this will mean colIdx=0 will correspond to
+    // the rightmost column
+    this.data.forEach(row => row.coords = row.coords.reverse());
+  };
+
+  getArrowDelay(i) {
+    // At every 4nd delay (of time arrowSpeed), two arrows should fire at the same time.
+    const idx = parseInt(i);
+    return this.arrowSpeed + (idx - Math.floor(Math.max(0, idx+1) / 5)) * this.arrowSpeed;
+  };
+
+  circlePairs() {
+    // An array of coordinate pairs indicating the centre of circles to be joined with an arrow
+    // Add an empty env node on the top so we can draw arrows from an assumed previous timestep
+    const topRow = this.data[0].coords;
+    const middleRow = this.data[1].coords;
+    const bottomRow = this.data[2].coords;
+    let arr = [];
+    for (let i = 0; i < this.numTimesteps-1; i++) {
+      // Connect mem with action
+      arr.push(this.shortenedPath(bottomRow[0], middleRow[0]));
+      // Connect action with env
+      arr.push(this.shortenedPath(middleRow.shift(), topRow[0]));
+      // Connect env-1 with env
+      // arr.push(this.shortenedPath(topRow.shift(), topRow[0]));
+      // Connect env with obs
+      arr.push(this.shortenedPath(topRow.shift(), middleRow[0]));
+      // Connect obs with mem
+      arr.push(this.shortenedPath(middleRow.shift(), bottomRow[1]));
+      // Connect mem-1 with mem
+      arr.push(this.shortenedPath(bottomRow.shift(), bottomRow[0]));
+    }
+    return arr;
+  };
+
+  getNodeLabel(i, j) {
+    // Since our data is reversed, we get the colIdx that this node would have if it weren't
+    // reversed, and pass this idx to the parent method
+    const rowIdx = parseInt(i);
+    const colIdx = parseInt(j);
+    const realColIdx = this.data[rowIdx].coords.length - colIdx - 1;
+    const subscript = `<tspan dy='5' font-size='.7em'>${this.getTimeStepText(rowIdx, realColIdx)}</tspan>`;
+    return this.getNodeType(rowIdx, realColIdx) + subscript;
+  };
+
+  getFill(i, j) {
+    // Again, get the reversed colIdx
+    const rowIdx = parseInt(i);
+    const colIdx = parseInt(j);
+    const realColIdx = this.data[rowIdx].coords.length - colIdx - 1;
+    return super.getFill(rowIdx, realColIdx);
+  };
+
+};
+
+
+module.exports = {
+  MDP: MDP,
+  MDPGrad: MDPGrad
+}
