@@ -1,4 +1,3 @@
-const d3 = require("d3");
 $ = require('jquery');
 get = require('lodash/get');
 
@@ -67,6 +66,7 @@ module.exports = class Panel {
 
     this.defaultStep = get(options, "defaultStep", 4);
 
+    this.cluster = "None";
     this.filters = {"raw": {}, "grad": {}};
     this.filterDim = {"raw": this.defaultXDim, "grad": this.defaultXDim};
     this.filterGt = {"raw": null, "grad": null};
@@ -186,6 +186,9 @@ module.exports = class Panel {
       defaultXDim: this.defaultXDim,
       defaultYDim: this.defaultXDim,
 
+      clusterNames: this.panelData.hasOwnProperty("clusters")
+                    ? Object.keys(this.panelData.clusters)
+                    : null,
       displayFilters: this.displayFilters,
     });
 
@@ -288,6 +291,10 @@ module.exports = class Panel {
     });
     this.select("filter-reset-button").on('click', function() {
       self.resetAllFilters();
+      this.blur();
+    });
+    this.select("cluster-select").on('change', function() {
+      self.changeCluster(this.value);
       this.blur();
     });
   }
@@ -418,6 +425,10 @@ module.exports = class Panel {
     return [min, max];
   }
 
+  clusterSamples() {
+    return this.cluster == "None" ? this.defaultSampleNames : this.panelData.clusters[this.cluster]
+  }
+
   changeFilterDim(filterType, dim) {
     if (this.filters[filterType].hasOwnProperty(dim)) {
       this.filterGt[filterType] = this.filters[filterType][dim]["gt"];
@@ -430,6 +441,15 @@ module.exports = class Panel {
     this.writeFilterDimButton(filterType, this.filterDim[filterType]);
   }
 
+  changeCluster(cluster) {
+    this.cluster = cluster;
+    this.resetAllFilters();
+    this.writeSampleCount();
+    if (this.sampleNames.length > 0) {
+      this.changeSampleSelect();
+    }
+  }
+
   applyFilter() {
     // Apply hx filter for each IC in this.filters[filterType] (these contain the manually
     // entered filters).
@@ -439,7 +459,9 @@ module.exports = class Panel {
     const numFilters = Object.keys(this.filters["raw"]).length
                      + Object.keys(this.filters["grad"]).length;
     const validSamples = [];
-    for (const sample of this.defaultSampleNames) {
+    // First filter by the select cluster
+    const samples = this.clusterSamples();
+    for (const sample of samples) {
       // Assumes all samples have the same number of steps
       for (let t=0; t <= this.maxStep; t++) {
         let dimsValid = 0;
@@ -477,37 +499,36 @@ module.exports = class Panel {
   }
 
   resetGradFilters() {
+    Object.keys(this.filters["grad"]).forEach(dim => this.writeFilterDimFont("grad", dim, false));
     this.filters["grad"] = {};
     this.sampleNames = this.applyFilter();
     // This will trigger changeFilterDim.
     this.select("filter-grad-dim-select").val(this.defaultXDim).trigger('change');
     this.changeSampleSelect();
     this.writeSampleCount();
-    Object.keys(this.filters["grad"]).forEach(dim => this.writeFilterDimFont("grad", dim, false));
   }
 
   resetAllFilters() {
+    Object.keys(this.filters["raw"]).forEach(dim => this.writeFilterDimFont("raw", dim, false));
+    Object.keys(this.filters["grad"]).forEach(dim => this.writeFilterDimFont("grad", dim, false));
     this.filters = {"raw": {}, "grad": {}};
-    this.sampleNames = this.defaultSampleNames;
+    this.sampleNames = this.clusterSamples();
     // This will trigger changeFilterDim.
     this.select("filter-raw-dim-select").val(this.defaultXDim).trigger('change');
     this.select("filter-grad-dim-select").val(this.defaultXDim).trigger('change');
     this.changeSampleSelect();
     this.writeSampleCount();
-    Object.keys(this.filters["raw"]).forEach(dim => this.writeFilterDimFont("raw", dim, false));
-    Object.keys(this.filters["grad"]).forEach(dim => this.writeFilterDimFont("grad", dim, false));
   }
 
   resetDimFilter(filterType) {
     if (this.filters[filterType].hasOwnProperty(this.filterDim[filterType])) {
+      this.writeFilterDimFont(filterType, this.filterDim[filterType], false);
       delete this.filters[filterType][this.filterDim[filterType]];
       this.sampleNames = this.applyFilter();
       // This will trigger changeFilterDim.
       this.select(`filter-${filterType}-dim-select`).val(this.filterDim[filterType]).trigger('change');
-      this.changeFilterGtLt(filterType);
       this.changeSampleSelect();
       this.writeSampleCount();
-      this.writeFilterDimFont(filterType, this.filterDim[filterType], false);
     }
   }
 

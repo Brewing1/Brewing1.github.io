@@ -128,10 +128,26 @@
     </div>
   </div>
 
-  <!-- Panel filters -->
-  <div id="{{id}}-right" class="panel filters">
+
+  <div id="{{id}}-right" class="panel">
+    <!-- Cluster selection -->
+    <div id="{{id}}-cluster">
+      <b>Cluster:</b>
+      <div id="{{id}}-cluster-raw-control">
+        <select name="cluster" id="{{id}}-cluster-select">
+          <option value="None" selected="selected">None</option>
+          {{#if clusterNames}}
+            {{#each clusterNames}}
+              <option value="{{this}}">{{this}}</option>
+            {{/each}}
+          {{/if}}
+        </select>
+      </div>
+    </div>
+
+    <!-- Panel filters -->
     {{#if displayFilters}}
-      <div id="{{id}}-filter-raw">
+      <div id="{{id}}-filter-raw" class="filters">
         <b>Raw Hx filters:</b>
         <div id="{{id}}-filter-raw-control">
           <input type="text" name="gt" id="{{id}}-filter-raw-gt">
@@ -151,7 +167,7 @@
         </div>
       </div>
 
-      <div id="{{id}}-filter-grad">
+      <div id="{{id}}-filter-grad" class="filters">
         <b>Grad filters:</b>
         <div id="{{id}}-filter-grad-control">
           <input type="text" name="gt" id="{{id}}-filter-grad-gt">
@@ -170,8 +186,6 @@
           <button id="{{id}}-filter-grad-dim-reset-button" type="button"></button>
         </div>
       </div>
-
-      <br>
 
       <div id="{{id}}-filter-reset">
         <button id="{{id}}-filter-reset-button" type="button">Reset All Filters</button>
