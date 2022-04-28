@@ -187,6 +187,16 @@
         </div>
       </div>
 
+      <div id="{{id}}-filter-step" class="filters">
+        <label for="{{id}}-filter-step-select">Timestep(s):</label>
+        <select name="time" id="{{id}}-filter-step-select">
+          <option value="All" selected="selected">All</option>
+          {{#each timesteps}}
+            <option value="{{this}}">{{this}}</option>
+          {{/each}}
+        </select>
+      </div>
+
       <div id="{{id}}-filter-reset">
         <button id="{{id}}-filter-reset-button" type="button">Reset All Filters</button>
       </div>

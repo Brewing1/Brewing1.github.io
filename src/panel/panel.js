@@ -60,6 +60,7 @@ module.exports = class Panel {
     this.defaultSampleNames = get(options, "sampleNames", Object.keys(this.panelData.samples));
     // sampleNames may change due to filtering
     this.sampleNames = this.defaultSampleNames
+    this.timesteps = [...this.panelData.samples[this.defaultSampleNames[0]].actions.keys()];
 
     this.defaultXDim = get(options, "defaultXDim", 0);
     this.defaultYDim = get(options, "defaultYDim", 1);
@@ -71,6 +72,7 @@ module.exports = class Panel {
     this.filterDim = {"raw": this.defaultXDim, "grad": this.defaultXDim};
     this.filterGt = {"raw": null, "grad": null};
     this.filterLt = {"raw": null, "grad": null};
+    this.filterSteps = this.timesteps;
 
     // Maps action numbers to thick arrows https://www.htmlsymbols.xyz/arrow-symbols
     this.arrowMap = {
@@ -189,7 +191,9 @@ module.exports = class Panel {
       clusterNames: this.panelData.hasOwnProperty("clusters")
                     ? Object.keys(this.panelData.clusters)
                     : null,
+
       displayFilters: this.displayFilters,
+      timesteps: this.timesteps,
     });
 
     $(this.element).html(panelHtml);
@@ -257,6 +261,10 @@ module.exports = class Panel {
       this.blur();
     });
 
+    this.select("cluster-select").on('change', function() {
+      self.changeCluster(this.value);
+      this.blur();
+    });
     this.select("filter-raw-dim-select").on('change', function() {
       self.changeFilterDim("raw", this.value);
       this.blur();
@@ -293,8 +301,8 @@ module.exports = class Panel {
       self.resetAllFilters();
       this.blur();
     });
-    this.select("cluster-select").on('change', function() {
-      self.changeCluster(this.value);
+    this.select("filter-step-select").on('change', function() {
+      self.changeFilterStep(this.value);
       this.blur();
     });
   }
@@ -307,8 +315,9 @@ module.exports = class Panel {
   }
 
   writeFilterGtLt(filterType, gt, lt) {
-    this.select(`filter-${filterType}-gt`).val(gt.toFixed(2));
-    this.select(`filter-${filterType}-lt`).val(lt.toFixed(2));
+    const decimals = filterType == "grad" ? 3 : 2
+    this.select(`filter-${filterType}-gt`).val(gt.toFixed(decimals));
+    this.select(`filter-${filterType}-lt`).val(lt.toFixed(decimals));
   }
 
   writeSampleCount() {
@@ -415,8 +424,7 @@ module.exports = class Panel {
     let min = Infinity;
     let max = -Infinity;
     for (let s=0; s < this.sampleNames.length; s++) {
-      // Assumes all samples have the same number of steps
-      for (let t=0; t <= this.maxStep; t++) {
+      for (const t of this.filterSteps) {
         const hx = this.panelData.samples[this.sampleNames[s]][loadings][t][dim];
         min = Math.min(min, hx);
         max = Math.max(max, hx);
@@ -450,6 +458,15 @@ module.exports = class Panel {
     }
   }
 
+  changeFilterStep(step) {
+    this.filterSteps = step == "All" ? this.timesteps : [step];
+    this.resetAllFilters();
+    this.writeSampleCount();
+    if (this.sampleNames.length > 0) {
+      this.changeSampleSelect();
+    }
+  }
+
   applyFilter() {
     // Apply hx filter for each IC in this.filters[filterType] (these contain the manually
     // entered filters).
@@ -463,7 +480,7 @@ module.exports = class Panel {
     const samples = this.clusterSamples();
     for (const sample of samples) {
       // Assumes all samples have the same number of steps
-      for (let t=0; t <= this.maxStep; t++) {
+      for (const t of this.filterSteps) {
         let dimsValid = 0;
         for (const filterType of ["raw", "grad"]) {
           const loadings = filterType == "raw" ? "hx_loadings" : `grad_hx_${this.saliencyType}_loadings`
