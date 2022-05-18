@@ -405,7 +405,7 @@ module.exports = class Panel {
     this.writeSampleSelect(el);
     const newSelected = this.select("sample-select").val();
     // Load the selected sample (if indeed it is a new sample)
-    if (newSelected != selected) {
+    if (newSelected != selected && newSelected !== null) {
       this.changeSample(newSelected);
       this.changeStep(this.defaultStep);
     }
@@ -434,7 +434,9 @@ module.exports = class Panel {
   }
 
   clusterSamples() {
-    return this.cluster == "None" ? this.defaultSampleNames : this.panelData.clusters[this.cluster]
+    return this.cluster == "None"
+      ? this.defaultSampleNames
+      : this.panelData.clusters[this.cluster].filter(x => this.defaultSampleNames.includes(x));
   }
 
   changeFilterDim(filterType, dim) {
