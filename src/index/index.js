@@ -3,9 +3,13 @@
 // TODO: disable before publishing
 
 
-$ = require('jquery');
-const Panel = require('../panel/panel.js');
-const {MDP, MDPGrad} = require('../mdp.js');
+// $ = require('jquery');
+// const Panel = require('../panel/panel.js');
+// const {MDP, MDPGrad} = require('../mdp.js');
+
+import $ from 'jquery';
+import Panel from '../panel/panel.js';
+import {MDP, MDPGrad} from '../mdp.js';
 
 
 const mdpAnimation = new MDP(

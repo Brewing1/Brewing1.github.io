@@ -1,4 +1,5 @@
 node_modules/
 static/localData/
-
+.vscode/
 *.DS_Store
+*stats.json
