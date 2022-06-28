@@ -202,28 +202,28 @@ module.exports = class Panel {
   _intializeControls(options) {
     const self = this;
 
-    this.select("back_all_btn").click(function() {
+    this.select("back_all_btn").on('click', function() {
       self.changeStep(0);
       this.blur();
     });
 
-    this.select("back_one_btn").click(function() {
+    this.select("back_one_btn").on('click', function() {
       self._backOneStep();
       this.blur();
     });
 
-    this.select("forward_one_btn").click(function() {
+    this.select("forward_one_btn").on('click', function() {
       self._forwardOneStep();
       this.blur();
     });
 
-    this.select("forward_all_btn").click(function() {
+    this.select("forward_all_btn").on('click', function() {
       self.changeStep(self.maxStep);
       this.blur();
     });
 
     this.playing = false;
-    this.select("play_pause_btn").click(function() {
+    this.select("play_pause_btn").on('click', function() {
       if (!self.playing) {
         self._play();
       } else {
