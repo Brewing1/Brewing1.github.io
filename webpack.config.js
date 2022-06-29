@@ -2,6 +2,7 @@ var path = require("path");
 var webpack = require("webpack");
 var HtmlWebpackPlugin = require("html-webpack-plugin");
 var CopyWebpackPlugin = require("copy-webpack-plugin");
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 module.exports = (env) => {
 	const isDevelopment = env == "dev";
@@ -76,6 +77,7 @@ module.exports = (env) => {
 				$: 'jquery',
 				jQuery: 'jquery'
 			}),
+			new BundleAnalyzerPlugin()
 		],
 		devServer: {
 			historyApiFallback: true,
