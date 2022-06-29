@@ -3,10 +3,10 @@ $ = require('jquery');
 const Panel = require('./panel.js');
 
 
-var dataLocation = "data"
+const dataLocation = "data"
 try {
-  const data = require(`../../static/localData/panel_data.json`);
-  dataLocation = "localData";
+  require(`../../static/localData/panel_data.json`);
+  const dataLocation = "localData";
   console.log("using localData folder!")
 } catch {}
 

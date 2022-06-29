@@ -77,7 +77,7 @@ module.exports = (env) => {
 				$: 'jquery',
 				jQuery: 'jquery'
 			}),
-			new BundleAnalyzerPlugin()
+			// new BundleAnalyzerPlugin()
 		],
 		devServer: {
 			historyApiFallback: true,

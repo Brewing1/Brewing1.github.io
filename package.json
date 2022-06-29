@@ -15,7 +15,8 @@
 		"jquery": "^3.6.0",
 		"lowdash": "^1.2.0",
 		"material-design-icons": "^3.0.1",
-		"path": "^0.12.7"
+		"path": "^0.12.7",
+		"tippy.js": "^6.3.7"
 	},
 	"devDependencies": {
 		"@babel/cli": "^7.8.3",

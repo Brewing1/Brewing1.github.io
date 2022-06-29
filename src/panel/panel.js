@@ -1,5 +1,6 @@
-$ = require('jquery');
-get = require('lodash/get');
+const $ = require('jquery');
+const get = require('lodash/get');
+const tippy = require('tippy.js').default;
 
 const panelTemplate = require("./panel-template.hbs");
 
@@ -89,8 +90,8 @@ module.exports = class Panel {
 
   _initialize(options) {
     this._initializeHtml(options);
+    this._writeTooltips(options)
     this._initializeGraphs(options);
-
     this.changeSample(this.sampleNames[0]);
 
     // Initialise filtering
@@ -199,6 +200,29 @@ module.exports = class Panel {
     });
 
     $(this.element).html(panelHtml);
+  }
+
+  _writeTooltips(options) {
+    if (this.displayObs) {
+      tippy(this.select("obs-tooltip")[0], {
+        content: "Observation explanation",
+      });
+    }
+    if (this.displaySaliency) {
+      tippy(this.select("sal-tooltip")[0], {
+        content: "Saliency explanation",
+      });
+    }
+    if (this.displayScatterPlot) {
+      tippy(this.select("scatterPlot-tooltip")[0], {
+        content: "Scatterplot explanation",
+      });
+    }
+    if (this.displayBarChart) {
+      tippy(this.select("barChart-tooltip")[0], {
+        content: "Bar chart explanation",
+      });
+    }
   }
 
   _intializeControls(options) {
