@@ -51,6 +51,7 @@ module.exports = class Panel {
     // panels to use
     this.displayObs         = get(options, "displayObs",         true);
     this.displaySaliency    = get(options, "displaySaliency",    true);
+    this.displayClusters    = get(options, "displayClusters",    false);
     this.displayFilters     = get(options, "displayFilters",     false);
     this.displayScatterPlot = get(options, "displayScatterPlot", true);
     this.displayBarChart    = get(options, "displayBarChart",    true);
@@ -192,6 +193,7 @@ module.exports = class Panel {
                     ? Object.keys(this.panelData.clusters)
                     : null,
 
+      displayClusters: this.displayClusters,
       displayFilters: this.displayFilters,
       timesteps: this.timesteps,
     });

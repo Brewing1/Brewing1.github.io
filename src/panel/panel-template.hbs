@@ -128,20 +128,22 @@
 
 
   <div id="{{id}}-right" class="panel">
-    <!-- Cluster selection -->
-    <div id="{{id}}-cluster">
-      <b>Cluster:</b>
-      <div id="{{id}}-cluster-raw-control">
-        <select name="cluster" id="{{id}}-cluster-select">
-          <option value="None" selected="selected">None</option>
-          {{#if clusterNames}}
-            {{#each clusterNames}}
-              <option value="{{this}}">{{this}}</option>
-            {{/each}}
-          {{/if}}
-        </select>
+    {{#if displayClusters}}
+      <!-- Cluster selection -->
+      <div id="{{id}}-cluster">
+        <b>Cluster:</b>
+        <div id="{{id}}-cluster-raw-control">
+          <select name="cluster" id="{{id}}-cluster-select">
+            <option value="None" selected="selected">None</option>
+            {{#if clusterNames}}
+              {{#each clusterNames}}
+                <option value="{{this}}">{{this}}</option>
+              {{/each}}
+            {{/if}}
+          </select>
+        </div>
       </div>
-    </div>
+    {{/if}}
 
     <!-- Panel filters -->
     {{#if displayFilters}}
