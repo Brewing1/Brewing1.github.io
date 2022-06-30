@@ -1,5 +1,5 @@
 
-$ = require('jquery');
+const $ = require('jquery');
 const Panel = require('./panel.js');
 
 

@@ -7,6 +7,22 @@ const panelTemplate = require("./panel-template.hbs");
 const BarChart = require('./bar-plot.js');
 const ICAScatterplot = require('./ica-scatterplot.js');
 
+const tooltipInfo = {
+  "obs": `Observation explanation. ASFDASFSFSDF sssss sss ssssss sssssssssssddd dssds
+  fsdfsdf sdf sdfdfds sdf sdf;sdkf asdfkl32r089234 232 3233rewe 2 3 r r23r oir23ori3riojr23.`,
+  "sal": `Saliency explanation. ASFDASFSFSDF sssss sss ssssss sssssssssssddd dssds
+  fsdfsdf sdf sdfdfds sdf sdf;sdkf asdfkl32r089234 232 3233rewe 2 3 r r23r oir23ori3riojr23.`,
+  "scatterPlot": `scatterPlot explanation. ASFDASFSFSDF sssss sss ssssss sssssssssssddd dssds
+  fsdfsdf sdf sdfdfds sdf sdf;sdkf asdfkl32r089234 232 3233rewe 2 3 r r23r oir23ori3riojr23
+  23r 23r r32l23r  3r r3 32 r23r 3r2 32r r  r 23r 23 r2r23rr 3r2 3r2 r3r 32r 23 r 23r 23r.
+  2r32r r  rdesfkamfa df  sadf809sdafu098u23  09ur 0 ur0 e0rr0werwe ew.`,
+  "barChart": `barChart explanation. ASFDASFSFSDF sssss sss ssssss sssssssssssddd dssds
+  fsdfsdf sdf sdfdfds sdf sdf;sdkf asdfkl32r089234 232 3233rewe 2 3 r r23r oir23ori3riojr23
+  23r 23r r32l23r  3r r3 32 r23r 3r2 32r r  r 23r 23 r2r23rr 3r2 3r2 r3r 32r 23 r 23r 23r.
+  2r32r r  rdesfkamfa df  sadf809sdafu098u23  09ur 0 ur0 e0rr0werwe ew.`,
+}
+
+
 module.exports = class Panel {
 
   constructor(element, id, options={}) {
@@ -205,22 +221,22 @@ module.exports = class Panel {
   _writeTooltips(options) {
     if (this.displayObs) {
       tippy(this.select("obs-tooltip")[0], {
-        content: "Observation explanation",
+        content: tooltipInfo["obs"],
       });
     }
     if (this.displaySaliency) {
       tippy(this.select("sal-tooltip")[0], {
-        content: "Saliency explanation",
+        content: tooltipInfo["sal"],
       });
     }
     if (this.displayScatterPlot) {
       tippy(this.select("scatterPlot-tooltip")[0], {
-        content: "Scatterplot explanation",
+        content: tooltipInfo["scatterPlot"],
       });
     }
     if (this.displayBarChart) {
       tippy(this.select("barChart-tooltip")[0], {
-        content: "Bar chart explanation",
+        content: tooltipInfo["barChart"],
       });
     }
   }

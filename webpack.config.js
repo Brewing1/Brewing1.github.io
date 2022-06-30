@@ -53,9 +53,7 @@ module.exports = (env) => {
 						removingTagAttrs: ["font-family"],
 					},
 				},
-
 			],
-
 		},
 		plugins: [
 			new HtmlWebpackPlugin({
