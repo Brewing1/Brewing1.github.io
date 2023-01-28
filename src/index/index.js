@@ -3,13 +3,9 @@
 // TODO: disable before publishing
 
 
-// $ = require('jquery');
-// const Panel = require('../panel/panel.js');
-// const {MDP, MDPGrad} = require('../mdp.js');
-
 import $ from 'jquery';
+import { MDP, MDPGrad } from '../mdp.js';
 import Panel from '../panel/panel.js';
-import {MDP, MDPGrad} from '../mdp.js';
 
 
 const mdpAnimation = new MDP(
@@ -29,6 +25,24 @@ const mdpAnimationGrad = new MDPGrad(
 	}
 );
 mdpAnimationGrad.draw()
+
+const panel = new Panel(
+  $("#panel").get(0),
+  "panel",
+  {
+    displayClusters: true,
+    displayFilters: true,
+    displaySaliency: true,
+    saliencyTypes: ["value", "action", "hx_direction_0", "hx_direction_1", "hx_direction_2", "hx_direction_3", "hx_direction_4", "hx_direction_5", "hx_direction_6", "hx_direction_7", "hx_direction_8", "hx_direction_9", "hx_direction_10", "hx_direction_11", "hx_direction_12", "hx_direction_13", "hx_direction_14", "hx_direction_15"],
+    panelLayout: "panel-grid-2-2",
+    barChartOptions: {
+			useColor: true,
+		},
+    // dataLocation: dataLocation,
+    defaultStep: 4,
+  }
+);
+
 
 /**
  * TODO: Figure that depicts ica plot with option for which
@@ -116,7 +130,7 @@ const behaviourPanel = new Panel(
 
 // NOT DONE
 
-const panelList = [basicPanel, maximalActivationPanel, saliencyPanel, behaviourPanel]
+const panelList = [panel, basicPanel, maximalActivationPanel, saliencyPanel, behaviourPanel]
 
 document.addEventListener('keydown', function(e) {
 	onScreen = panelList.filter(function(p) {

@@ -31,6 +31,7 @@
 .right-controls {
 	flex: 1;
 	margin-right: 10px;
+	text-align: right;
 }
 
 /* Line of subpanels */
@@ -69,6 +70,10 @@
 
 .control-icon svg {
 	width: 25px;
+}
+
+.material-icons.md-18 {
+	font-size: 18px;
 }
 
 .subpanel hr {
@@ -111,7 +116,13 @@
 	text-align: right;
 }
 
+#panel-cluster {
+	margin-bottom: 10px;
+}
 /* Filters */
+.filters {
+	margin-bottom: 10px;
+}
 .filters input{
 	width: 6ch;
 }
