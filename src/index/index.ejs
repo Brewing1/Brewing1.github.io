@@ -41,9 +41,10 @@
           <li><a href="#dissecting-failure">Limitations of our method</a></li>
           <li><a href="#hallucinations">New possibilities</a></li>
         </ul>
+        <div><a href="#appendix">Appendix</a></div>
       </nav>
     </d-contents>
-    <div>
+    <div id="introduction">
       <p>
         The last half-decade has seen deep reinforcement learning (RL) agents learn to solve many exciting tasks, from beating humans in Go and Starcraft to solving Rubix cubes with a robotic hand. As real-world deployment of RL agents grows, there's an increasing need to understand the causal mechanisms of their behaviours <d-cite key="deletang2021"></d-cite>. This means looking inside their neural networks. But unlike convolutional image classifier networks, there has been much less success in interpreting the representations learned by deep RL agents. Why is analyzing the networks of RL agents so different?
       </p>
@@ -167,22 +168,11 @@
       <figcaption style="text-align: center;">MAIN PANEL.</figcaption>
     </figure>
 
-    <figure class="l-page">
-      <div id="basic-panel">
-      </div>
-      <figcaption style="text-align: center;">TODO: Figure that depicts ica plot with option for which ICs to choose. 3 panels. It's a video of the agent observations (no saliency) and the hx as it moves through pca space with bar chart (no saliency either).</figcaption>
-    </figure>
-
     <div>
       <p>
         When we generate agent-environment rollouts that maximally activate agent's hidden state neurons in the directions of the ICs, we find that the visualisations look more meaningful. Here we find directions that appear to correspond to XYZ.
       </p>
     </div>
-    <figure class="l-page">
-      <div id="max-act-panel">
-      </div>
-      <figcaption style="text-align: center;">Same 3 panel figure as above (has obs, ica, and barchart, no saliency of obs or on barchart) but  for samples that maximise each of the ICs (or NMFs if it happens to be what you use for the bar chart)</figcaption>
-    </figure>
 
     <h3>Using saliency to dissect the causal mechanisms of behaviour</h3>
 
@@ -194,22 +184,12 @@
         For example, we can measure how much each directions in the agent's neural statespace contributes to a particular action by measuring the alignment of the saliency vector with that statespace direction. Blue colours mean those directions (groups of neurons) positively contributed to that action, and red colours indicate negative contributions.
       </p>
     </div>
-    <figure>
-      <div id="saliency-panel">
-      </div>
-      <figcaption style="text-align: center;">TODO: One of the main figures: Four panels. Obs, obs-saliency, PCA, ica-barchart with saliency. It should have a bunch of samples that tell the story of the specific XYZ variables that we identified a few paragraphs above. Some probably work out, but some probably don't. E.g. we might have got the buzzsaw direction right but the box direction wrong because it also assigns saliency to thin ledges as well as boxes.</figcaption>
-    </figure>
 
     <div>
       <p>
         We've just shown how directions in the agent's neural state space causally respond to observations of specific features in the environment. But the hidden state does more than respond to what the agent sees - it also determines behaviour. We can identify how much an action a certain timestep is caused by observations of components of the agent's neural statespace (figxxx). These samples depict an agent that jumps over a buzzsaw in the 20th timestep. The saliency plots depict the contribution of the observation and the directions in the agent's neural statespace to that action. We can see by the saliency map that the buzzsaw contributes to the jumping action just before the jump. The buzzsaw-selective direction in neural statespace also contributes to the jumping action.
       </p>
     </div>
-    <figure>
-      <div id="behaviour-panel">
-      </div>
-      <figcaption style="text-align: center;">TODO: Another one of the main figures: Four panels. Obs, obs-saliency, PCA, ica-barchart with saliency. It should have a bunch of samples that depict the action/behaviour that we're trying to explain. </figcaption>
-    </figure>
 
     <div>
       <p>
@@ -225,12 +205,6 @@
         Our understanding of a neural network is only as good as the predictions it enables us to make about it. We therefore tried to predictably control the agent's behaviour. To do this, we 'swap' certain directions in the agent's neural statespace: for example, at any timestep where the agent's networks cause its hidden state to move in the direction of the buzzsaw-representation, we instead move it in the direction of the box-representation.
       </p>
     </div>
-    <figure>
-      <video style="width: 100%;" loop controls muted>
-        <source src="videos/sample_0_50000_1.mp4" type="video/mp4">
-      </video>
-      <figcaption style="text-align: center;">TODO: Figure. 4 panels. Top 2 panels are agent observations and bar chart, no saliency on either. Bottom two panels are the same but for samples where the directions have not been swapped. </figcaption>
-    </figure>
 
     <div>
       <p>
@@ -276,75 +250,11 @@
       </ul>
 
     <h1>End of article</h1>
-    <h1>End of article</h1>
     <h2>Just retaining the below hints because they'll probably be useful as a reference. </h2>
     <h4>Hot reloading</h4>
     <p>Your browser can automatically refresh when your editor saves. This should work by default, and you can disable
       it in <code>index.js</code>. Sometimes hot reloading isn't fully compatible with all types of code, so you may
-      need to try manually reloading if you're seeing inconsistent behavior.</p>
-
-    <h4>Inlined SVGs</h4>
-    <p>SVGs are so small that it can be nice to save an extra request and simply inline them intop your HTML:</p>
-
-    <figure>
-      <%= require("../../static/diagrams/diffparam.svg") %>
-    </figure>
-
-    <style>
-      #arrow-2 #arrow-head {
-        fill: steelblue;
-      }
-
-      #arrow-2 #arrow-line {
-        stroke: steelblue;
-      }
-    </style>
-
-    <p>Let's use some CSS to style an inlined SVG. Here's an arrow
-      <svg width="27px" height="9px" viewBox="0 0 27 9" version="1.1" xmlns="http://www.w3.org/2000/svg"
-        xmlns:xlink="http://www.w3.org/1999/xlink">
-        <g id="arrow" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-          <g id="Group" transform="translate(-0.195652, 0.0)">
-            <path d="M10.5,4.5 L26.8913043,4.5" id="arrow-line" stroke="#FF6600" stroke-width="2"
-              stroke-linecap="square" stroke-dasharray="6,4"></path>
-            <g id="arrow-head" transform="translate(5.0, 4.5) scale(-1, 1) translate(-5.0, -4.5) translate(0.5, 0.0)"
-              fill="#FF6600" fill-rule="nonzero">
-              <path
-                d="M4.5,0 C5.67007294,3.25202425 6.85281213,6.29180565 9,9 L4.5,7.3125 L0,9 C2.13530145,6.28972675 3.34126793,3.24998975 4.5,0 Z"
-                id="Shape" transform="translate(4.5, 4.5) rotate(-270.0) translate(-4.5, -4.5) "></path>
-            </g>
-          </g>
-        </g>
-      </svg> that we
-      can make
-      inline. If you'd like to change the color in CSS, we can do so. Let's put the second arrow (<span
-        id="arrow-2"><svg width="27px" height="9px" viewBox="0 0 27 9" version="1.1" xmlns="http://www.w3.org/2000/svg"
-          xmlns:xlink="http://www.w3.org/1999/xlink">
-          <g id="arrow" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-            <g id="Group" transform="translate(-0.195652, 0.0)">
-              <path d="M10.5,4.5 L26.8913043,4.5" id="arrow-line" stroke="#FF6600" stroke-width="2"
-                stroke-linecap="square" stroke-dasharray="6,4"></path>
-              <g id="arrow-head" transform="translate(5.0, 4.5) scale(-1, 1) translate(-5.0, -4.5) translate(0.5, 0.0)"
-                fill="#FF6600" fill-rule="nonzero">
-                <path
-                  d="M4.5,0 C5.67007294,3.25202425 6.85281213,6.29180565 9,9 L4.5,7.3125 L0,9 C2.13530145,6.28972675 3.34126793,3.24998975 4.5,0 Z"
-                  id="Shape" transform="translate(4.5, 4.5) rotate(-270.0) translate(-4.5, -4.5) "></path>
-              </g>
-            </g>
-          </g>
-        </svg></span>) in a tag with an ID, so we can
-      target it in CSS.
-
-      <d-code block="" language="css">
-        #arrow-2 #arrow-head {
-        fill: steelblue;
-        }
-
-        #arrow-2 #arrow-line {
-        stroke: steelblue;
-        }
-      </d-code>
-
+      need to try manually reloading if you're seeing inconsistent behavior.
     </p>
 
     <h4>Formulas</h4>
@@ -355,80 +265,6 @@
     <d-math block="">
       c = \pm \sqrt{ \sum_{i=0}^{n}{a^{222} + b^2}}
     </d-math>
-    <p>Math can also be quite involved:</p>
-    <d-math block="">
-      \frac{1}{\Bigl(\sqrt{\phi \sqrt{5}}-\phi\Bigr) e^{\frac25 \pi}} = 1+\frac{e^{-2\pi}} {1+\frac{e^{-4\pi}}
-      {1+\frac{e^{-6\pi}} {1+\frac{e^{-8\pi}} {1+\cdots} } } }
-    </d-math>
-
-    <p>We've also been experimenting with <a
-        href="https://github.com/distillpub/template/wiki/Annotated-Formulas">annotated formulas</a>:</p>
-
-    <style>
-      .eq-grid {
-        display: grid;
-        justify-content: start;
-        grid-row-gap: 10px;
-      }
-
-      .eq-grid figcaption d-math {
-        font-size: 100%;
-      }
-
-      .eq-grid .expansion-marker {
-        border: 1px solid #CCC;
-        border-bottom: none;
-        height: .5em;
-        width: 100%;
-      }
-    </style>
-
-    <figure class="eq-grid">
-
-      <div style="grid-row: 1; grid-column: 1;">
-        <d-math> C ~~~=~~~~ </d-math>
-      </div>
-      <div style="grid-row: 1; grid-column: 2;">
-        <d-math> H^E_D(X, Z) </d-math>
-      </div>
-      <div style="grid-row: 1; grid-column: 3;">
-        <d-math> ~~~-~~~ </d-math>
-      </div>
-      <div style="grid-row: 1; grid-column: 4;">
-        <d-math> H^E_E(X, Z) </d-math>
-      </div>
-
-
-      <div class="expansion-marker" style="grid-row: 2; grid-column: 4 / 7; "></div>
-
-      <div style="grid-row: 3; grid-column: 1;">
-        <d-math> ~~~~~~~=~~~~ </d-math>
-      </div>
-      <div style="grid-row: 3; grid-column: 2;">
-        <d-math> H^E_D(X, Z) </d-math>
-      </div>
-      <div style="grid-row: 3; grid-column: 3;">
-        <d-math> ~~~-~~~ </d-math>
-      </div>
-      <div style="grid-row: 3; grid-column: 4;">
-        <d-math> H^E_E(Z | X) </d-math>
-      </div>
-      <div style="grid-row: 3; grid-column: 5;">
-        <d-math> ~~~-~~~ </d-math>
-      </div>
-      <div style="grid-row: 3; grid-column: 6;">
-        <d-math> H^E_E(X) </d-math>
-      </div>
-
-      <figcaption style="grid-row: 4; grid-column: 4; max-width:135px;">
-        Bits to represent <d-math>z</d-math><br> if you already know <d-math>x</d-math>.
-      </figcaption>
-      <figcaption style="grid-row: 4; grid-column: 6; max-width:120px;">
-        Bits to represent<br>
-        <d-math>x</d-math> by itself.
-      </figcaption>
-
-    </figure>
 
     <h4>Citations</h4>
 
@@ -445,108 +281,10 @@
         right. Also, here's math in a footnote: <d-math>c = \sum_0^i{x}</d-math>. Also, a citation. Box-ception<d-cite
           key="gregor2015draw"></d-cite>!</d-footnote> as well.</p>
 
-
-    <h4>Displaying code</h4>
-    <p>Some inline javascript:<d-code language="javascript">var x = 25;</d-code>. And here's a javascript code block.
-    </p>
-
-    <d-code block="" language="javascript">
-      var x = 25;
-      function(x){
-      return x * x;
-      }
-    </d-code>
-    <p>We also support some highlighting.</p>
-    <d-code block="" language="python">
-      # Python 3: Fibonacci series up to n
-      def fib(n):
-      a, b = 0, 1
-      while a &lt; n: print(a, end=' ' ) a, b=b, a+b </d-code>
-
-    <h4>Tables</h4>
-    <p>We have simple tables that try to stay readable at most screen sizes:
-    </p>
-
-    <style>
-      #example-table {
-        overflow-x: scroll;
-      }
-
-      #example-table th {
-        white-space: nowrap;
-      }
-
-      #example-table tbody th {
-        font-weight: initial;
-        border-bottom: 1px solid rgb(242, 242, 242);
-      }
-
-      #example-table tbody tr:last-of-type th {
-        border-bottom: inherit;
-      }
-
-      #example-table td,
-      #example-table thead th {
-        text-align: center;
-      }
-
-      #example-table td {
-        border-color: rgb(242, 242, 242);
-      }
-
-      #example-table td.no {
-        background-color: #f6f6f6;
-      }
-    </style>
-    <table id="example-table">
-      <thead>
-        <tr>
-          <th></th>
-          <th scope="col">Parallel</th>
-          <th scope="col">Efficient</th>
-          <th scope="col">Reversible</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <th scope="row">GANs</th>
-          <td>Yes</td>
-          <td>Yes</td>
-          <td class="no">No</td>
-        </tr>
-        <tr>
-          <th scope="row">Flow Models</th>
-          <td>Yes</td>
-          <td class="no">No</td>
-          <td>Yes</td>
-        </tr>
-        <tr>
-          <th scope="row">Autoregressive Models</th>
-          <td class="no">No</td>
-          <td>Yes</td>
-          <td>Yes</td>
-        </tr>
-      </tbody>
-    </table>
-
-    <h4>Interactive Figures</h4>
-
-
-    <p>You can't use citation tags (<code>d-cite</code>) in figures that are dynamically loaded using Javascript.
-      Distill statically
-      analyzes your submission for its citations, because they need to be uploaded to indexers and organizations like <a
-        href="https://www.crossref.org/">CrossRef</a> and <a href="https://scholar.google.com">Google Scholar</a>.</p>
-
-    <p>That's it for the example article! Feel free to look at <a
-        href="https://github.com/distillpub?utf8=%E2%9C%93&q=post--&type=public">implementations
-        of existing Distill articles</a>, or ask for help in
-      the <a href="http://slack.distill.pub">Distill Slack Community</a>.</p>
-
   </d-article>
 
 
-
-  <d-appendix>
+  <d-appendix id="appendix">
     <h3>Acknowledgments</h3>
     <p>
       We are deeply grateful to...

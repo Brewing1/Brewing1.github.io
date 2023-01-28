@@ -10,7 +10,6 @@ module.exports = (env) => {
 		devtool: isDevelopment ? "inline-source-map" : false,
 		entry: {
 			index: "./src/index/index.js",
-			panel: "./src/panel/panel-view.js"
 		},
 		resolve: {
 			extensions: [".js", ".html", ".npy", ".json"],
@@ -60,11 +59,6 @@ module.exports = (env) => {
 				template: "./src/index/index.ejs",
 				filename: "index.html",
 				chunks: ["index"],
-			}),
-			new HtmlWebpackPlugin({
-				template: "./src/panel/panel.ejs",
-				filename: "panel.html",
-				chunks: ["panel"],
 			}),
 			new CopyWebpackPlugin({
 				patterns: [{
