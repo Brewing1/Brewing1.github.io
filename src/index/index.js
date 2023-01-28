@@ -133,15 +133,18 @@ const behaviourPanel = new Panel(
 const panelList = [panel, basicPanel, maximalActivationPanel, saliencyPanel, behaviourPanel]
 
 document.addEventListener('keydown', function(e) {
-	onScreen = panelList.filter(function(p) {
+	const onScreen = panelList.filter(function(p) {
 		const midpoint = $(p.element).offset().top + $(p.element).outerHeight()/2;
     	const top_of_screen = $(window).scrollTop();
 		const bottom_of_screen = top_of_screen + $(window).innerHeight();
 		return ((midpoint > top_of_screen) && (midpoint < bottom_of_screen))
 	})
-	console.log(onScreen)
 
 	if (onScreen.length>0) {
+		if(["ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].indexOf(e.code) > -1) {
+			// Prevent the default (scrolling) behaviour so users can click through samples
+			e.preventDefault();
+		}
 		onScreen[0].keydown(e);
 	}
 });
