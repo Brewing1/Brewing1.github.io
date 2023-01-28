@@ -8,7 +8,7 @@
 The article text and high level formatting resides in */src/index.ejs*. Custom javascript files should be stored in */src*. Images, videos and custom css should be stored in */static*.
 
 ### Build and deploy
-1. Run *npm run build*. This will create or update the */docs* directory with the compiled html and accompanying files.
+1. Run *npm run build*. This will create or update the */docs* directory with the compiled html and accompanying files. Note that, to avoid stale cache to be used, the */docs* dir should be deleted first (TODO: fix this)
 
 After pushing to the remote, github will read from the */docs* directory automatically and deploy to https://interpreting-rl-behavior.github.io/
 
