@@ -112,9 +112,9 @@ module.exports = class Panel {
 
     // Initialise filtering
     this.changeFilterDim("raw", this.defaultXDim);
-    this.changeFilterDim("grad", this.defaultXDim);
 
     if (this.displaySaliency) {
+      this.changeFilterDim("grad", this.defaultXDim);
       this.changeSaliencyType(this.saliencyType);
     }
     this._intializeControls();
